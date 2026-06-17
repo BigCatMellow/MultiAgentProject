@@ -1,0 +1,62 @@
+{
+  "project_id": "PATHWELL-MAP-20260617",
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "title": "Inventory Pathwell source notes",
+      "task_type": "research",
+      "role": "researcher",
+      "status": "READY",
+      "dependencies": [],
+      "owner": null,
+      "output_paths": ["artifacts/research/source_inventory.md"],
+      "acceptance_criteria": [
+        "List each source file in ../Story_Files/",
+        "Summarize what each source file is authoritative for",
+        "Flag duplicated, stale, or conflicting notes without resolving them silently",
+        "Identify which files are required context for story-logic work"
+      ]
+    },
+    {
+      "task_id": "TASK-002",
+      "title": "Stress test therefore/but chain",
+      "task_type": "analysis",
+      "role": "story_reviewer",
+      "status": "BLOCKED",
+      "dependencies": ["TASK-001"],
+      "owner": null,
+      "output_paths": ["artifacts/reviews/therefore_but_chain_review.md"],
+      "acceptance_criteria": [
+        "Trace the story chain using therefore/but logic",
+        "Separate broken links from weak-but-usable links",
+        "Cite relevant source notes from ../Story_Files/",
+        "Produce actionable findings rather than vague impressions"
+      ]
+    },
+    {
+      "task_id": "TASK-003",
+      "title": "Draft revision options for highest-priority chain gaps",
+      "task_type": "revise",
+      "role": "story_editor",
+      "status": "BLOCKED",
+      "dependencies": ["TASK-002"],
+      "owner": null,
+      "output_paths": ["artifacts/planning/chain_gap_revision_options.md"],
+      "acceptance_criteria": [
+        "Address the highest-priority broken or weak chain links from TASK-002",
+        "Give at least two concrete revision options for each selected gap",
+        "Explain tradeoffs for Elizabeth's agency, Pathwell's motive, Shade's motive, and escalation",
+        "Do not overwrite canon; mark proposals as proposals"
+      ]
+    }
+  ],
+  "approval_gates": [
+    {
+      "gate_id": "GATE-001",
+      "name": "Source inventory review",
+      "required_after": "TASK-001",
+      "resume_on_approval": ["TASK-002"],
+      "on_rejection": "CHANGES_REQUESTED"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+project:
+  id: PATHWELL-MAP-20260617
+  name: Pathwell Story Project
+  type: writing_project
+  status: active
+  created_at: 2026-06-17T14:30:00-04:00
+
+objective:
+  summary: Use MAP to coordinate story development, structure review, and revision work for Pathwell.
+  completion_condition: Story tasks are reviewed, revised, and approved against explicit acceptance criteria.
+
+workflow:
+  template: writing_project
+  version: 1
+
+limits:
+  maximum_active_workers: 2
+  maximum_parallel_tasks: 2
+  maximum_review_cycles: 3
+  task_lease_seconds: 1800
+
+human_approval_required:
+  - destructive_actions
+  - external_network_calls
+  - external_publication
+  - final_release

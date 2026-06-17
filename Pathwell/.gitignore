@@ -1,0 +1,14 @@
+# Python/cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local Pathwell MAP runtime state
+MAP_System/logs/*.log
+MAP_System/logs/*.jsonl
+MAP_System/snapshots/
+MAP_System/exports/
+
+# Optional local Git fallback if Pathwell is used as a standalone folder.
+.map-git/
+

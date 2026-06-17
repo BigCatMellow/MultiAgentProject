@@ -1,0 +1,33 @@
+workflow:
+  id: general_multi_agent_project
+  version: 1
+  description: File-backed bootstrap workflow for Codex and Claude Code collaboration.
+
+states:
+  - READY
+  - CLAIMED
+  - IN_PROGRESS
+  - BLOCKED
+  - SUBMITTED
+  - REVIEW
+  - CHANGES_REQUESTED
+  - APPROVED
+  - DONE
+
+default_flow:
+  - claim_ready_task
+  - mark_in_progress
+  - produce_artifact
+  - submit_for_review
+  - independent_review
+  - approve_or_request_changes
+  - integrate
+
+review_policy:
+  required_for:
+    - implementation
+    - workflow
+    - architecture
+  maximum_cycles: 3
+  self_review_allowed: false
+
