@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-001",
+  "title": "Review collaboration bootstrap",
+  "task_type": "review",
+  "role": "reviewer",
+  "status": "READY",
+  "dependencies": [],
+  "owner": null,
+  "description": "Review the initial collaboration workspace for clarity, completeness, and usability by both Codex and Claude Code.",
+  "input_paths": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+    "shared/",
+    "workflow/",
+    "langgraph/"
+  ],
+  "output_paths": [
+    "artifacts/reviews/bootstrap_review.md"
+  ],
+  "acceptance_criteria": [
+    "Verify that Codex and Claude Code have clear entrypoint instructions",
+    "Verify that task and handoff conventions are understandable",
+    "Verify that LangGraph boundaries are documented",
+    "Record required fixes or approve the bootstrap"
+  ]
+}
+

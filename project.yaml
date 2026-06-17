@@ -1,0 +1,27 @@
+project:
+  id: MAP-BOOTSTRAP-20260617
+  name: MultiAgentProject Collaboration Bootstrap
+  type: multi_agent_workspace
+  status: active
+  created_at: 2026-06-17T14:30:00-04:00
+
+objective:
+  summary: Set up collaboration between Codex, Claude Code, and a future LangGraph runtime.
+  completion_condition: Workspace scaffolding exists, validates, and documents the next implementation step.
+
+workflow:
+  template: general_multi_agent_project
+  version: 1
+
+limits:
+  maximum_active_workers: 2
+  maximum_parallel_tasks: 2
+  maximum_review_cycles: 3
+  task_lease_seconds: 1800
+
+human_approval_required:
+  - destructive_actions
+  - external_network_calls
+  - external_publication
+  - final_release
+

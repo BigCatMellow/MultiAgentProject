@@ -1,0 +1,62 @@
+{
+  "project_id": "MAP-BOOTSTRAP-20260617",
+  "tasks": [
+    {
+      "task_id": "TASK-001",
+      "title": "Review collaboration bootstrap",
+      "task_type": "review",
+      "role": "reviewer",
+      "status": "READY",
+      "dependencies": [],
+      "owner": null,
+      "output_paths": ["artifacts/reviews/bootstrap_review.md"],
+      "acceptance_criteria": [
+        "Verify that Codex and Claude Code have clear entrypoint instructions",
+        "Verify that task and handoff conventions are understandable",
+        "Verify that LangGraph boundaries are documented",
+        "Record required fixes or approve the bootstrap"
+      ]
+    },
+    {
+      "task_id": "TASK-002",
+      "title": "Implement minimal LangGraph runner",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "BLOCKED",
+      "dependencies": ["TASK-001"],
+      "owner": null,
+      "output_paths": ["langgraph/runner.py", "artifacts/tests/langgraph_runner_test.md"],
+      "acceptance_criteria": [
+        "Loads workflow/task_graph.json",
+        "Selects ready tasks whose dependencies are satisfied",
+        "Routes submitted tasks to review",
+        "Does not treat LangGraph state as canonical project storage"
+      ]
+    },
+    {
+      "task_id": "TASK-003",
+      "title": "Design SQLite task board migration",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "BLOCKED",
+      "dependencies": ["TASK-001"],
+      "owner": null,
+      "output_paths": ["artifacts/planning/sqlite_task_board.md"],
+      "acceptance_criteria": [
+        "Defines tables for agents, tasks, claims, messages, artifacts, reviews, decisions, and events",
+        "Explains atomic task claims and lease expiration",
+        "Maps current file-backed state to future SQLite tables"
+      ]
+    }
+  ],
+  "approval_gates": [
+    {
+      "gate_id": "GATE-001",
+      "name": "Bootstrap review",
+      "required_after": "TASK-001",
+      "resume_on_approval": ["TASK-002", "TASK-003"],
+      "on_rejection": "CHANGES_REQUESTED"
+    }
+  ]
+}
+

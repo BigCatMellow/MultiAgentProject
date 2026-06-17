@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local runtime state
+logs/*.log
+logs/*.jsonl
+snapshots/
+exports/
+
+# Local Git fallback used because .git is currently a read-only mount point.
+.map-git/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
