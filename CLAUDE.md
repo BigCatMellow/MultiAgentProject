@@ -1,12 +1,14 @@
-# Claude Code Instructions
+# Claude Code Pointer
 
-Follow `AGENTS.md` as the canonical collaboration protocol for this workspace.
+Claude Code instructions are in:
 
-Before making changes:
+```text
+MAP_System/CLAUDE.md
+```
 
-1. Read the relevant task in `tasks/`.
-2. Check `shared/decisions.md` and `shared/unresolved_questions.md`.
-3. Confirm that your edits stay inside the task's owned output paths or create a handoff explaining why a broader edit is necessary.
+The shared agent protocol is in:
 
-When handing work back to Codex, create a file in `handoffs/` and add an event to `events/events.jsonl`.
+```text
+MAP_System/AGENTS.md
+```
 

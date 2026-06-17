@@ -5,13 +5,13 @@ This workspace currently has `.git` occupied by a read-only tmpfs mount point. N
 To keep the project usable now, this repo uses a separate Git directory:
 
 ```bash
-scripts/setup_git_fallback.sh
-scripts/map-git status
-scripts/map-git add .
-scripts/map-git commit -m "Initial MAP collaboration scaffold"
+MAP_System/scripts/setup_git_fallback.sh
+MAP_System/scripts/map-git status
+MAP_System/scripts/map-git add .
+MAP_System/scripts/map-git commit -m "Initial MAP collaboration scaffold"
 ```
 
-`scripts/map-git` is a thin wrapper around:
+`MAP_System/scripts/map-git` is a thin wrapper around:
 
 ```bash
 git --git-dir=.map-git --work-tree=.
@@ -21,5 +21,4 @@ If the `.git` mount is later removed, you can convert to normal Git by moving or
 
 ## Suggested Agent Rule
 
-Agents should use `scripts/map-git` in this workspace unless normal `git status` starts working.
-
+Agents should use `MAP_System/scripts/map-git` in this workspace unless normal `git status` starts working.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 GIT_DIR="$ROOT/.map-git"
 
 if [[ -d "$ROOT/.git" ]] && mountpoint -q "$ROOT/.git"; then
@@ -16,5 +16,4 @@ if [[ ! -d "$GIT_DIR" ]]; then
 fi
 
 echo "Git fallback is ready."
-echo "Use: scripts/map-git status"
-
+echo "Use: MAP_System/scripts/map-git status"
