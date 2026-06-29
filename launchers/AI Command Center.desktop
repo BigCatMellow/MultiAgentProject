@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AI Command Center
+Comment=Open the hcom and WezTerm AI command center
+Exec=/home/home/.local/bin/ai-command-center
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

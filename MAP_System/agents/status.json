@@ -1,0 +1,70 @@
+{
+  "agents": {
+    "antigravity": {
+      "status": "standby",
+      "reason": "out_of_tokens",
+      "resume_after": "when operator restores token budget",
+      "notes": ""
+    },
+    "claude": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "claude-bono": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "claude-mako": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "claude-muse": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex-live": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex-tori": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex-vera": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "gemini": {
+      "status": "standby",
+      "reason": "long_term_unavailable",
+      "resume_after": "when operator prompts it",
+      "notes": ""
+    },
+    "map-task": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    }
+  }
+}

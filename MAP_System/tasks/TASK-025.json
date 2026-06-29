@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-025",
+  "title": "Rename MAP_System/langgraph/ to MAP_System/graph/",
+  "task_type": "refactor",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-022"
+  ],
+  "owner": "claude",
+  "description": "MAP_System/langgraph/ directory name shadows the real langgraph package when MAP_System/ is on sys.path. Rename to graph/, update all internal refs in runner.py and agent_loop.py, verify py_compile and smoke tests pass.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/graph/runner.py",
+    "graph/runner.py"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/langgraph/ directory no longer exists",
+    "MAP_System/graph/runner.py exists and is importable",
+    "py_compile clean on runner.py and agent_loop.py",
+    "runner --pretty smoke test passes",
+    "agent_loop --once --dry-run smoke test passes"
+  ]
+}

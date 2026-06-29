@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-043",
+  "title": "HPOM-016: Metrics report \u2014 MAP health dashboard",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-038"
+  ],
+  "owner": "codex-live",
+  "description": "Create scripts/map_metrics.py to report: task count by status, review queue size, conflict count, stale shared file count, change-request rate, approval-to-release lag. Output as plain text table and optionally JSON. Read-only reporting script.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/map-metrics-test.md",
+    "MAP_System/scripts/map_metrics.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_map_metrics.py"
+  ],
+  "acceptance_criteria": [
+    "reports task count by status",
+    "reports review queue size (SUBMITTED tasks awaiting review)",
+    "reports conflict count (tasks in CONFLICT status)",
+    "reports stale shared file count (if validate_shared_state.py exists)",
+    "script runs standalone: python3 MAP_System/scripts/map_metrics.py"
+  ]
+}

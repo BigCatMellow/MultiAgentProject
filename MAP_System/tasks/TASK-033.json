@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-033",
+  "title": "map-task CLI for task lifecycle operations",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-013",
+    "TASK-017"
+  ],
+  "owner": "codex",
+  "description": "scripts/map_task.py: create task with dependencies/output_paths/criteria, approve/reject submitted task, sync via export_to_files, emit events. Replaces ad-hoc sqlite snippets.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/map_task_test.md",
+    "MAP_System/scripts/map_task.py",
+    "artifacts/tests/map-task-test.md",
+    "scripts/map_task.py"
+  ],
+  "acceptance_criteria": [
+    "map_task.py create --task-id TASK-NNN --title ... --owner ... [--depends-on X Y] [--output-path P] [--criterion C]",
+    "map_task.py approve TASK-NNN --reviewer agent-id (sets APPROVED, emits event, syncs files)",
+    "map_task.py reject TASK-NNN --reviewer agent-id --reason \"...\" (sets CHANGES_REQUESTED, emits event)",
+    "map_task.py show TASK-NNN (prints task JSON)",
+    "Exits 0 on success; prints error and exits nonzero on bad input"
+  ]
+}

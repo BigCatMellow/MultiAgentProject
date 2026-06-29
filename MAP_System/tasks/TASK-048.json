@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-048",
+  "title": "HPOM-011: local_runner.py \u2014 scoped Ollama invocation wrapper",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-live",
+  "description": "Create scripts/local_runner.py: a CLI wrapper for running Ollama models on scoped tasks. Pre-checks model health (local_assistant_health.py), runs the model with a prompt file or inline prompt, writes output to a named artifact file, creates a helper note in inbox/helpers/, and appends a HELPER_INVOKED event. Must enforce: model must be in REQUIRED_MODELS list, output must be written to an explicit --output path, helper note must record task_id/model/scope/input/output.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/local-runner-test.md",
+    "MAP_System/scripts/local_runner.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_local_runner.py"
+  ],
+  "acceptance_criteria": [
+    "script fails if requested model is not in the required models list",
+    "output is written to the --output path, not only stdout",
+    "a helper note is created in inbox/helpers/ with task_id, model, scope, output_path",
+    "a HELPER_INVOKED event is appended to events.jsonl",
+    "script runs standalone: python3 MAP_System/scripts/local_runner.py --help"
+  ],
+  "objective": "Wrap Ollama invocations so every local model run has a scope record, output artifact, and event log entry. Enforce that only approved models can be used.",
+  "required_context": "MAP_System/scripts/local_assistant_health.py, MAP_System/notes/local-model-helper-guide.md, MAP_System/shared/hpom.md, MAP_System/events/events.jsonl",
+  "files_in_scope": "MAP_System/scripts/local_runner.py, MAP_System/tests/test_local_runner.py",
+  "forbidden_changes": "Do not modify local_assistant_health.py or claims.py; do not register Ollama models as core agents; do not use --yes-always or headless invocation",
+  "expected_artifacts": "MAP_System/scripts/local_runner.py, MAP_System/tests/test_local_runner.py",
+  "reviewer_role": "claude-mako",
+  "risk": "LOW \u2014 new script; no existing logic modified"
+}

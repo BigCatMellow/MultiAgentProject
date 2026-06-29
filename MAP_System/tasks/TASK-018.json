@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-018",
+  "title": "Implement SQLite-to-JSON export",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Implement MAP_System/migration/export_to_files.py \u2014 the reverse of seed_from_files.py. Reads map.db and writes canonical task JSON files back to tasks/, updates workflow/task_graph.json task statuses/owners, and rewrites agents/status.json. Keeps file-backed state in sync after SQLite claims or status changes.",
+  "input_paths": [
+    "map.db",
+    "migration/seed_from_files.py",
+    "migration/schema.sql"
+  ],
+  "output_paths": [
+    "artifacts/tests/export-test.md",
+    "artifacts/tests/export_test.md",
+    "migration/export_to_files.py"
+  ],
+  "acceptance_criteria": [
+    "Reads tasks from map.db and writes/updates MAP_System/tasks/TASK-NNN.json for each",
+    "Updates status and owner fields in workflow/task_graph.json to match SQLite",
+    "Rewrites agents/status.json from the agents table",
+    "Idempotent: re-running produces no diff when SQLite and files are already in sync",
+    "Prints a summary of files written vs unchanged"
+  ]
+}

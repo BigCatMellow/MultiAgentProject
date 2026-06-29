@@ -1,0 +1,36 @@
+{
+  "task_id": "TASK-037",
+  "title": "Define HPOM system scope",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-live",
+  "description": "Define what HPOM means in this project and how it should relate to MAP, HCOM, command-center helpers, local assistants, task ownership, and durable memory. Command-center requested starting HPOM implementation on 2026-06-29.",
+  "input_paths": [
+    "MAP_System/artifacts/planning/map-hpom-local-assistants-roadmap-2026-06-29.md",
+    "MAP_System/notes/architect-agent-guide.md",
+    "MAP_System/notes/communication-architecture.md",
+    "MAP_System/notes/helper-agent-guide.md",
+    "MAP_System/notes/local-model-helper-guide.md",
+    "MAP_System/shared/architecture.md",
+    "MAP_System/shared/unresolved-questions.md"
+  ],
+  "output_paths": [
+    "artifacts/planning/hpom-scope-definition.md",
+    "shared/agent-capability-matrix.md",
+    "shared/architecture.md",
+    "shared/current-state.md",
+    "shared/decisions.md",
+    "shared/hpom.md",
+    "shared/unresolved-questions.md",
+    "tasks/TASK-037.json"
+  ],
+  "acceptance_criteria": [
+    "shared/hpom.md defines the HPOM acronym, boundary, inputs, outputs, and relationship to MAP/HCOM/local assistants",
+    "shared/agent-capability-matrix.md lists what each current worker/model/tool is good at and what to avoid",
+    "The HPOM plan states whether HPOM is a protocol, operating model, orchestration layer, or command-center workflow",
+    "The HPOM plan lists what HPOM must not do, especially around hidden helper work, final authority, and task ownership",
+    "A command-center decision is recorded in shared/decisions.md and current-state/architecture link to the HPOM references"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-019",
+  "title": "Design software project workflow template",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "claude",
+  "description": "Design a reusable workflow template for software development projects in MAP_System/workflow/templates/software_project.yaml. Defines standard task types (spec, implement, test, review, release), stage sequence, acceptance criteria patterns, and review rules. A second project should be launchable by copying this template and filling in project-specific values.",
+  "input_paths": [
+    "general-purpose-multi-agent-project-system-v2.md",
+    "workflow/task_graph.json",
+    "workflow/runtime_policy.yaml",
+    "shared/decisions.md"
+  ],
+  "output_paths": [
+    "workflow/templates/software_project.yaml"
+  ],
+  "acceptance_criteria": [
+    "Defines task_types with role, typical acceptance criteria shape, and review requirement",
+    "Defines stage sequence: spec -> implement -> test -> review -> release",
+    "Each stage specifies who owns it (implementer/reviewer) and what gates it",
+    "Template is self-contained: a new project can be started by copying and editing project-specific fields",
+    "Includes at least one worked example task showing how to instantiate the template"
+  ]
+}

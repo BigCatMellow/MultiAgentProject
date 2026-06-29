@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-029",
+  "title": "map-status CLI for live project state",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-014"
+  ],
+  "owner": "codex",
+  "description": "scripts/map_status.py: reads map.db and prints task claims with lease_expires_at, pending approval gates, agent statuses. Human-readable table output.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/map_status_test.md",
+    "MAP_System/scripts/map_status.py",
+    "artifacts/tests/map-status-test.md",
+    "scripts/map_status.py"
+  ],
+  "acceptance_criteria": [
+    "Shows IN_PROGRESS tasks with claimed_by, lease_expires_at, heartbeat_at",
+    "Shows pending approval gates",
+    "Shows agent statuses (available/busy/offline)",
+    "Shows SUBMITTED tasks awaiting review",
+    "Exits 0; works against real map.db with no args"
+  ]
+}

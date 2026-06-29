@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-040",
+  "title": "HPOM-008: Conflict freeze \u2014 stop work when contradictions are found",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-mako",
+  "description": "Create conflict handling protocol: CONFLICT status in SQLite, scripts/flag_conflict.py to create conflict records and update task status, templates/conflict.md template.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/db/migration/",
+    "MAP_System/scripts/flag_conflict.py",
+    "MAP_System/templates/conflict.md"
+  ],
+  "acceptance_criteria": [
+    "CONFLICT is a valid task status in SQLite",
+    "flag_conflict.py creates a conflict record and moves task to CONFLICT",
+    "conflict record template includes: type, affected_files, conflicting_sources, decision_owner, resolution",
+    "tasks in CONFLICT cannot be claimed or promoted without resolution record"
+  ]
+}

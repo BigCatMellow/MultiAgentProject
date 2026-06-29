@@ -12,13 +12,22 @@ logs/*.log
 logs/*.jsonl
 snapshots/
 exports/
+MAP_System/map.db
+MAP_System/db/map.db
 
-# Local Git fallback used because .git is currently a read-only mount point.
+# Dependency bundles (not needed in repo)
+**/.deps/
+
+# Pathwell project — excluded from public repo; private creative work
+Projects/Pathwell/
+
+# Local Git conversion backups.
 .map-git/
+.git-empty-*/
+MAP_System/.git-unused-*/
 
 # OS/editor noise
 .DS_Store
 Thumbs.db
 *.swp
 *~
-

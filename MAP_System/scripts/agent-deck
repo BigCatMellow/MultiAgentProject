@@ -1,0 +1,44 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="/home/home/Downloads/MultiAgentProject"
+SESSION_NAME="agent-deck"
+
+if ! command -v tmux >/dev/null 2>&1; then
+  echo "Agent Deck requires tmux. Install it with: sudo apt-get install tmux" >&2
+  exit 1
+fi
+
+if ! command -v /home/home/.local/bin/codex >/dev/null 2>&1; then
+  echo "Codex launcher not found at /home/home/.local/bin/codex" >&2
+  exit 1
+fi
+
+if ! command -v /home/home/.local/bin/claude >/dev/null 2>&1; then
+  echo "Claude launcher not found at /home/home/.local/bin/claude" >&2
+  exit 1
+fi
+
+if ! command -v /home/home/.local/bin/ai >/dev/null 2>&1; then
+  echo "AI command-center launcher not found at /home/home/.local/bin/ai" >&2
+  exit 1
+fi
+
+cd "$PROJECT_DIR"
+
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+  exec tmux attach-session -t "$SESSION_NAME"
+fi
+
+tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR" -n agents
+tmux send-keys -t "$SESSION_NAME:agents.0" "/home/home/.local/bin/codex" C-m
+tmux split-window -h -t "$SESSION_NAME:agents" -c "$PROJECT_DIR"
+tmux send-keys -t "$SESSION_NAME:agents.1" "/home/home/.local/bin/claude" C-m
+tmux split-window -v -t "$SESSION_NAME:agents.1" -c "$PROJECT_DIR"
+tmux send-keys -t "$SESSION_NAME:agents.2" "/home/home/.local/bin/ai antigravity start; /home/home/.local/bin/ai antigravity logs" C-m
+tmux select-pane -t "$SESSION_NAME:agents.0"
+tmux set-option -t "$SESSION_NAME" status on >/dev/null
+tmux set-window-option -t "$SESSION_NAME:agents" pane-border-status top >/dev/null
+tmux select-layout -t "$SESSION_NAME:agents" main-vertical >/dev/null
+
+exec tmux attach-session -t "$SESSION_NAME"

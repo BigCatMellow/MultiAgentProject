@@ -2,14 +2,38 @@ runtime_policy:
   storage_mode: file_backed
   future_storage_mode: sqlite
   maximum_active_workers: 2
+  core_agents_always_open:
+    - codex
+    - claude
+    - antigravity
+  helper_agents:
+    enabled: true
+    launch_mode: operator_or_core_agent_requested
+    terminal_mode: command_center_managed
+    default_terminal: wezterm-tab
+    headless_backend_allowed: true
+    headless_allowed_only_when: ai_command_center_exposes_inspect_send_approve_stop
+    operator_surface_required: true
+    tag_prefix: helper
+    notes_dir: inbox/helpers
+    maximum_active_helpers: 4
+    idle_timeout_minutes: 20
+    require_named_scope: true
   maximum_parallel_tasks: 2
   task_lease_seconds: 1800
   reconciliation_interval_seconds: 60
   event_log: events/events.jsonl
+  agent_status_path: agents/status.json
+  unavailable_agent_policy:
+    continue_without_unavailable_agents: true
+    require_handoff_for_owned_work: true
+    wait_only_when_task_requires_unavailable_agent: true
 
 agent_ids:
   codex: Codex coding agent
   claude: Claude Code agent
+  antigravity: Google Antigravity agent
+  gemini: Gemini agent, manually coordinated by the operator when hcom communication is unreliable
 
 claiming:
   current_mode: manual
@@ -21,3 +45,11 @@ human_approval_required:
   - publication
   - final_release
 
+approval_handling:
+  operator_reachable_surface_required: true
+  visible_terminal_or_ai_command_center_required: true
+  prefer_session_level_approval_for_in_scope_work: true
+  approval_prompt_commands:
+    inspect: ai screen <agent>
+    accept_selected: ai approve <agent>
+    choose_option: ai approve <agent> <option>

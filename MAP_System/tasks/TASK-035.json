@@ -1,0 +1,45 @@
+{
+  "task_id": "TASK-035",
+  "title": "Implement strict READY promotion gate",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-033"
+  ],
+  "owner": "codex",
+  "description": "Implement the HPOM READY promotion gate so incomplete or unsafe task records cannot be promoted to READY. The gate must validate the HPOM task contract across SQLite and exported task JSON, provide an audit mode for existing READY tasks, and add a soft claim-time defense for acceptance criteria.",
+  "input_paths": [
+    "MAP_System/notes/state-machine-guardrails.md",
+    "MAP_System/notes/task-authoring-guide.md",
+    "MAP_System/templates/task.json",
+    "MAP_System/scripts/map_task.py",
+    "MAP_System/db/claims.py",
+    "MAP_System/scripts/validate_task_graph.py",
+    "MAP_System/shared/hpom.md",
+    "MAP_System/shared/agent-capability-matrix.md",
+    "MAP_System/migration/seed_from_files.py",
+    "MAP_System/migration/export_to_files.py"
+  ],
+  "output_paths": [
+    "artifacts/tests/promote-task-test.md",
+    "db/claims.py",
+    "scripts/map_task.py",
+    "scripts/promote_task.py",
+    "scripts/run_tests.sh",
+    "tasks/TASK-035.json",
+    "tests/test_promote_task.py"
+  ],
+  "acceptance_criteria": [
+    "map_task.py create defaults incomplete tasks to BACKLOG or NEEDS_SHAPING rather than READY",
+    "python3 MAP_System/scripts/validate_task_graph.py passes",
+    "scripts/promote_task.py accepts --task-id and reads the target task from SQLite and MAP_System/tasks/TASK-NNN.json",
+    "scripts/promote_task.py validates non-empty HPOM fields in both SQLite-derived task data and task JSON: objective, required_context, files_in_scope, forbidden_changes, acceptance_criteria, expected_artifacts, reviewer_role, risk",
+    "scripts/promote_task.py fails with a clear error naming each missing HPOM field",
+    "scripts/promote_task.py promotes a valid task to READY in SQLite and syncs file-backed task state",
+    "scripts/promote_task.py --audit flags existing READY tasks that are missing HPOM fields without mutating them",
+    "db/claims.py refuses to claim a READY task with empty acceptance_criteria as a soft claim-time defense",
+    "MAP_System/tests/test_promote_task.py covers valid promotion, invalid blocked promotion, and missing-field error messages",
+    "run_tests.sh includes the promotion gate tests and passes"
+  ]
+}

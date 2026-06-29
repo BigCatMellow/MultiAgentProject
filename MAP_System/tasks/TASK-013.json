@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-013",
+  "title": "Implement SQLite migration seed script",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [
+    "TASK-003"
+  ],
+  "owner": "codex",
+  "description": "Implement MAP_System/migration/seed_from_files.py to populate SQLite from the current file-backed state (Phase 1 of the SQLite migration design in artifacts/planning/sqlite-task-board.md). Script must be idempotent, create map.db with the full schema, and seed agents, tasks, dependencies, events, and decisions.",
+  "input_paths": [
+    "artifacts/planning/sqlite-task-board.md",
+    "workflow/task_graph.json",
+    "agents/status.json",
+    "events/events.jsonl",
+    "shared/decisions.md"
+  ],
+  "output_paths": [
+    "artifacts/tests/sqlite-seed-test.md",
+    "artifacts/tests/sqlite_seed_test.md",
+    "migration/schema.sql",
+    "migration/seed_from_files.py"
+  ],
+  "acceptance_criteria": [
+    "Creates MAP_System/map.db with all tables from the design document",
+    "Seeds tasks, dependencies, agents, events, and decisions from current files",
+    "Idempotent: re-running does not duplicate rows",
+    "Prints a summary of rows inserted or skipped"
+  ]
+}

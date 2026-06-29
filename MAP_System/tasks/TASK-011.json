@@ -1,0 +1,37 @@
+{
+  "task_id": "TASK-011",
+  "title": "Replace Gemini core agent with Antigravity",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Put Antigravity on PATH and update the AI Command Center so the core agent set is Codex, Claude, and Antigravity instead of Gemini.",
+  "input_paths": [
+    "MAP_System/scripts/ai-command-center-cli",
+    "MAP_System/scripts/ai-command-center-shell",
+    "MAP_System/scripts/agent-deck",
+    "MAP_System/workflow/runtime_policy.yaml",
+    "MAP_System/AGENTS.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "output_paths": [
+    "AGENTS.md",
+    "scripts/agent-deck",
+    "scripts/ai-command-center-antigravity",
+    "scripts/ai-command-center-cli",
+    "scripts/ai-command-center-shell",
+    "scripts/antigravity-wrapper",
+    "shared/decisions.md",
+    "tasks/TASK-011.json",
+    "workflow/runtime_policy.yaml",
+    "workflow/task_graph.json"
+  ],
+  "acceptance_criteria": [
+    "antigravity and agy resolve on PATH",
+    "ai start launches Codex, Claude, and Antigravity",
+    "AI Command Center help and banner no longer list Gemini as a core command",
+    "Desktop command-center layout opens an Antigravity tab instead of Gemini",
+    "Agent Deck uses Antigravity instead of Gemini"
+  ]
+}

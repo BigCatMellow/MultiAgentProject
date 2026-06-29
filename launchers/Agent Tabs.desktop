@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Tabs
+Comment=Open Shell, Codex, Claude Code, Gemini, and hcom tabs
+Exec=/home/home/.local/bin/agent-tabs
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

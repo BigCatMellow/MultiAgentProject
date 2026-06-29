@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-004",
+  "title": "Install Agent Deck local launcher",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Create and install a local Agent Deck launcher that opens Codex and Claude Code together in one terminal.",
+  "input_paths": [
+    "Codex.desktop",
+    "Claude Code.desktop",
+    "MAP_System/shared/requirements.md",
+    "MAP_System/shared/constraints.md"
+  ],
+  "output_paths": [
+    "Agent Deck.desktop",
+    "scripts/agent-deck"
+  ],
+  "acceptance_criteria": [
+    "Agent Deck launcher starts from the project root",
+    "Codex and Claude Code open in one terminal using separate panes",
+    "Launcher source is stored in the repository",
+    "Install steps are recorded in events/events.jsonl"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-015",
+  "title": "Update LangGraph runner to query SQLite",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [
+    "TASK-014"
+  ],
+  "owner": "codex",
+  "description": "Update MAP_System/langgraph/runner.py to load task and agent state from map.db instead of workflow/task_graph.json and agents/status.json. The runner should remain read-only by default; --record-event should write to the events table in SQLite as well as events.jsonl.",
+  "input_paths": [
+    "langgraph/runner.py",
+    "db/claims.py",
+    "map.db"
+  ],
+  "output_paths": [
+    "artifacts/tests/runner-sqlite-test.md",
+    "artifacts/tests/runner_sqlite_test.md",
+    "langgraph/runner.py"
+  ],
+  "acceptance_criteria": [
+    "Runner loads tasks and agent status from map.db when the database exists",
+    "Falls back to JSON files if map.db is absent (backward compatibility)",
+    "ready_tasks, blocked_tasks, done_task_ids, available_agents reflect SQLite state",
+    "--record-event writes to SQLite events table in addition to events.jsonl",
+    "Existing --pretty output format unchanged"
+  ]
+}

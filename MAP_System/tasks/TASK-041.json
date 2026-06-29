@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-041",
+  "title": "HPOM-009: Decision log \u2014 enforce durable decision records",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-mako",
+  "description": "Create scripts/validate_decisions.py that reads decisions.md and verifies each entry has required fields. Create DECISIONS.md active decision index. Ensure templates/decision.md matches required schema.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/validate_decisions.py",
+    "MAP_System/shared/DECISIONS.md",
+    "MAP_System/templates/decision.md"
+  ],
+  "acceptance_criteria": [
+    "validate_decisions.py parses shared/decisions.md and flags entries missing required fields",
+    "decision template includes: id, owner, reason, applies_to, date, supersedes, superseded_by",
+    "DECISIONS.md is a machine-readable index of active decisions"
+  ]
+}

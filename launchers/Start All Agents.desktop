@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Start All Agents
+Comment=Launch Claude Code, Codex, and Gemini CLI with hcom
+Exec=/home/home/Downloads/MultiAgentProject/start-all-agents.sh
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

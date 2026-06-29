@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-046",
+  "title": "Backfill HPOM metadata headers on shared/ files and decisions.md",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-mako",
+  "description": "validate_shared_state.py flags all 13 shared/ files as missing HPOM metadata headers. validate_decisions.py flags existing decisions.md entries as missing owner/date/applies_to. Backfill both. For shared/ files: add <!-- hpom: ... --> header comments using the shared-state.md template. For decisions.md entries (DEC-001 through DEC-010): add Status/Owner/Date/Applies-To lines based on content and git history. Do not change the meaning of any existing decision; only add the missing metadata fields.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/shared/"
+  ],
+  "acceptance_criteria": [
+    "validate_shared_state.py reports 0 failures for all shared/ .md files",
+    "validate_decisions.py reports 0 MISSING_FIELD failures",
+    "No existing decision text or shared-file content was changed (only metadata added)",
+    "validate_task_graph.py still passes"
+  ]
+}

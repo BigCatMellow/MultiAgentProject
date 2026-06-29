@@ -1,0 +1,36 @@
+{
+  "task_id": "TASK-012",
+  "title": "Restore Gemini to manually coordinated plans",
+  "task_type": "maintenance",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Restore Gemini to planning state while documenting that the operator may need to manually prompt Gemini and Antigravity for now.",
+  "input_paths": [
+    "MAP_System/agents/status.json",
+    "MAP_System/agents/README.md",
+    "MAP_System/langgraph/README.md",
+    "MAP_System/inbox/helpers/README.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/tasks/TASK-005.json",
+    "MAP_System/workflow/task_graph.json"
+  ],
+  "output_paths": [
+    "agents/README.md",
+    "agents/status.json",
+    "inbox/helpers/README.md",
+    "langgraph/README.md",
+    "shared/decisions.md",
+    "tasks/TASK-005.json",
+    "tasks/TASK-012.json",
+    "workflow/runtime_policy.yaml",
+    "workflow/task_graph.json"
+  ],
+  "acceptance_criteria": [
+    "Gemini is present in durable availability state as manually coordinated",
+    "Current command-center routing guidance allows Gemini examples without assuming reliable hcom communication",
+    "Task planning records distinguish core agents from manually coordinated agents",
+    "A durable decision records that the operator may need to prompt Gemini and Antigravity manually"
+  ]
+}

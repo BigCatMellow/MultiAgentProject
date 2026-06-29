@@ -1,0 +1,230 @@
+# Software Project Workflow Template
+# Copy this file to workflow/templates/ of a new project and fill in [PLACEHOLDERS].
+# Remove comment lines before use.
+#
+# Stage sequence: spec -> implement -> test -> review -> release
+# Each stage produces at least one artifact and requires independent review before the next stage opens.
+
+project:
+  id: "[PROJECT-ID]"                   # e.g. SOFTWARE-20260619
+  title: "[Project title]"
+  description: "[One-sentence objective]"
+  owner: "[agent or human]"
+  created_at: "[ISO-8601]"
+
+# ─── STAGES ───────────────────────────────────────────────────────────────────
+
+stages:
+  - id: spec
+    label: Specification
+    description: Define what to build, what it must not do, and how success is measured.
+    role: architect
+    produces:
+      - artifacts/spec/[project-id]-spec.md
+    gates_next: implement
+    review_required: true
+    acceptance_criteria_shape:
+      - "Functional requirements listed with one acceptance test each"
+      - "Non-goals explicitly stated"
+      - "API surface or data schema defined"
+      - "External dependencies identified"
+
+  - id: implement
+    label: Implementation
+    description: Build against the approved spec. One task per logical module or layer.
+    role: implementer
+    produces:
+      - "[source files per module]"
+      - artifacts/tests/[module]-unit-test.md
+    gates_next: test
+    review_required: false          # implementation tasks are reviewed in the test stage
+    acceptance_criteria_shape:
+      - "Implements spec requirement [REQ-NNN]"
+      - "No functionality outside the spec scope"
+      - "py_compile / lint passes"
+
+  - id: test
+    label: Integration Test
+    description: Verify that implemented modules work together against spec acceptance criteria.
+    role: implementer
+    produces:
+      - artifacts/tests/[project-id]-integration-test.md
+    gates_next: review
+    review_required: true
+    acceptance_criteria_shape:
+      - "Each spec acceptance criterion exercised with a concrete test or verified manually"
+      - "No regressions in adjacent modules"
+      - "Test results reproducible from a clean state"
+
+  - id: review
+    label: Code and Design Review
+    description: Independent reviewer checks implementation for correctness, spec compliance, and safety.
+    role: reviewer
+    produces:
+      - artifacts/reviews/[project-id]-review.md
+    gates_next: release
+    review_required: false          # the review IS the stage
+    acceptance_criteria_shape:
+      - "No BLOCKER or REQUIRED findings outstanding"
+      - "All RECOMMENDED findings acknowledged (accepted or deferred with reason)"
+      - "Verdict recorded: APPROVED or CHANGES_REQUESTED"
+
+  - id: release
+    label: Release
+    description: Integrate approved artifact into the project's canonical output location.
+    role: implementer
+    produces:
+      - artifacts/final/[project-id]-[version].md   # or binary, package, etc.
+    gates_next: null                # terminal stage
+    review_required: false
+    human_approval_required: true   # operator must approve before release
+    acceptance_criteria_shape:
+      - "Artifact matches the approved review artifact exactly"
+      - "Version tagged in events.jsonl"
+      - "Operator approval recorded"
+
+# ─── TASK TYPES ───────────────────────────────────────────────────────────────
+
+task_types:
+  spec_task:
+    stage: spec
+    role: architect
+    typical_owner: claude
+    review_required: true
+    fields:
+      - output_paths           # one or more artifact paths
+      - acceptance_criteria    # min 3 criteria
+      - dependencies           # usually [] for the first spec task
+
+  implementation_task:
+    stage: implement
+    role: implementer
+    typical_owner: codex
+    review_required: false
+    fields:
+      - output_paths
+      - acceptance_criteria
+      - dependencies           # usually depends on the approved spec task
+
+  test_task:
+    stage: test
+    role: implementer
+    typical_owner: codex
+    review_required: true
+    fields:
+      - output_paths
+      - acceptance_criteria
+      - dependencies           # depends on all implementation tasks for this module
+
+  review_task:
+    stage: review
+    role: reviewer
+    typical_owner: claude
+    review_required: false
+    fields:
+      - output_paths
+      - acceptance_criteria
+      - dependencies           # depends on the test task
+
+  release_task:
+    stage: release
+    role: implementer
+    typical_owner: codex
+    review_required: false
+    human_approval_required: true
+    fields:
+      - output_paths
+      - acceptance_criteria
+      - dependencies           # depends on the review task
+
+# ─── APPROVAL GATES ───────────────────────────────────────────────────────────
+
+approval_gates:
+  - gate_id: GATE-SPEC
+    name: Spec approval
+    required_after_stage: spec
+    resumes: implement
+    on_rejection: CHANGES_REQUESTED back to spec
+
+  - gate_id: GATE-TEST
+    name: Integration test approval
+    required_after_stage: test
+    resumes: review
+    on_rejection: CHANGES_REQUESTED back to implement
+
+  - gate_id: GATE-RELEASE
+    name: Human release approval
+    required_after_stage: review
+    resumes: release
+    on_rejection: hold — operator decision required
+    approver: human_operator
+
+# ─── REVIEW STANDARD ──────────────────────────────────────────────────────────
+
+review_standard:
+  severities:
+    BLOCKER: Must be fixed before approval. Gate does not open.
+    REQUIRED: Must be fixed or explicitly deferred by the operator before approval.
+    RECOMMENDED: Should be fixed; acceptable to defer with documented reason.
+    OPTIONAL: Nice to have; no impact on approval.
+  blocking_severities: [BLOCKER, REQUIRED]
+
+# ─── WORKED EXAMPLE ───────────────────────────────────────────────────────────
+#
+# Project: Add a CLI flag parser module to MAP_System
+#
+# tasks:
+#   - task_id: ARGPARSE-001
+#     title: "Spec: CLI flag parser"
+#     task_type: spec_task
+#     role: architect
+#     status: READY
+#     dependencies: []
+#     owner: claude
+#     output_paths:
+#       - artifacts/spec/argparse-spec.md
+#     acceptance_criteria:
+#       - "Flags --db, --pretty, --record-event defined with types and defaults"
+#       - "Non-goals: no interactive mode, no subcommands beyond existing runner flags"
+#       - "Parsing failure behavior specified (exit code, error message format)"
+#
+#   - task_id: ARGPARSE-002
+#     title: "Implement: CLI flag parser"
+#     task_type: implementation_task
+#     role: implementer
+#     status: BLOCKED
+#     dependencies: [ARGPARSE-001]
+#     owner: codex
+#     output_paths:
+#       - scripts/cli.py
+#       - artifacts/tests/argparse-unit-test.md
+#     acceptance_criteria:
+#       - "Implements all flags from ARGPARSE-001 spec"
+#       - "Unknown flags print usage and exit 2"
+#       - "py_compile passes"
+#
+#   - task_id: ARGPARSE-003
+#     title: "Test: CLI flag parser integration"
+#     task_type: test_task
+#     role: implementer
+#     status: BLOCKED
+#     dependencies: [ARGPARSE-002]
+#     owner: codex
+#     output_paths:
+#       - artifacts/tests/argparse-integration-test.md
+#     acceptance_criteria:
+#       - "Each acceptance criterion from ARGPARSE-001 exercised"
+#       - "runner.py --pretty and --record-event still work after integration"
+#
+#   - task_id: ARGPARSE-004
+#     title: "Review: CLI flag parser"
+#     task_type: review_task
+#     role: reviewer
+#     status: BLOCKED
+#     dependencies: [ARGPARSE-003]
+#     owner: claude
+#     output_paths:
+#       - artifacts/reviews/argparse-review.md
+#     acceptance_criteria:
+#       - "No BLOCKER or REQUIRED findings"
+#       - "Verdict recorded"

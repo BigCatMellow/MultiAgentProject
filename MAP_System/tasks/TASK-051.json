@@ -1,0 +1,39 @@
+{
+  "task_id": "TASK-051",
+  "title": "Clean up OPTIONAL findings from local_runner.py TASK-048 review",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-live",
+  "description": "Remove unreachable output_path guard (local_runner.py line after output is required=True) and replace try/except ModuleNotFoundError import with sys.path.insert. Per TASK-048 review OPTIONAL findings.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/local_runner.py"
+  ],
+  "acceptance_criteria": [
+    "unreachable output_path guard at line 137 removed",
+    "import uses sys.path.insert instead of try/except ModuleNotFoundError",
+    "run_tests.sh passes 12/12"
+  ],
+  "objective": "Remove unreachable output_path guard and replace try/except ModuleNotFoundError import with sys.path.insert in local_runner.py per TASK-048 review findings.",
+  "required_context": [
+    "MAP_System/scripts/aider_wrapper.py",
+    "MAP_System/scripts/local_runner.py",
+    "MAP_System/artifacts/reviews/task049-aider-wrapper-review.md",
+    "MAP_System/artifacts/reviews/task048-local-runner-review.md"
+  ],
+  "files_in_scope": [
+    "MAP_System/scripts/local_runner.py"
+  ],
+  "forbidden_changes": [
+    "Do not modify TASK-048 or TASK-049 acceptance criteria",
+    "Do not add new flags to FORBIDDEN_AIDER_FLAGS without a blocking reason",
+    "Do not change the local_runner API"
+  ],
+  "expected_artifacts": [
+    "MAP_System/scripts/local_runner.py (updated)"
+  ],
+  "reviewer_role": "claude-mako",
+  "risk": "LOW"
+}

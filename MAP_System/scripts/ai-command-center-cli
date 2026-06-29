@@ -1,0 +1,527 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-/home/home/Downloads/MultiAgentProject}"
+HCOM="/home/home/.local/bin/hcom"
+LANGGRAPH="/home/home/.local/bin/langgraph-run"
+ANTIGRAVITY_BIN="/home/home/Downloads/Antigravity-x64/antigravity"
+ANTIGRAVITY_LOG_DIR="/home/home/.config/Antigravity/logs"
+ANTIGRAVITY_DEVTOOLS_PORT="/home/home/.config/Antigravity/DevToolsActivePort"
+HELPER_DIR="$PROJECT_DIR/MAP_System/inbox/helpers"
+EVENT_LOG="$PROJECT_DIR/MAP_System/events/events.jsonl"
+AGENT_STATUS="$PROJECT_DIR/MAP_System/agents/status.json"
+DEFAULT_TERMINAL="${HCOM_TERMINAL:-wezterm-tab}"
+
+usage() {
+  cat <<'EOF'
+AI Help
+
+Core:
+  ai help                                   Show this command list
+  ai start                                  Start Codex, Claude, and Antigravity in visible tabs
+  ai status                                 Show hcom agent status
+  ai inbox [N]                              Show recent agent messages
+  ai screens                                Dump agent PTY screens
+  ai screen <agent>                         Dump one agent PTY screen
+  ai approve <agent> [option]               Send Enter or an option number to an approval prompt
+  ai route                                  Run the LangGraph workflow router
+  ai dashboard                              Open the full hcom dashboard
+  ai tasks                                  Edit TASKS.md
+  ai antigravity start                      Launch the Antigravity GUI suite in this tab
+  ai antigravity status                     Show Antigravity local status
+  ai antigravity logs                       Tail Antigravity logs
+  ai local-health                           Read-only Ollama/Aider helper capability check
+
+Messaging:
+  ai tell "message"                        Send to hcom-controlled core agents
+  ai codex "message"                       Send to Codex agents
+  ai claude "message"                      Send to Claude agents
+
+Agent Availability:
+  ai agent list                             Show durable agent availability
+  ai agent available <agent> ["note"]        Mark an agent available
+  ai agent busy <agent> "reason"             Mark an agent busy
+  ai agent standby <agent> "reason" ["when"] Mark an agent on standby
+  ai agent offline <agent> "reason"          Mark an agent offline
+
+Helpers:
+  ai helper list                            Show helper notes and hcom status
+  ai helper start codex <slug> "scope"      Start a named Codex helper
+  ai helper start claude <slug> "scope"     Start a named Claude helper
+  ai helper send <slug> "message"           Message a helper tag
+  ai helper note <slug> "note"              Append a helper note
+  ai helper stop <slug>                     Stop helper agents with that tag
+
+Common Approval Flow:
+  ai status                                 Find blocked agents
+  ai screen <agent>                         Inspect the prompt
+  ai approve <agent>                        Accept the selected option
+  ai approve <agent> 2                      Choose option 2, often session approval
+EOF
+}
+
+timestamp() {
+  date -Iseconds
+}
+
+require_reachable_surface() {
+  case "$DEFAULT_TERMINAL" in
+    none|false|off)
+      printf 'Refusing unreachable command-center launch: HCOM_TERMINAL=%s\n' "$DEFAULT_TERMINAL" >&2
+      printf 'Use a reachable hcom terminal mode, such as wezterm-tab or headless managed through ai screen/send/approve/stop.\n' >&2
+      exit 2
+      ;;
+  esac
+}
+
+event() {
+  type="$1"
+  summary="$2"
+  paths="$3"
+  printf '{"created_at":"%s","type":"%s","task_id":null,"sender":"command-center","summary":"%s","artifact_paths":%s}\n' \
+    "$(timestamp)" "$type" "$summary" "$paths" >> "$EVENT_LOG"
+}
+
+send() {
+  target="$1"
+  shift
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing message.\n\n' >&2
+    usage >&2
+    exit 2
+  fi
+  exec "$HCOM" send --from command-center "$target" -- "$*"
+}
+
+helper_tag() {
+  slug="$1"
+  case "$slug" in
+    helper-*) printf '%s\n' "$slug" ;;
+    *) printf 'helper-%s\n' "$slug" ;;
+  esac
+}
+
+helper_note_path() {
+  tag="$(helper_tag "$1")"
+  printf '%s/%s.md\n' "$HELPER_DIR" "$tag"
+}
+
+helper_usage() {
+  usage >&2
+  exit 2
+}
+
+agent_usage() {
+  usage >&2
+  exit 2
+}
+
+agent_status_update() {
+  status="$1"
+  agent="$2"
+  reason="${3:-}"
+  resume_after="${4:-}"
+  note="${5:-}"
+  mkdir -p "$(dirname "$AGENT_STATUS")"
+  MAP_AGENT_STATUS="$AGENT_STATUS" \
+  MAP_AGENT="$agent" \
+  MAP_STATUS="$status" \
+  MAP_REASON="$reason" \
+  MAP_RESUME_AFTER="$resume_after" \
+  MAP_NOTE="$note" \
+    python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+path = Path(os.environ["MAP_AGENT_STATUS"])
+agent = os.environ["MAP_AGENT"]
+status = os.environ["MAP_STATUS"]
+reason = os.environ["MAP_REASON"] or None
+resume_after = os.environ["MAP_RESUME_AFTER"] or None
+note = os.environ["MAP_NOTE"] or ""
+
+if path.exists():
+    data = json.loads(path.read_text(encoding="utf-8"))
+else:
+    data = {"agents": {}}
+
+details = data.setdefault("agents", {}).setdefault(agent, {})
+details["status"] = status
+details["reason"] = reason
+details["resume_after"] = resume_after
+if note:
+    details["notes"] = note
+elif "notes" not in details:
+    details["notes"] = ""
+
+path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+PY
+  event "PROGRESS" "Marked agent $agent $status." "[\"MAP_System/agents/status.json\"]"
+  printf 'Marked %s %s in %s\n' "$agent" "$status" "$AGENT_STATUS"
+}
+
+agent_list() {
+  if [ -f "$AGENT_STATUS" ]; then
+    python3 -m json.tool "$AGENT_STATUS"
+  else
+    printf 'No agent status file found at %s\n' "$AGENT_STATUS" >&2
+    exit 1
+  fi
+}
+
+helper_list() {
+  mkdir -p "$HELPER_DIR"
+  printf 'Helper notes:\n'
+  find "$HELPER_DIR" -maxdepth 1 -type f -name 'helper-*.md' -printf '  %f\n' | sort
+  printf '\nAgent status:\n'
+  exec "$HCOM" list
+}
+
+helper_note() {
+  slug="$1"
+  shift
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing helper note text.\n' >&2
+    helper_usage
+  fi
+  mkdir -p "$HELPER_DIR"
+  tag="$(helper_tag "$slug")"
+  note_path="$(helper_note_path "$tag")"
+  {
+    printf '\n## %s\n\n' "$(timestamp)"
+    printf '%s\n' "$*"
+  } >> "$note_path"
+  event "PROGRESS" "Updated helper note for $tag." "[\"MAP_System/inbox/helpers/$tag.md\"]"
+  printf 'Updated %s\n' "$note_path"
+}
+
+helper_start() {
+  require_reachable_surface
+  provider="$1"
+  slug="$2"
+  shift 2
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing helper scope.\n' >&2
+    helper_usage
+  fi
+  case "$provider" in
+    codex|claude) ;;
+    *)
+      printf 'Unsupported helper provider: %s\n' "$provider" >&2
+      helper_usage
+      ;;
+  esac
+
+  mkdir -p "$HELPER_DIR"
+  tag="$(helper_tag "$slug")"
+  note_path="$(helper_note_path "$tag")"
+  scope="$*"
+
+  if [ ! -f "$note_path" ]; then
+    {
+      printf '# %s\n\n' "$tag"
+      printf '- status: active\n'
+      printf '- provider: %s\n' "$provider"
+      printf '- owner: core-agent\n'
+      printf '- created_at: %s\n' "$(timestamp)"
+      printf '- scope: %s\n\n' "$scope"
+      printf '## Running Notes\n'
+    } > "$note_path"
+  else
+    {
+      printf '\n## %s\n\n' "$(timestamp)"
+      printf 'Restarted as %s helper with scope: %s\n' "$provider" "$scope"
+    } >> "$note_path"
+  fi
+
+  event "PROGRESS" "Started $provider helper $tag." "[\"MAP_System/inbox/helpers/$tag.md\"]"
+
+  prompt="You are temporary helper $tag in /home/home/Downloads/MultiAgentProject. Read AGENTS.md and MAP_System/AGENTS.md first. Your durable note is MAP_System/inbox/helpers/$tag.md. Scope: $scope. Keep notes current, report findings to the core agents through hcom, and stop when the scoped work is complete. You are managed by the AI Command Center, so the operator can inspect and interact through the terminal surface or ai screen/send/approve/stop commands. For routine in-scope reads, edits, tests, and hcom coordination, prefer the tool's session-level approval option when it is offered. Do not bypass human approval requirements for destructive actions, external network calls, publication, final release, or changes outside this scope."
+
+  exec "$HCOM" "$provider" --tag "$tag" --terminal "$DEFAULT_TERMINAL" --dir "$PROJECT_DIR" --hcom-prompt "$prompt"
+}
+
+start_core_agents() {
+  require_reachable_surface
+  core_prompt="You are a core command-center agent in /home/home/Downloads/MultiAgentProject. Read AGENTS.md and MAP_System/AGENTS.md first. You are managed by the AI Command Center, so the operator can inspect and interact through the terminal surface or ai screen/send/approve/stop commands. For routine in-scope reads, edits, tests, and hcom coordination, prefer the tool's session-level approval option when it is offered. Do not bypass human approval requirements for destructive actions, external network calls, publication, final release, or changes outside your assigned task. IMPORTANT: When spawning any sub-agent or helper with hcom, use a command-center-managed terminal mode. Headless hcom is allowed only when the ai command can inspect, message, approve, and stop the session."
+  start_core_agent codex "$core_prompt"
+  start_core_agent claude "$core_prompt"
+  printf 'Antigravity is a GUI suite. Use the Antigravity command-center tab or run: ai antigravity start\n'
+  event "PROGRESS" "Started visible hcom core agents; Antigravity is launched from its GUI tab." "[]"
+}
+
+start_core_agent() {
+  provider="$1"
+  prompt="$2"
+  set +e
+  "$HCOM" "$provider" --tag "$provider" --terminal "$DEFAULT_TERMINAL" --dir "$PROJECT_DIR" --hcom-prompt "$prompt"
+  status="$?"
+  set -e
+  case "$status" in
+    0|2) ;;
+    *) exit "$status" ;;
+  esac
+}
+
+require_antigravity() {
+  if [ -x "$ANTIGRAVITY_BIN" ]; then
+    return 0
+  fi
+  printf 'Antigravity is not installed at %s.\n' "$ANTIGRAVITY_BIN" >&2
+  exit 1
+}
+
+start_antigravity() {
+  require_antigravity
+  ELECTRON_ENABLE_LOGGING=1 exec "$ANTIGRAVITY_BIN"
+}
+
+antigravity_is_running() {
+  ps -eo comm=,args= | awk '
+    $1 == "antigravity" { found = 1 }
+    $1 == "language_server" && index($0, "--subclient_type hub") { found = 1 }
+    END { exit(found ? 0 : 1) }
+  '
+}
+
+antigravity_status() {
+  printf 'Antigravity GUI status:\n'
+  running=0
+  if antigravity_is_running; then
+    printf '  running: yes\n'
+    running=1
+  else
+    printf '  running: no\n'
+  fi
+  if [ "$running" -eq 1 ] && [ -f "$ANTIGRAVITY_DEVTOOLS_PORT" ]; then
+    port="$(sed -n '1p' "$ANTIGRAVITY_DEVTOOLS_PORT")"
+    printf '  devtools: http://127.0.0.1:%s\n' "$port"
+  fi
+  if [ -f "$ANTIGRAVITY_LOG_DIR/main.log" ]; then
+    printf '  main log: %s/main.log\n' "$ANTIGRAVITY_LOG_DIR"
+  fi
+  if [ -f "$ANTIGRAVITY_LOG_DIR/language_server.log" ]; then
+    printf '  server log: %s/language_server.log\n' "$ANTIGRAVITY_LOG_DIR"
+  fi
+}
+
+antigravity_logs() {
+  mkdir -p "$ANTIGRAVITY_LOG_DIR"
+  touch "$ANTIGRAVITY_LOG_DIR/main.log" "$ANTIGRAVITY_LOG_DIR/language_server.log"
+  tail -n 80 -f "$ANTIGRAVITY_LOG_DIR/main.log" "$ANTIGRAVITY_LOG_DIR/language_server.log"
+}
+
+approval_prompt() {
+  agent="$1"
+  option="${2:-}"
+  if [ -n "$option" ]; then
+    exec "$HCOM" term inject "$agent" "$option" --enter
+  fi
+  exec "$HCOM" term inject "$agent" --enter
+}
+
+helper_send() {
+  slug="$1"
+  shift
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing helper message.\n' >&2
+    helper_usage
+  fi
+  tag="$(helper_tag "$slug")"
+  exec "$HCOM" send --from command-center "@$tag-" -- "$*"
+}
+
+helper_stop() {
+  slug="$1"
+  tag="$(helper_tag "$slug")"
+  note_path="$(helper_note_path "$tag")"
+  if [ -f "$note_path" ]; then
+    {
+      printf '\n## %s\n\n' "$(timestamp)"
+      printf 'Stop requested from command center.\n'
+    } >> "$note_path"
+  fi
+  event "PROGRESS" "Stopped helper tag $tag." "[\"MAP_System/inbox/helpers/$tag.md\"]"
+  exec "$HCOM" kill "tag:$tag"
+}
+
+cd "$PROJECT_DIR"
+
+case "${1:-}" in
+  start)
+    start_core_agents
+    ;;
+  status)
+    exec /home/home/.local/bin/agent-status
+    ;;
+  inbox)
+    shift
+    exec /home/home/.local/bin/ai-inbox "$@"
+    ;;
+  screens)
+    exec /home/home/.local/bin/agent-screens
+    ;;
+  screen)
+    shift
+    [ "$#" -eq 1 ] || {
+      usage >&2
+      exit 2
+    }
+    exec "$HCOM" term "$1"
+    ;;
+  approve)
+    shift
+    [ "$#" -ge 1 ] && [ "$#" -le 2 ] || {
+      usage >&2
+      exit 2
+    }
+    approval_prompt "$@"
+    ;;
+  route|langgraph)
+    exec "$LANGGRAPH"
+    ;;
+  local-health|local-assistant-health)
+    exec python3 "$PROJECT_DIR/MAP_System/scripts/local_assistant_health.py"
+    ;;
+  dashboard|hcom)
+    exec /home/home/.local/bin/hcom-dashboard
+    ;;
+  tasks)
+    exec /home/home/.local/bin/edit-tasks
+    ;;
+  tell)
+    shift
+    if [ "$#" -eq 0 ]; then
+      printf 'Missing message.\n\n' >&2
+      usage >&2
+      exit 2
+    fi
+    exec "$HCOM" send --from command-center @codex- @claude- -- "$*"
+    ;;
+  codex)
+    shift
+    send @codex- "$@"
+    ;;
+  claude)
+    shift
+    send @claude- "$@"
+    ;;
+  antigravity|agy)
+    shift
+    case "${1:-}" in
+      start)
+        shift
+        [ "$#" -eq 0 ] || {
+          usage >&2
+          exit 2
+        }
+        start_antigravity
+        ;;
+      status)
+        shift
+        [ "$#" -eq 0 ] || {
+          usage >&2
+          exit 2
+        }
+        antigravity_status
+        ;;
+      logs)
+        shift
+        [ "$#" -eq 0 ] || {
+          usage >&2
+          exit 2
+        }
+        antigravity_logs
+        ;;
+      "")
+        printf 'Missing Antigravity subcommand.\n\n' >&2
+        usage >&2
+        exit 2
+        ;;
+      *)
+        printf 'Antigravity is a GUI suite in this install, not an hcom message target. Use ai antigravity start, then work in the Antigravity window.\n' >&2
+        exit 2
+        ;;
+    esac
+    ;;
+  agent)
+    shift
+    case "${1:-}" in
+      list|status)
+        agent_list
+        ;;
+      available)
+        shift
+        [ "$#" -ge 1 ] || agent_usage
+        agent="$1"
+        shift
+        agent_status_update "available" "$agent" "" "" "${1:-}"
+        ;;
+      busy)
+        shift
+        [ "$#" -ge 2 ] || agent_usage
+        agent="$1"
+        shift
+        agent_status_update "busy" "$agent" "$*" "" ""
+        ;;
+      standby)
+        shift
+        [ "$#" -ge 2 ] || agent_usage
+        agent="$1"
+        reason="$2"
+        resume_after="${3:-}"
+        agent_status_update "standby" "$agent" "$reason" "$resume_after" ""
+        ;;
+      offline)
+        shift
+        [ "$#" -ge 2 ] || agent_usage
+        agent="$1"
+        shift
+        agent_status_update "offline" "$agent" "$*" "" ""
+        ;;
+      *)
+        agent_usage
+        ;;
+    esac
+    ;;
+  helper)
+    shift
+    case "${1:-}" in
+      list)
+        helper_list
+        ;;
+      start)
+        shift
+        [ "$#" -ge 3 ] || helper_usage
+        helper_start "$@"
+        ;;
+      send)
+        shift
+        [ "$#" -ge 2 ] || helper_usage
+        helper_send "$@"
+        ;;
+      note)
+        shift
+        [ "$#" -ge 2 ] || helper_usage
+        helper_note "$@"
+        ;;
+      stop)
+        shift
+        [ "$#" -eq 1 ] || helper_usage
+        helper_stop "$1"
+        ;;
+      *)
+        helper_usage
+        ;;
+    esac
+    ;;
+  ""|help|commands|ai-help|--help|-h)
+    usage
+    ;;
+  *)
+    printf 'Unknown ai command: %s\n\n' "$1" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

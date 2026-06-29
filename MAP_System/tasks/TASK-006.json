@@ -1,0 +1,32 @@
+{
+  "task_id": "TASK-006",
+  "title": "Upgrade LangGraph command-center routing",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Extend the file-backed LangGraph runner so it reads runtime policy, scans helper notes, routes helper proposals, and can record routing decisions to the event log without launching agents autonomously.",
+  "input_paths": [
+    "MAP_System/langgraph/runner.py",
+    "MAP_System/langgraph/README.md",
+    "MAP_System/workflow/runtime_policy.yaml",
+    "MAP_System/workflow/task_graph.json",
+    "MAP_System/inbox/helpers/"
+  ],
+  "output_paths": [
+    "artifacts/tests/langgraph-runner-test.md",
+    "artifacts/tests/langgraph_runner_test.md",
+    "langgraph/README.md",
+    "langgraph/runner.py",
+    "tasks/TASK-006.json",
+    "workflow/task_graph.json"
+  ],
+  "acceptance_criteria": [
+    "Runner reads runtime policy and helper note metadata from durable files",
+    "Runner can route to propose_helper when policy permits and ready work would benefit from helper attention",
+    "Runner reports a recommended action and command-center hint without launching helpers automatically",
+    "Runner can append routing events to events/events.jsonl when explicitly requested",
+    "Existing review, claim_or_assign, and wait_or_reconcile routes continue to work"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-028",
+  "title": "Persistent agent_loop checkpointing via MapSqliteSaver",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-021",
+    "TASK-022"
+  ],
+  "owner": "claude",
+  "description": "Swap MemorySaver for MapSqliteSaver in agent_loop so the daemon resumes correctly after restart \u2014 currently operator_interrupt state is lost on exit.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/agent_loop.py",
+    "scripts/agent_loop.py"
+  ],
+  "acceptance_criteria": [
+    "agent_loop uses MapSqliteSaver(db_path) as checkpointer instead of MemorySaver",
+    "Interrupted daemon (operator_interrupt route) can be resumed with --resume flag without re-running reconcile+poll from scratch",
+    "Clean exit still works; --once still works; --dry-run still works",
+    "py_compile clean; integration_test 11/11 pass"
+  ]
+}

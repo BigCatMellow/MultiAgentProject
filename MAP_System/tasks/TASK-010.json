@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-010",
+  "title": "Add Antigravity command-center support",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Add optional Antigravity commands to the AI Command Center and warn clearly when the Antigravity CLI is not installed.",
+  "input_paths": [
+    "MAP_System/scripts/ai-command-center-cli",
+    "MAP_System/scripts/ai-command-center-shell",
+    "MAP_System/workflow/runtime_policy.yaml"
+  ],
+  "output_paths": [
+    "scripts/ai-command-center-cli",
+    "scripts/ai-command-center-shell",
+    "tasks/TASK-010.json",
+    "workflow/runtime_policy.yaml",
+    "workflow/task_graph.json"
+  ],
+  "acceptance_criteria": [
+    "ai antigravity start starts an Antigravity agent through hcom when the CLI is installed",
+    "ai antigravity \"message\" sends to Antigravity-tagged agents",
+    "ai helper start antigravity supports named temporary helpers",
+    "Command-center help and banner mention Antigravity commands",
+    "Missing local Antigravity CLI produces a clear error"
+  ]
+}

@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="/home/home/Downloads/MultiAgentProject"
+cd "$PROJECT_DIR"
+
+printf 'Starting visible Antigravity agent through hcom...\n\n'
+printf 'Launching Antigravity GUI suite. This tab stays attached to the app.\n\n'
+exec /home/home/.local/bin/ai antigravity start

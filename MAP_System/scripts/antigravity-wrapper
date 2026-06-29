@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -gt 0 ]; then
+  ELECTRON_ENABLE_LOGGING=1 exec /home/home/Downloads/Antigravity-x64/antigravity "$@"
+fi
+
+exec /home/home/.local/bin/ai antigravity start

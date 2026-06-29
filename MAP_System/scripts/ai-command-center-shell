@@ -1,0 +1,45 @@
+#!/bin/bash
+
+PROJECT_DIR="/home/home/Downloads/MultiAgentProject"
+export PROJECT_DIR
+cd "$PROJECT_DIR" || exit 1
+
+clear
+printf 'AI Command Center\n\n'
+printf 'Tabs:\n'
+printf '  Control: this shell\n'
+printf '  Codex:   live Codex core agent\n'
+printf '  Claude:  live Claude core agent\n'
+printf '  Antigravity: live Antigravity core agent\n\n'
+printf 'Core agents stay open. Temporary helpers can be opened and closed as needed.\n'
+printf 'Agents open in visible tabs by default so approval prompts are reachable.\n'
+printf 'Helper memory lives in MAP_System/inbox/helpers/.\n\n'
+printf 'Use Ctrl+Tab / Ctrl+Shift+Tab to switch tabs.\n\n'
+printf 'Use one command: ai\n\n'
+printf '  ai help                         # AI Help: show all commands\n'
+printf '  ai inbox\n'
+printf '  ai start\n'
+printf '  ai status\n'
+printf '  ai route\n'
+printf '  ai screen antigravity-dosa\n'
+printf '  ai approve antigravity-dosa 2\n'
+printf '  ai tell "message"\n'
+printf '  ai codex "message"\n'
+printf '  ai claude "message"\n'
+printf '  ai antigravity start\n'
+printf '  ai antigravity status\n'
+printf '  ai antigravity logs\n'
+printf '  ai agent list\n'
+printf '  ai agent standby antigravity "session_limit" "tomorrow"\n'
+printf '  ai agent available antigravity\n'
+printf '  ai helper list\n'
+printf '  ai helper start codex research-01 "scope"\n'
+printf '  ai helper send research-01 "message"\n'
+printf '  ai helper note research-01 "note"\n'
+printf '  ai helper stop research-01\n'
+printf '  ai screens\n'
+printf '  ai dashboard\n'
+printf '  ai tasks\n\n'
+printf 'Old helper commands still work, but ai is the main interface.\n\n'
+
+exec /bin/bash --noprofile --norc -i

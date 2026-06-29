@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-017",
+  "title": "Implement reconciliation script",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Implement MAP_System/scripts/reconcile.py. Calls expire_leases() from db/claims.py, logs expired task IDs to events.jsonl and SQLite, prints a summary. Runnable standalone or from a cron. No daemon process \u2014 just a single-shot script.",
+  "input_paths": [
+    "db/claims.py",
+    "map.db"
+  ],
+  "output_paths": [
+    "artifacts/tests/reconcile-test.md",
+    "artifacts/tests/reconcile_test.md",
+    "scripts/reconcile.py"
+  ],
+  "acceptance_criteria": [
+    "expire_leases() result logged to events.jsonl and SQLite events table",
+    "Prints count of tasks returned to READY and their IDs",
+    "No-op run (nothing expired) exits cleanly with zero count",
+    "Runnable as: python3 MAP_System/scripts/reconcile.py"
+  ]
+}

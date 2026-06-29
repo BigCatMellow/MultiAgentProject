@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-024",
+  "title": "PID/lockfile guard for agent_loop.py",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-021"
+  ],
+  "owner": "codex",
+  "description": "Prevent two instances of same agent_id running against same DB simultaneously. Write a lockfile on start, check on startup, release on exit.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/agent_loop_lock_test.md",
+    "MAP_System/scripts/agent_loop.py",
+    "artifacts/tests/agent-loop-lock-test.md",
+    "scripts/agent_loop.py"
+  ],
+  "acceptance_criteria": [
+    "Starting a second instance with same agent_id fails with a clear error",
+    "Lockfile released on clean exit and on SIGTERM",
+    "Stale lockfile (PID no longer running) is cleaned up automatically"
+  ]
+}

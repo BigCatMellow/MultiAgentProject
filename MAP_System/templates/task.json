@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-NNN",
+  "title": "[Short action-oriented title]",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "READY",
+  "dependencies": [],
+  "owner": "[agent-id]",
+  "description": "[Enough context to execute without chat history.]",
+  "input_paths": [
+    "[path/to/read]"
+  ],
+  "output_paths": [
+    "[path/to/create-or-edit]"
+  ],
+  "acceptance_criteria": [
+    "[Observable completion check.]",
+    "[Verification command, file, behavior, or review condition.]"
+  ]
+}

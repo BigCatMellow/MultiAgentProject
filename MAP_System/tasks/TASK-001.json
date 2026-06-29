@@ -3,9 +3,9 @@
   "title": "Review collaboration bootstrap",
   "task_type": "review",
   "role": "reviewer",
-  "status": "READY",
+  "status": "DONE",
   "dependencies": [],
-  "owner": null,
+  "owner": "claude",
   "description": "Review the initial collaboration workspace for clarity, completeness, and usability by both Codex and Claude Code.",
   "input_paths": [
     "AGENTS.md",
@@ -16,6 +16,7 @@
     "langgraph/"
   ],
   "output_paths": [
+    "artifacts/reviews/bootstrap-review.md",
     "artifacts/reviews/bootstrap_review.md"
   ],
   "acceptance_criteria": [
@@ -25,4 +26,3 @@
     "Record required fixes or approve the bootstrap"
   ]
 }
-

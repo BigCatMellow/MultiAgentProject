@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-045",
+  "title": "Fix exporter to preserve unknown HPOM JSON fields on sync",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-live",
+  "description": "export_to_files.py currently strips arbitrary JSON keys not in its schema when writing task files. This erases HPOM fields (objective, required_context, files_in_scope, forbidden_changes, expected_artifacts, reviewer_role, risk) after any sync. Fix: read the existing task JSON file before writing, merge unknown keys from the SQLite-derived payload into the existing JSON, then write. This makes promote_task.py --no-sync workaround unnecessary.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/exporter-hpom-fields-test.md",
+    "MAP_System/migration/export_to_files.py",
+    "MAP_System/tests/test_exporter_hpom_fields.py"
+  ],
+  "acceptance_criteria": [
+    "HPOM fields in a task JSON survive a sync round-trip through export_to_files.py",
+    "existing task JSON fields not in SQLite schema are preserved, not stripped",
+    "tests verify round-trip preservation of objective, reviewer_role, risk",
+    "run_tests.sh still passes"
+  ]
+}

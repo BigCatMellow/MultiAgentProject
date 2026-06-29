@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Gemini
+Comment=Open Gemini in a terminal
+Exec=gnome-terminal -- /home/home/.local/bin/launch-gemini-terminal
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

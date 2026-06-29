@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-020",
+  "title": "Design autonomous claim loop protocol",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "claude",
+  "description": "Design the autonomous claim loop protocol in MAP_System/artifacts/planning/autonomous-claim-loop.md. Specifies how an agent process polls the runner, auto-claims the next ready task via db/claims.py, sends heartbeats, submits on completion, and handles claim failures. Intended as the spec for a future TASK-021 implementation.",
+  "input_paths": [
+    "db/claims.py",
+    "langgraph/runner.py",
+    "workflow/runtime_policy.yaml",
+    "artifacts/planning/sqlite-task-board.md"
+  ],
+  "output_paths": [
+    "artifacts/planning/autonomous-claim-loop.md",
+    "artifacts/planning/autonomous_claim_loop.md"
+  ],
+  "acceptance_criteria": [
+    "Defines the poll-claim-work-heartbeat-submit cycle with decision points",
+    "Specifies failure modes: claim race, heartbeat timeout, max_attempts exhausted",
+    "Specifies how the loop interacts with expire_leases (reconcile.py) and the runner",
+    "Defines a safe shutdown protocol (finish current task, do not abandon mid-work)",
+    "Pseudocode or flowchart illustrates the full loop"
+  ]
+}

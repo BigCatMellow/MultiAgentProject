@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Codex
+Comment=Open Codex in a terminal
+Exec=gnome-terminal -- /home/home/.local/bin/launch-codex-terminal
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-023",
+  "title": "Integration test: full claim loop against real handler",
+  "task_type": "test",
+  "role": "tester",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-014",
+    "TASK-021"
+  ],
+  "owner": "claude",
+  "description": "Script that seeds temp DB with fixtures, runs agent_loop --once against a real handler, verifies claim->heartbeat->submit->export cycle end-to-end.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/integration_test.md",
+    "MAP_System/graph/runner.py",
+    "MAP_System/migration/export_to_files.py",
+    "MAP_System/scripts/integration_test.py",
+    "artifacts/tests/integration-test.md",
+    "graph/runner.py",
+    "migration/export_to_files.py",
+    "scripts/integration_test.py"
+  ],
+  "acceptance_criteria": [
+    "Temp DB seeded with at least one READY task",
+    "agent_loop --once runs handler, task transitions to SUBMITTED",
+    "export_to_files writes task file",
+    "All assertions pass with zero manual DB setup"
+  ]
+}

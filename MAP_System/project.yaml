@@ -1,8 +1,11 @@
+# LEGACY: Bootstrap-phase project manifest. Status is preserved for historical
+# reference. The active operating model is described in shared/current-state.md
+# and shared/hpom.md. This file is not read by any live script.
 project:
   id: MAP-BOOTSTRAP-20260617
   name: MultiAgentProject Collaboration Bootstrap
   type: multi_agent_workspace
-  status: active
+  status: complete  # bootstrap phase completed 2026-06-29
   created_at: 2026-06-17T14:30:00-04:00
 
 objective:

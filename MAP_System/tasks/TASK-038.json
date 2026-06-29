@@ -1,0 +1,35 @@
+{
+  "task_id": "TASK-038",
+  "title": "HPOM-006: Release gate \u2014 distinguish APPROVED from RELEASED",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-live",
+  "description": "APPROVED means review passed. RELEASED means work is integrated into active project state. Add RELEASED as a valid task status in the SQLite schema. Create scripts/release_task.py with a release checklist: shared-file updates, decisions recorded, follow-up tasks created, event log entry. A task cannot become RELEASED without completing the checklist. Update map_task.py to support 'release' subcommand.",
+  "objective": "Add a RELEASED terminal status distinct from APPROVED. Implement release_task.py with a pre-release checklist gate. Add map_task.py release subcommand. No task may move APPROVED\u2192RELEASED without a completed checklist record.",
+  "required_context": "MAP_System/shared/hpom.md, MAP_System/db/migration/schema.sql, MAP_System/scripts/map_task.py, MAP_System/templates/release-checklist.md",
+  "files_in_scope": "MAP_System/db/migration/, MAP_System/scripts/map_task.py, MAP_System/scripts/release_task.py, MAP_System/templates/release-checklist.md",
+  "forbidden_changes": "Do not modify task claiming logic in db/claims.py; do not change APPROVED or SUBMITTED status semantics; do not remove existing map_task.py subcommands",
+  "expected_artifacts": "MAP_System/scripts/release_task.py, updated MAP_System/scripts/map_task.py, updated schema if needed, test evidence",
+  "reviewer_role": "claude-mako",
+  "risk": "LOW \u2014 additive new status; existing approve/reject/claim paths are unchanged",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/release-gate-test.md",
+    "MAP_System/db/migration/",
+    "MAP_System/migration/schema.sql",
+    "MAP_System/scripts/map_task.py",
+    "MAP_System/scripts/release_task.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_task_graph.py",
+    "MAP_System/templates/release-checklist.md",
+    "MAP_System/tests/test_release_gate.py"
+  ],
+  "acceptance_criteria": [
+    "RELEASED status exists in SQLite schema",
+    "release_task.py enforces checklist before marking RELEASED",
+    "map_task.py release subcommand works",
+    "tasks cannot go APPROVED -> RELEASED without a checklist completion record"
+  ]
+}

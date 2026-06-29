@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-016",
+  "title": "Fix validator and update agent claiming docs",
+  "task_type": "maintenance",
+  "role": "architect",
+  "status": "DONE",
+  "dependencies": [
+    "TASK-014"
+  ],
+  "owner": "claude",
+  "description": "Two parallel fixes: (1) fix MAP_System/scripts/validate_task_graph.py so it does not error when all tasks are DONE (no initially READY task is valid in a completed graph); (2) update MAP_System/AGENTS.md and MAP_System/shared/decisions.md to document the SQLite claiming protocol so agents know to use db/claims.py instead of editing JSON files directly.",
+  "input_paths": [
+    "scripts/validate_task_graph.py",
+    "AGENTS.md",
+    "shared/decisions.md",
+    "artifacts/planning/sqlite-task-board.md"
+  ],
+  "output_paths": [
+    "AGENTS.md",
+    "scripts/validate_task_graph.py",
+    "shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "validate_task_graph.py passes without error when all tasks are DONE",
+    "validate_task_graph.py still catches genuine problems (cycles, missing deps, unknown statuses)",
+    "AGENTS.md documents that agents should use db/claims.py to claim tasks once TASK-014 is merged",
+    "DEC-009 recorded in shared/decisions.md: SQLite is the claiming coordinator from TASK-014 onward"
+  ]
+}

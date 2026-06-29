@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-021",
+  "title": "Implement autonomous claim loop (LangGraph cyclic graph)",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-014",
+    "TASK-015",
+    "TASK-017",
+    "TASK-018"
+  ],
+  "owner": "codex",
+  "description": "Implement MAP_System/scripts/agent_loop.py as a cyclic LangGraph graph per artifacts/planning/autonomous-claim-loop.md. Nodes: poll_runner -> try_claim -> do_work (placeholder) -> submit -> reconcile -> poll_runner (cycle). Use MemorySaver for interrupt() support. interrupt() fires on unrecoverable errors or operator-required decisions.",
+  "input_paths": [],
+  "output_paths": [
+    "artifacts/tests/agent-loop-test.md",
+    "artifacts/tests/agent_loop_test.md",
+    "scripts/agent_loop.py"
+  ],
+  "acceptance_criteria": [
+    "Graph cycles: poll_runner -> try_claim -> submit -> reconcile -> poll_runner",
+    "Claim race (rowcount==0) routes back to poll_runner without error",
+    "interrupt() fires when task hits max_attempts or unrecoverable state",
+    "Shutdown (KeyboardInterrupt) releases active claim before exit",
+    "Dry-run mode cycles without actually claiming (for testing)",
+    "State includes current_task_id, attempt_count, last_route"
+  ]
+}

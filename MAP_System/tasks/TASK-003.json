@@ -3,16 +3,19 @@
   "title": "Design SQLite task board migration",
   "task_type": "architecture",
   "role": "architect",
-  "status": "BLOCKED",
-  "dependencies": ["TASK-001"],
-  "owner": null,
+  "status": "DONE",
+  "dependencies": [
+    "TASK-001"
+  ],
+  "owner": "claude",
   "description": "Design the next storage layer so task claims, leases, messages, and reviews can become atomic and queryable.",
   "input_paths": [
-    "general_purpose_multi_agent_project_system_v2.md",
+    "general-purpose-multi-agent-project-system-v2.md",
     "workflow/task_graph.json",
     "shared/decisions.md"
   ],
   "output_paths": [
+    "artifacts/planning/sqlite-task-board.md",
     "artifacts/planning/sqlite_task_board.md"
   ],
   "acceptance_criteria": [
@@ -21,4 +24,3 @@
     "Maps current file-backed state to future SQLite tables"
   ]
 }
-

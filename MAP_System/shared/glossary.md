@@ -1,3 +1,13 @@
+<!-- hpom: file: shared/glossary.md -->
+<!-- hpom: project: MAP -->
+<!-- hpom: state_owner: command-center -->
+<!-- hpom: status: CURRENT -->
+<!-- hpom: last_verified: 2026-06-29 -->
+<!-- hpom: verified_against: MAP_System audit 2026-06-29 -->
+<!-- hpom: confidence: MEDIUM -->
+<!-- hpom: supersedes: NONE -->
+<!-- hpom: superseded_by: NONE -->
+
 # Glossary
 
 **Agent:** A model-backed worker such as Codex or Claude Code operating with task-specific context.

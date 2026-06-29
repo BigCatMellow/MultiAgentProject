@@ -2,18 +2,14 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-GIT_DIR="$ROOT/.map-git"
 
-if [[ -d "$ROOT/.git" ]] && mountpoint -q "$ROOT/.git"; then
-  echo "Detected .git mount point; using .map-git as the repository directory."
+if git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Normal root Git is available."
+  echo "Use: git status"
+  echo "Or:  MAP_System/scripts/map-git status"
+  exit 0
 fi
 
-if [[ ! -d "$GIT_DIR" ]]; then
-  git init --bare "$GIT_DIR"
-  git --git-dir="$GIT_DIR" --work-tree="$ROOT" config core.bare false
-  git --git-dir="$GIT_DIR" --work-tree="$ROOT" config core.worktree "$ROOT"
-  git --git-dir="$GIT_DIR" --work-tree="$ROOT" symbolic-ref HEAD refs/heads/main
-fi
-
-echo "Git fallback is ready."
-echo "Use: MAP_System/scripts/map-git status"
+echo "No root Git repository found at $ROOT." >&2
+echo "Run: git -C \"$ROOT\" init -b main" >&2
+exit 1

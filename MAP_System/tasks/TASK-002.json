@@ -3,9 +3,11 @@
   "title": "Implement minimal LangGraph runner",
   "task_type": "implementation",
   "role": "implementer",
-  "status": "BLOCKED",
-  "dependencies": ["TASK-001"],
-  "owner": null,
+  "status": "DONE",
+  "dependencies": [
+    "TASK-001"
+  ],
+  "owner": "codex",
   "description": "Implement the first executable LangGraph flow around the file-backed task graph.",
   "input_paths": [
     "workflow/task_graph.json",
@@ -13,8 +15,9 @@
     "langgraph/graph.py"
   ],
   "output_paths": [
-    "langgraph/runner.py",
-    "artifacts/tests/langgraph_runner_test.md"
+    "artifacts/tests/langgraph-runner-test.md",
+    "artifacts/tests/langgraph_runner_test.md",
+    "langgraph/runner.py"
   ],
   "acceptance_criteria": [
     "Loads workflow/task_graph.json",
@@ -23,4 +26,3 @@
     "Does not treat LangGraph state as canonical project storage"
   ]
 }
-

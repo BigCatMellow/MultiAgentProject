@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-044",
+  "title": "HPOM-003b: No-self-review gate in SQLite claim layer",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-035"
+  ],
+  "owner": "codex-live",
+  "description": "TASK-036 covered no-self-review at review time (validate_review.py). This task adds the SQLite claim-time gate: when an agent claims a review task, db/claims.py must check that the claiming agent is not the same as the task owner. For high-risk tasks, optionally require a different model_family field. Add tests.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/no-self-review-test.md",
+    "MAP_System/db/claims.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_no_self_review.py"
+  ],
+  "acceptance_criteria": [
+    "claim_task fails when reviewer agent_id matches task owner in SQLite",
+    "error is distinguishable from other claim failures (returns False with logged reason, or raises ClaimError)",
+    "tests cover: same agent blocked, different agent allowed",
+    "run_tests.sh still passes"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-042",
+  "title": "HPOM-010: Project quality standards template",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-mako",
+  "description": "Create templates/project-quality-standards.md supporting software, writing, research, design, and operations projects. Also create templates/review-checklist.md as a separate review tool.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/templates/project-quality-standards.md",
+    "MAP_System/templates/review-checklist.md"
+  ],
+  "acceptance_criteria": [
+    "template has sections for: positive standards, anti-patterns, review checklist reference",
+    "template supports at least software and writing project types",
+    "review-checklist.md covers: scope check, criteria check, forbidden-changes check, files-reviewed list, risk identification, verdict"
+  ]
+}

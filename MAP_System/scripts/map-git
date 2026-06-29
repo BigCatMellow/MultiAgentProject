@@ -2,12 +2,5 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-GIT_DIR="$ROOT/.map-git"
 
-if [[ ! -d "$GIT_DIR" ]]; then
-  echo "MAP Git directory not initialized at $GIT_DIR" >&2
-  echo "Run: MAP_System/scripts/setup_git_fallback.sh" >&2
-  exit 1
-fi
-
-exec git --git-dir="$GIT_DIR" --work-tree="$ROOT" "$@"
+exec git -C "$ROOT" "$@"

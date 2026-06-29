@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-039",
+  "title": "HPOM-007: Shared-state metadata \u2014 flag stale or superseded files",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-035"
+  ],
+  "owner": "claude-mako",
+  "description": "Shared files need metadata headers: file, project, state_owner, status, last_verified, verified_against, confidence, supersedes, superseded_by. Create scripts/validate_shared_state.py that reads shared/ files, checks for required metadata, and flags STALE or SUPERSEDED files. Create templates/shared-state.md.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/validate_shared_state.py",
+    "MAP_System/templates/shared-state.md"
+  ],
+  "acceptance_criteria": [
+    "validate_shared_state.py finds and reports shared/ files missing required metadata",
+    "STALE or SUPERSEDED status is flagged with file path and reason",
+    "template includes all required metadata fields",
+    "script can be run standalone: python3 MAP_System/scripts/validate_shared_state.py"
+  ]
+}

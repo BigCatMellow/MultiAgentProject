@@ -1,0 +1,157 @@
+# STATE_SNAPSHOT handoff format
+# Copy the `example` shape into MAP_System/handoffs/STATE_SNAPSHOT-<agent>-<session>.yaml
+# at session end. Keep snapshots compact; point to durable files instead of copying them.
+
+schema:
+  kind:
+    required: true
+    enum: [STATE_SNAPSHOT]
+  snapshot_version:
+    required: true
+    enum: [1]
+  created_at:
+    required: true
+    type: iso8601
+  project_id:
+    required: true
+    type: string
+  agent_id:
+    required: true
+    type: string
+  session_id:
+    required: true
+    type: string
+  status:
+    required: true
+    enum: [active, handing_off, blocked, complete]
+  task_context:
+    required: true
+    fields:
+      current_task:
+        type: string
+        default: null
+      owned_tasks:
+        type: list[string]
+        default: []
+      pending_reviews:
+        type: list[string]
+        default: []
+      recent_events:
+        type: list[object]
+        default: []
+      touched_paths:
+        type: list[string]
+        default: []
+  active_constraints:
+    required: true
+    type: list[object]
+    item_fields:
+      scope:
+        enum: [repo, task, file, communication, tool, safety]
+      rule:
+        type: string
+      source:
+        type: string
+  forward_tasks:
+    required: true
+    type: list[object]
+    item_fields:
+      task_id:
+        type: string
+      next_action:
+        enum: [claim, continue, review, fix, wait, ask_operator]
+      owner:
+        type: string
+        default: null
+      reason:
+        type: string
+      paths:
+        type: list[string]
+        default: []
+  blockers:
+    required: false
+    default: []
+    type: list[object]
+    item_fields:
+      kind:
+        enum: [approval, dependency, missing_context, tool_failure, ownership_conflict]
+      detail:
+        type: string
+      unblock_by:
+        type: string
+  lexicon:
+    required: true
+    type: object
+    description: "Project-local abbreviations, tokens, and terms the next agent should preserve."
+  resume_commands:
+    required: false
+    default: []
+    type: list[string]
+  validation:
+    required: false
+    default: []
+    type: list[string]
+
+example:
+  kind: STATE_SNAPSHOT
+  snapshot_version: 1
+  created_at: "2026-06-19T10:45:00-04:00"
+  project_id: MAP-BOOTSTRAP-20260617
+  agent_id: claude
+  session_id: claude-example-20260619
+  status: handing_off
+  task_context:
+    current_task: TASK-027
+    owned_tasks: [TASK-023, TASK-025, TASK-027]
+    pending_reviews: [TASK-024]
+    recent_events:
+      - event_type: CHANGES_REQUESTED
+        task_id: TASK-025
+        summary: "Update langgraph-run wrapper and graph README after rename."
+      - event_type: CHANGES_REQUESTED
+        task_id: TASK-027
+        summary: "Update requirements.md stale autonomous-daemon non-goal."
+    touched_paths:
+      - MAP_System/graph/README.md
+      - MAP_System/shared/requirements.md
+      - MAP_System/events/events.jsonl
+  active_constraints:
+    - scope: communication
+      rule: "Use MATOCP tokens for agent-to-agent messages."
+      source: phatic-suppression.md
+    - scope: tool
+      rule: "Spawn helpers through a command-center-managed surface; headless hcom is allowed only when ai screen/send/approve/stop can reach the session."
+      source: AGENTS.md
+    - scope: task
+      rule: "Claim active work through MAP_System/db/claims.py; mirror SQLite state to files after state changes."
+      source: AGENTS.md
+  forward_tasks:
+    - task_id: TASK-025
+      next_action: fix
+      owner: claude
+      reason: "Rename left stale wrapper/doc references."
+      paths:
+        - /home/home/.local/bin/langgraph-run
+        - MAP_System/graph/README.md
+    - task_id: TASK-026
+      next_action: continue
+      owner: codex
+      reason: "Fill DEC-010 and AGENTS emit/load instructions after TASK-027 path ownership clears."
+      paths:
+        - MAP_System/workflow/templates/state_snapshot.yaml
+        - MAP_System/shared/decisions.md
+        - MAP_System/AGENTS.md
+  blockers:
+    - kind: ownership_conflict
+      detail: "TASK-026 acceptance needs AGENTS.md and decisions.md while TASK-027 owns those paths."
+      unblock_by: "Approve TASK-027 or explicitly hand off those paths to TASK-026."
+  lexicon:
+    MATOCP: "Compact agent communication tokens such as !ACK, !REQ, !LGTM."
+    STATE_SNAPSHOT: "YAML handoff record used to resume context across agent sessions."
+    map_db: "MAP_System/map.db, authoritative task claim coordinator."
+  resume_commands:
+    - "python3 MAP_System/scripts/validate_task_graph.py"
+    - "MAP_System/.venv/bin/python MAP_System/graph/runner.py --pretty"
+  validation:
+    - "YAML parses with yaml.safe_load."
+    - "Required keys present: kind, snapshot_version, created_at, project_id, agent_id, session_id, status, task_context, active_constraints, forward_tasks, lexicon."

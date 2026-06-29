@@ -1,0 +1,43 @@
+{
+  "task_id": "TASK-050",
+  "title": "Fix --no-auto-commits in aider_wrapper.py FORBIDDEN_AIDER_FLAGS",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-live",
+  "description": "Remove --no-auto-commits from FORBIDDEN_AIDER_FLAGS; it is a safety flag, not a danger flag. Only --auto-commits should be blocked. Identified in TASK-049 review.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/aider_wrapper.py",
+    "MAP_System/tests/test_aider_wrapper.py"
+  ],
+  "acceptance_criteria": [
+    "--no-auto-commits is NOT in FORBIDDEN_AIDER_FLAGS",
+    "--auto-commits IS still in FORBIDDEN_AIDER_FLAGS",
+    "a test confirms --no-auto-commits passes validate_aider_args()",
+    "run_tests.sh passes 12/12"
+  ],
+  "objective": "Remove --no-auto-commits from FORBIDDEN_AIDER_FLAGS in aider_wrapper.py; it is a safety flag (prevents auto-commit), not a danger flag. Only --auto-commits should be blocked.",
+  "required_context": [
+    "MAP_System/scripts/aider_wrapper.py",
+    "MAP_System/scripts/local_runner.py",
+    "MAP_System/artifacts/reviews/task049-aider-wrapper-review.md",
+    "MAP_System/artifacts/reviews/task048-local-runner-review.md"
+  ],
+  "files_in_scope": [
+    "MAP_System/scripts/aider_wrapper.py",
+    "MAP_System/tests/test_aider_wrapper.py"
+  ],
+  "forbidden_changes": [
+    "Do not modify TASK-048 or TASK-049 acceptance criteria",
+    "Do not add new flags to FORBIDDEN_AIDER_FLAGS without a blocking reason",
+    "Do not change the local_runner API"
+  ],
+  "expected_artifacts": [
+    "MAP_System/scripts/aider_wrapper.py (updated)",
+    "MAP_System/tests/test_aider_wrapper.py (updated)"
+  ],
+  "reviewer_role": "claude-mako",
+  "risk": "LOW"
+}

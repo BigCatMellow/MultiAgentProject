@@ -1,0 +1,33 @@
+{
+  "task_id": "TASK-049",
+  "title": "HPOM-012: aider_wrapper.py \u2014 supervised Aider edit setup with scope enforcement",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-048"
+  ],
+  "owner": "codex-live",
+  "description": "Create scripts/aider_wrapper.py: a setup wrapper for Aider-assisted edits. Checks git baseline is clean before proceeding, validates target files are within the task output_paths scope, creates a helper note in inbox/helpers/ recording the edit intent, then launches Aider interactively (not headless, not --yes-always). Does NOT automate Aider decisions \u2014 it sets context and transfers control to the operator.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/aider-wrapper-test.md",
+    "MAP_System/scripts/aider_wrapper.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_aider_wrapper.py"
+  ],
+  "acceptance_criteria": [
+    "script fails if git working tree has uncommitted changes to the target files",
+    "script fails if any target file is outside the task output_paths in TASK-NNN.json",
+    "helper note created in inbox/helpers/ before Aider launches",
+    "Aider is launched interactively (no --yes-always or headless flags)",
+    "script runs standalone: python3 MAP_System/scripts/aider_wrapper.py --help"
+  ],
+  "objective": "Wrap Aider invocations with scope validation and helper note creation. Ensure operator retains control by launching Aider interactively, never headlessly.",
+  "required_context": "MAP_System/scripts/local_runner.py, MAP_System/scripts/local_assistant_health.py, MAP_System/notes/local-model-helper-guide.md",
+  "files_in_scope": "MAP_System/scripts/aider_wrapper.py, MAP_System/tests/test_aider_wrapper.py",
+  "forbidden_changes": "Do not run Aider with --yes-always; do not auto-apply changes; do not modify local_runner.py",
+  "expected_artifacts": "MAP_System/scripts/aider_wrapper.py, MAP_System/tests/test_aider_wrapper.py",
+  "reviewer_role": "claude-mako",
+  "risk": "LOW \u2014 new script; Aider still requires operator interaction"
+}

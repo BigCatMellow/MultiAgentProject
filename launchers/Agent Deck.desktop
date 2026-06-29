@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Agent Deck
+Comment=Open Codex and Claude Code in one terminal
+Exec=gnome-terminal -- /home/home/.local/bin/agent-deck
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;

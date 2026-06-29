@@ -30,6 +30,8 @@ def detect_cycle(tasks: dict[str, dict]) -> list[str] | None:
         visiting.add(task_id)
         stack.append(task_id)
         for dependency in tasks[task_id].get("dependencies", []):
+            if dependency not in tasks:
+                continue  # already reported as unknown dependency
             cycle = visit(dependency)
             if cycle:
                 return cycle
@@ -72,8 +74,14 @@ def validate(graph: dict) -> list[str]:
         if not task_file.exists():
             errors.append(f"{task_id} has no matching task file at {task_file.relative_to(ROOT)}")
 
-    if tasks and not any(task.get("status") == "READY" for task in tasks.values()):
-        errors.append("No task is initially READY")
+    terminal = {"DONE", "APPROVED", "RELEASED"}
+    active = {"READY", "IN_PROGRESS", "SUBMITTED", "REVIEW", "CHANGES_REQUESTED"}
+    stalled = [t for t in tasks.values() if t.get("status") not in terminal | active]
+    all_done = all(t.get("status") in terminal for t in tasks.values())
+    if not all_done and not any(t.get("status") in active for t in tasks.values()):
+        errors.append(
+            f"Graph is stalled: {len(stalled)} task(s) are BACKLOG/BLOCKED with nothing active or ready"
+        )
 
     cycle = detect_cycle(tasks) if tasks else None
     if cycle:
@@ -81,7 +89,7 @@ def validate(graph: dict) -> list[str]:
 
     active_outputs: dict[str, str] = {}
     for task in raw_tasks:
-        if task.get("status") in {"DONE", "APPROVED"}:
+        if task.get("status") in terminal | {"BLOCKED"}:
             continue
         for output_path in task.get("output_paths", []):
             owner = active_outputs.setdefault(output_path, task["task_id"])
@@ -104,4 +112,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

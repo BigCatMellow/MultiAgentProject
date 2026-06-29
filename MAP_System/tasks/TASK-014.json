@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-014",
+  "title": "Implement SQLite claim module",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex",
+  "description": "Implement MAP_System/db/claims.py providing claim_task(), heartbeat(), release_task(), expire_leases(), and submit_task() using the atomic UPDATE pattern from artifacts/planning/sqlite-task-board.md \u00a73. All operations work against MAP_System/map.db.",
+  "input_paths": [
+    "artifacts/planning/sqlite-task-board.md",
+    "migration/schema.sql",
+    "map.db"
+  ],
+  "output_paths": [
+    "artifacts/tests/claims-test.md",
+    "artifacts/tests/claims_test.md",
+    "db/__init__.py",
+    "db/claims.py"
+  ],
+  "acceptance_criteria": [
+    "claim_task() returns True only when rowcount==1 (atomic claim); returns False if already claimed or max_attempts exceeded",
+    "heartbeat() extends lease_expires_at and updates heartbeat_at",
+    "release_task() sets status to SUBMITTED and clears claimed_by and lease",
+    "expire_leases() returns tasks back to READY when lease_expires_at has passed",
+    "All functions accept a db_path argument and use MAP_System/map.db as default",
+    "Repeat-run test documented in artifacts/tests/claims_test.md",
+    "Repeat-run test documented in artifacts/tests/claims-test.md"
+  ]
+}

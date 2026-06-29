@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-031",
+  "title": "CI test runner script",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-023"
+  ],
+  "owner": "codex",
+  "description": "scripts/run_tests.sh: runs py_compile on all .py files, validate_task_graph, integration_test, summarizes pass/fail with exit code.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/run_tests_test.md",
+    "MAP_System/scripts/run_tests.sh",
+    "artifacts/tests/run-tests-test.md",
+    "scripts/run_tests.sh"
+  ],
+  "acceptance_criteria": [
+    "Runs py_compile on all MAP_System/**/*.py files",
+    "Runs validate_task_graph.py",
+    "Runs integration_test.py",
+    "Prints per-check pass/fail and a final summary",
+    "Exits nonzero if any check fails",
+    "Exits 0 and all green against current workspace"
+  ]
+}

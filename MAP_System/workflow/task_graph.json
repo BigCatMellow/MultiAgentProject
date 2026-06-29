@@ -6,10 +6,13 @@
       "title": "Review collaboration bootstrap",
       "task_type": "review",
       "role": "reviewer",
-      "status": "READY",
+      "status": "DONE",
       "dependencies": [],
-      "owner": null,
-      "output_paths": ["artifacts/reviews/bootstrap_review.md"],
+      "owner": "claude",
+      "output_paths": [
+        "artifacts/reviews/bootstrap-review.md",
+        "artifacts/reviews/bootstrap_review.md"
+      ],
       "acceptance_criteria": [
         "Verify that Codex and Claude Code have clear entrypoint instructions",
         "Verify that task and handoff conventions are understandable",
@@ -22,10 +25,16 @@
       "title": "Implement minimal LangGraph runner",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "BLOCKED",
-      "dependencies": ["TASK-001"],
-      "owner": null,
-      "output_paths": ["langgraph/runner.py", "artifacts/tests/langgraph_runner_test.md"],
+      "status": "DONE",
+      "dependencies": [
+        "TASK-001"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/langgraph-runner-test.md",
+        "artifacts/tests/langgraph_runner_test.md",
+        "langgraph/runner.py"
+      ],
       "acceptance_criteria": [
         "Loads workflow/task_graph.json",
         "Selects ready tasks whose dependencies are satisfied",
@@ -38,14 +47,1124 @@
       "title": "Design SQLite task board migration",
       "task_type": "architecture",
       "role": "architect",
-      "status": "BLOCKED",
-      "dependencies": ["TASK-001"],
-      "owner": null,
-      "output_paths": ["artifacts/planning/sqlite_task_board.md"],
+      "status": "DONE",
+      "dependencies": [
+        "TASK-001"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "artifacts/planning/sqlite-task-board.md",
+        "artifacts/planning/sqlite_task_board.md"
+      ],
       "acceptance_criteria": [
         "Defines tables for agents, tasks, claims, messages, artifacts, reviews, decisions, and events",
         "Explains atomic task claims and lease expiration",
         "Maps current file-backed state to future SQLite tables"
+      ]
+    },
+    {
+      "task_id": "TASK-004",
+      "title": "Install Agent Deck local launcher",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "Agent Deck.desktop",
+        "scripts/agent-deck"
+      ],
+      "acceptance_criteria": [
+        "Agent Deck launcher starts from the project root",
+        "Codex and Claude Code open in one terminal using separate panes",
+        "Launcher source is stored in the repository",
+        "Install steps are recorded in events/events.jsonl"
+      ]
+    },
+    {
+      "task_id": "TASK-005",
+      "title": "Add command-center helper agent policy",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "/home/home/.local/bin/ai",
+        "AGENTS.md",
+        "inbox/helpers/README.md",
+        "scripts/ai-command-center-cli",
+        "scripts/ai-command-center-shell",
+        "shared/decisions.md",
+        "shared/requirements.md",
+        "workflow/runtime_policy.yaml"
+      ],
+      "acceptance_criteria": [
+        "Policy keeps command-center core and manually coordinated agent roles explicit",
+        "Temporary helpers have stable helper tags and durable notes",
+        "Command-center CLI can start, message, note, list, and stop helpers",
+        "Existing ai commands continue to be documented"
+      ]
+    },
+    {
+      "task_id": "TASK-006",
+      "title": "Upgrade LangGraph command-center routing",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/langgraph-runner-test.md",
+        "artifacts/tests/langgraph_runner_test.md",
+        "langgraph/README.md",
+        "langgraph/runner.py",
+        "tasks/TASK-006.json",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Runner reads runtime policy and helper note metadata from durable files",
+        "Runner can route to propose_helper when policy permits and ready work would benefit from helper attention",
+        "Runner reports a recommended action and command-center hint without launching helpers automatically",
+        "Runner can append routing events to events/events.jsonl when explicitly requested",
+        "Existing review, claim_or_assign, and wait_or_reconcile routes continue to work"
+      ]
+    },
+    {
+      "task_id": "TASK-007",
+      "title": "Add unavailable-agent routing",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "agents/README.md",
+        "agents/status.json",
+        "langgraph/runner.py",
+        "scripts/ai-command-center-cli",
+        "scripts/ai-command-center-shell",
+        "shared/decisions.md",
+        "tasks/TASK-007.json",
+        "workflow/runtime_policy.yaml",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Unavailable core agents are recorded in durable state",
+        "LangGraph reports unavailable agents and available core agents",
+        "Ready tasks that require an unavailable agent route to wait_for_agent",
+        "Other ready work can continue with available agents",
+        "Command-center CLI can mark agents available, standby, offline, or busy"
+      ]
+    },
+    {
+      "task_id": "TASK-008",
+      "title": "Make command-center agent approvals visible",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "scripts/ai-command-center-cli",
+        "scripts/ai-command-center-shell",
+        "shared/decisions.md",
+        "shared/requirements.md",
+        "tasks/TASK-008.json",
+        "workflow/runtime_policy.yaml",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "ai start launches core agents in visible terminals instead of using the headless start-agents script",
+        "ai helper start launches helpers in a visible terminal",
+        "Command-center CLI exposes a way to inspect and answer agent approval prompts",
+        "Runtime policy documents visible terminal and approval handling defaults",
+        "ai helper start launches helpers through an operator-reachable command-center surface",
+        "Runtime policy documents that headless hcom is allowed only when managed through AI Command Center controls"
+      ]
+    },
+    {
+      "task_id": "TASK-009",
+      "title": "Add AI Help command-center option",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "scripts/ai-command-center-cli",
+        "scripts/ai-command-center-shell",
+        "tasks/TASK-009.json",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Command-center banner shows an AI Help option",
+        "ai help prints all available commands in clear groups",
+        "ai commands and ai ai-help are accepted aliases"
+      ]
+    },
+    {
+      "task_id": "TASK-010",
+      "title": "Add Antigravity command-center support",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "scripts/ai-command-center-cli",
+        "scripts/ai-command-center-shell",
+        "tasks/TASK-010.json",
+        "workflow/runtime_policy.yaml",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "ai antigravity start starts an Antigravity agent through hcom when the CLI is installed",
+        "ai antigravity \"message\" sends to Antigravity-tagged agents",
+        "ai helper start antigravity supports named temporary helpers",
+        "Command-center help and banner mention Antigravity commands",
+        "Missing local Antigravity CLI produces a clear error"
+      ]
+    },
+    {
+      "task_id": "TASK-011",
+      "title": "Replace Gemini core agent with Antigravity",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "AGENTS.md",
+        "scripts/agent-deck",
+        "scripts/ai-command-center-antigravity",
+        "scripts/ai-command-center-cli",
+        "scripts/ai-command-center-shell",
+        "scripts/antigravity-wrapper",
+        "shared/decisions.md",
+        "tasks/TASK-011.json",
+        "workflow/runtime_policy.yaml",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "antigravity and agy resolve on PATH",
+        "ai start launches Codex, Claude, and Antigravity",
+        "AI Command Center help and banner no longer list Gemini as a core command",
+        "Desktop command-center layout opens an Antigravity tab instead of Gemini",
+        "Agent Deck uses Antigravity instead of Gemini"
+      ]
+    },
+    {
+      "task_id": "TASK-012",
+      "title": "Restore Gemini to manually coordinated plans",
+      "task_type": "maintenance",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "agents/README.md",
+        "agents/status.json",
+        "inbox/helpers/README.md",
+        "langgraph/README.md",
+        "shared/decisions.md",
+        "tasks/TASK-005.json",
+        "tasks/TASK-012.json",
+        "workflow/runtime_policy.yaml",
+        "workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Gemini is present in durable availability state as manually coordinated",
+        "Current command-center routing guidance allows Gemini examples without assuming reliable hcom communication",
+        "Task planning records distinguish core agents from manually coordinated agents",
+        "A durable decision records that the operator may need to prompt Gemini and Antigravity manually"
+      ]
+    },
+    {
+      "task_id": "TASK-013",
+      "title": "Implement SQLite migration seed script",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [
+        "TASK-003"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/sqlite-seed-test.md",
+        "artifacts/tests/sqlite_seed_test.md",
+        "migration/schema.sql",
+        "migration/seed_from_files.py"
+      ],
+      "acceptance_criteria": [
+        "Creates MAP_System/map.db with all tables from the design document",
+        "Seeds tasks, dependencies, agents, events, and decisions from current files",
+        "Idempotent: re-running does not duplicate rows",
+        "Prints a summary of rows inserted or skipped"
+      ]
+    },
+    {
+      "task_id": "TASK-014",
+      "title": "Implement SQLite claim module",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/claims-test.md",
+        "artifacts/tests/claims_test.md",
+        "db/__init__.py",
+        "db/claims.py"
+      ],
+      "acceptance_criteria": [
+        "claim_task() returns True only when rowcount==1 (atomic claim); returns False if already claimed or max_attempts exceeded",
+        "heartbeat() extends lease_expires_at and updates heartbeat_at",
+        "release_task() sets status to SUBMITTED and clears claimed_by and lease",
+        "expire_leases() returns tasks back to READY when lease_expires_at has passed",
+        "All functions accept a db_path argument and use MAP_System/map.db as default",
+        "Repeat-run test documented in artifacts/tests/claims_test.md",
+        "Repeat-run test documented in artifacts/tests/claims-test.md"
+      ]
+    },
+    {
+      "task_id": "TASK-015",
+      "title": "Update LangGraph runner to query SQLite",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [
+        "TASK-014"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/runner-sqlite-test.md",
+        "artifacts/tests/runner_sqlite_test.md",
+        "langgraph/runner.py"
+      ],
+      "acceptance_criteria": [
+        "Runner loads tasks and agent status from map.db when the database exists",
+        "Falls back to JSON files if map.db is absent (backward compatibility)",
+        "ready_tasks, blocked_tasks, done_task_ids, available_agents reflect SQLite state",
+        "--record-event writes to SQLite events table in addition to events.jsonl",
+        "Existing --pretty output format unchanged"
+      ]
+    },
+    {
+      "task_id": "TASK-016",
+      "title": "Fix validator and update agent claiming docs",
+      "task_type": "maintenance",
+      "role": "architect",
+      "status": "DONE",
+      "dependencies": [
+        "TASK-014"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "AGENTS.md",
+        "scripts/validate_task_graph.py",
+        "shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "validate_task_graph.py passes without error when all tasks are DONE",
+        "validate_task_graph.py still catches genuine problems (cycles, missing deps, unknown statuses)",
+        "AGENTS.md documents that agents should use db/claims.py to claim tasks once TASK-014 is merged",
+        "DEC-009 recorded in shared/decisions.md: SQLite is the claiming coordinator from TASK-014 onward"
+      ]
+    },
+    {
+      "task_id": "TASK-017",
+      "title": "Implement reconciliation script",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/reconcile-test.md",
+        "artifacts/tests/reconcile_test.md",
+        "scripts/reconcile.py"
+      ],
+      "acceptance_criteria": [
+        "expire_leases() result logged to events.jsonl and SQLite events table",
+        "Prints count of tasks returned to READY and their IDs",
+        "No-op run (nothing expired) exits cleanly with zero count",
+        "Runnable as: python3 MAP_System/scripts/reconcile.py"
+      ]
+    },
+    {
+      "task_id": "TASK-018",
+      "title": "Implement SQLite-to-JSON export",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/export-test.md",
+        "artifacts/tests/export_test.md",
+        "migration/export_to_files.py"
+      ],
+      "acceptance_criteria": [
+        "Reads tasks from map.db and writes/updates MAP_System/tasks/TASK-NNN.json for each",
+        "Updates status and owner fields in workflow/task_graph.json to match SQLite",
+        "Rewrites agents/status.json from the agents table",
+        "Idempotent: re-running produces no diff when SQLite and files are already in sync",
+        "Prints a summary of files written vs unchanged"
+      ]
+    },
+    {
+      "task_id": "TASK-019",
+      "title": "Design software project workflow template",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "claude",
+      "output_paths": [
+        "workflow/templates/software_project.yaml"
+      ],
+      "acceptance_criteria": [
+        "Defines task_types with role, typical acceptance criteria shape, and review requirement",
+        "Defines stage sequence: spec -> implement -> test -> review -> release",
+        "Each stage specifies who owns it (implementer/reviewer) and what gates it",
+        "Template is self-contained: a new project can be started by copying and editing project-specific fields",
+        "Includes at least one worked example task showing how to instantiate the template"
+      ]
+    },
+    {
+      "task_id": "TASK-020",
+      "title": "Design autonomous claim loop protocol",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "claude",
+      "output_paths": [
+        "artifacts/planning/autonomous-claim-loop.md",
+        "artifacts/planning/autonomous_claim_loop.md"
+      ],
+      "acceptance_criteria": [
+        "Defines the poll-claim-work-heartbeat-submit cycle with decision points",
+        "Specifies failure modes: claim race, heartbeat timeout, max_attempts exhausted",
+        "Specifies how the loop interacts with expire_leases (reconcile.py) and the runner",
+        "Defines a safe shutdown protocol (finish current task, do not abandon mid-work)",
+        "Pseudocode or flowchart illustrates the full loop"
+      ]
+    },
+    {
+      "task_id": "TASK-021",
+      "title": "Implement autonomous claim loop (LangGraph cyclic graph)",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-014",
+        "TASK-015",
+        "TASK-017",
+        "TASK-018"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/agent-loop-test.md",
+        "artifacts/tests/agent_loop_test.md",
+        "scripts/agent_loop.py"
+      ],
+      "acceptance_criteria": [
+        "Graph cycles: poll_runner -> try_claim -> submit -> reconcile -> poll_runner",
+        "Claim race (rowcount==0) routes back to poll_runner without error",
+        "interrupt() fires when task hits max_attempts or unrecoverable state",
+        "Shutdown (KeyboardInterrupt) releases active claim before exit",
+        "Dry-run mode cycles without actually claiming (for testing)",
+        "State includes current_task_id, attempt_count, last_route"
+      ]
+    },
+    {
+      "task_id": "TASK-022",
+      "title": "Add interrupt() and SqliteSaver checkpointing to runner",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-015"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "artifacts/tests/checkpointer-test.md",
+        "artifacts/tests/checkpointer_test.md",
+        "db/checkpointer.py",
+        "langgraph/runner.py"
+      ],
+      "acceptance_criteria": [
+        "MapSqliteSaver implements get_tuple(), put(), put_writes(), list() backed by map.db",
+        "Runner compiled with MapSqliteSaver checkpointer when --thread-id is given",
+        "approval_gate route calls interrupt() with gate_id and gate details",
+        "Runner --approve <thread-id> resumes an interrupted graph with approval",
+        "Runner --reject <thread-id> resumes with rejection and routes to CHANGES_REQUESTED",
+        "Without --thread-id, runner behaves identically to current behavior (no regression)"
+      ]
+    },
+    {
+      "task_id": "TASK-023",
+      "title": "Integration test: full claim loop against real handler",
+      "task_type": "test",
+      "role": "tester",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-014",
+        "TASK-021"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "MAP_System/artifacts/tests/integration_test.md",
+        "MAP_System/graph/runner.py",
+        "MAP_System/migration/export_to_files.py",
+        "MAP_System/scripts/integration_test.py",
+        "artifacts/tests/integration-test.md",
+        "graph/runner.py",
+        "migration/export_to_files.py",
+        "scripts/integration_test.py"
+      ],
+      "acceptance_criteria": [
+        "Temp DB seeded with at least one READY task",
+        "agent_loop --once runs handler, task transitions to SUBMITTED",
+        "export_to_files writes task file",
+        "All assertions pass with zero manual DB setup"
+      ]
+    },
+    {
+      "task_id": "TASK-024",
+      "title": "PID/lockfile guard for agent_loop.py",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-021"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "MAP_System/artifacts/tests/agent_loop_lock_test.md",
+        "MAP_System/scripts/agent_loop.py",
+        "artifacts/tests/agent-loop-lock-test.md",
+        "scripts/agent_loop.py"
+      ],
+      "acceptance_criteria": [
+        "Starting a second instance with same agent_id fails with a clear error",
+        "Lockfile released on clean exit and on SIGTERM",
+        "Stale lockfile (PID no longer running) is cleaned up automatically"
+      ]
+    },
+    {
+      "task_id": "TASK-025",
+      "title": "Rename MAP_System/langgraph/ to MAP_System/graph/",
+      "task_type": "refactor",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-022"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "MAP_System/graph/runner.py",
+        "graph/runner.py"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/langgraph/ directory no longer exists",
+        "MAP_System/graph/runner.py exists and is importable",
+        "py_compile clean on runner.py and agent_loop.py",
+        "runner --pretty smoke test passes",
+        "agent_loop --once --dry-run smoke test passes"
+      ]
+    },
+    {
+      "task_id": "TASK-026",
+      "title": "STATE_SNAPSHOT handoff format",
+      "task_type": "design",
+      "role": "architect",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-019"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "AGENTS.md",
+        "MAP_System/AGENTS.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/workflow/templates/state_snapshot.yaml",
+        "shared/decisions.md",
+        "workflow/templates/state_snapshot.yaml"
+      ],
+      "acceptance_criteria": [
+        "YAML schema covers: agent_id, session_id, task context, active constraints, forward_tasks, lexicon",
+        "Example snapshot for end-of-session claude handoff included",
+        "DEC-010 filled in at shared/decisions.md (placeholder already reserved)",
+        "AGENTS.md updated with emit/load instructions"
+      ]
+    },
+    {
+      "task_id": "TASK-027",
+      "title": "Shared docs state cleanup",
+      "task_type": "documentation",
+      "role": "documenter",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-021",
+        "TASK-022"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "AGENTS.md",
+        "MAP_System/AGENTS.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/shared/requirements.md",
+        "MAP_System/shared/unresolved_questions.md",
+        "shared/decisions.md",
+        "shared/requirements.md",
+        "shared/unresolved-questions.md"
+      ],
+      "acceptance_criteria": [
+        "unresolved_questions.md: SQLite-as-coordinator question marked resolved (DEC-009)",
+        "unresolved_questions.md: autonomous daemon question marked resolved (TASK-021)",
+        "AGENTS.md: helper spawn policy updated to --terminal wezterm-tab",
+        "decisions.md: DEC-010 reserved or assigned to STATE_SNAPSHOT (TASK-026)",
+        "No references to open questions that are now answered",
+        "unresolved-questions.md: SQLite-as-coordinator question marked resolved (DEC-009)",
+        "unresolved-questions.md: autonomous daemon question marked resolved (TASK-021)"
+      ]
+    },
+    {
+      "task_id": "TASK-028",
+      "title": "Persistent agent_loop checkpointing via MapSqliteSaver",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-021",
+        "TASK-022"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "MAP_System/scripts/agent_loop.py",
+        "scripts/agent_loop.py"
+      ],
+      "acceptance_criteria": [
+        "agent_loop uses MapSqliteSaver(db_path) as checkpointer instead of MemorySaver",
+        "Interrupted daemon (operator_interrupt route) can be resumed with --resume flag without re-running reconcile+poll from scratch",
+        "Clean exit still works; --once still works; --dry-run still works",
+        "py_compile clean; integration_test 11/11 pass"
+      ]
+    },
+    {
+      "task_id": "TASK-029",
+      "title": "map-status CLI for live project state",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-014"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "MAP_System/artifacts/tests/map_status_test.md",
+        "MAP_System/scripts/map_status.py",
+        "artifacts/tests/map-status-test.md",
+        "scripts/map_status.py"
+      ],
+      "acceptance_criteria": [
+        "Shows IN_PROGRESS tasks with claimed_by, lease_expires_at, heartbeat_at",
+        "Shows pending approval gates",
+        "Shows agent statuses (available/busy/offline)",
+        "Shows SUBMITTED tasks awaiting review",
+        "Exits 0; works against real map.db with no args"
+      ]
+    },
+    {
+      "task_id": "TASK-030",
+      "title": "Multi-gate handling in LangGraph runner",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-022"
+      ],
+      "owner": "claude",
+      "output_paths": [
+        "MAP_System/graph/runner.py",
+        "graph/runner.py"
+      ],
+      "acceptance_criteria": [
+        "Interrupt payload includes list of all pending gates, not just the first",
+        "--approve/--reject applies to specified gate_id, then loops back if more gates remain",
+        "Single-gate case unchanged (no regression)",
+        "py_compile clean; runner smoke test passes"
+      ]
+    },
+    {
+      "task_id": "TASK-031",
+      "title": "CI test runner script",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-023"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "MAP_System/artifacts/tests/run_tests_test.md",
+        "MAP_System/scripts/run_tests.sh",
+        "artifacts/tests/run-tests-test.md",
+        "scripts/run_tests.sh"
+      ],
+      "acceptance_criteria": [
+        "Runs py_compile on all MAP_System/**/*.py files",
+        "Runs validate_task_graph.py",
+        "Runs integration_test.py",
+        "Prints per-check pass/fail and a final summary",
+        "Exits nonzero if any check fails",
+        "Exits 0 and all green against current workspace"
+      ]
+    },
+    {
+      "task_id": "TASK-032",
+      "title": "Task retry backoff in agent_loop",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-028"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "MAP_System/artifacts/tests/agent_loop_retry_cooldown_test.md",
+        "MAP_System/scripts/agent_loop.py",
+        "artifacts/tests/agent-loop-retry-cooldown-test.md",
+        "scripts/agent_loop.py"
+      ],
+      "acceptance_criteria": [
+        "Failed tasks are skipped for --retry-cooldown seconds (default 300) after release",
+        "Cooldown tracked in LoopState (not SQLite)",
+        "Operator can set --retry-cooldown 0 to disable",
+        "py_compile clean"
+      ]
+    },
+    {
+      "task_id": "TASK-033",
+      "title": "map-task CLI for task lifecycle operations",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-013",
+        "TASK-017"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "MAP_System/artifacts/tests/map_task_test.md",
+        "MAP_System/scripts/map_task.py",
+        "artifacts/tests/map-task-test.md",
+        "scripts/map_task.py"
+      ],
+      "acceptance_criteria": [
+        "map_task.py create --task-id TASK-NNN --title ... --owner ... [--depends-on X Y] [--output-path P] [--criterion C]",
+        "map_task.py approve TASK-NNN --reviewer agent-id (sets APPROVED, emits event, syncs files)",
+        "map_task.py reject TASK-NNN --reviewer agent-id --reason \"...\" (sets CHANGES_REQUESTED, emits event)",
+        "map_task.py show TASK-NNN (prints task JSON)",
+        "Exits 0 on success; prints error and exits nonzero on bad input"
+      ]
+    },
+    {
+      "task_id": "TASK-034",
+      "title": "Add multi-gate approval regression test",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-030"
+      ],
+      "owner": "codex-tori",
+      "output_paths": [
+        "MAP_System/scripts/multigate_regression_test.py",
+        "MAP_System/scripts/run_tests.sh",
+        "scripts/multigate_regression_test.py",
+        "scripts/run_tests.sh"
+      ],
+      "acceptance_criteria": [
+        "run_tests.sh invokes a targeted multi-gate approve-then-reject fixture",
+        "fixture fails if SQLite stores GATE-B as approved after --reject GATE-B",
+        "MAP_System/scripts/run_tests.sh passes"
+      ]
+    },
+    {
+      "task_id": "TASK-035",
+      "title": "Implement strict READY promotion gate",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-033"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/promote-task-test.md",
+        "db/claims.py",
+        "scripts/map_task.py",
+        "scripts/promote_task.py",
+        "scripts/run_tests.sh",
+        "tasks/TASK-035.json",
+        "tests/test_promote_task.py"
+      ],
+      "acceptance_criteria": [
+        "map_task.py create defaults incomplete tasks to BACKLOG or NEEDS_SHAPING rather than READY",
+        "python3 MAP_System/scripts/validate_task_graph.py passes",
+        "scripts/promote_task.py accepts --task-id and reads the target task from SQLite and MAP_System/tasks/TASK-NNN.json",
+        "scripts/promote_task.py validates non-empty HPOM fields in both SQLite-derived task data and task JSON: objective, required_context, files_in_scope, forbidden_changes, acceptance_criteria, expected_artifacts, reviewer_role, risk",
+        "scripts/promote_task.py fails with a clear error naming each missing HPOM field",
+        "scripts/promote_task.py promotes a valid task to READY in SQLite and syncs file-backed task state",
+        "scripts/promote_task.py --audit flags existing READY tasks that are missing HPOM fields without mutating them",
+        "db/claims.py refuses to claim a READY task with empty acceptance_criteria as a soft claim-time defense",
+        "MAP_System/tests/test_promote_task.py covers valid promotion, invalid blocked promotion, and missing-field error messages",
+        "run_tests.sh includes the promotion gate tests and passes"
+      ]
+    },
+    {
+      "task_id": "TASK-036",
+      "title": "Add local assistant health checks",
+      "task_type": "implementation",
+      "role": "technical_editor",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-035"
+      ],
+      "owner": "codex",
+      "output_paths": [
+        "artifacts/tests/local-assistant-health-test.md",
+        "scripts/ai-command-center-cli",
+        "scripts/local_assistant_health.py",
+        "tasks/TASK-036.json"
+      ],
+      "acceptance_criteria": [
+        "A read-only local assistant health command reports Ollama reachability without registering local models as core agents",
+        "The health command checks for llama3.2:3b, llama3.2:1b, qwen2.5-coder:3b, qwen2.5-coder:1.5b, and gemma3:4b",
+        "The health command checks whether Aider is installed and reports it as a tool/workbench, not a model",
+        "ai help exposes the health-check command without adding local assistant start wrappers",
+        "A deterministic fixture or mock test for local assistant health parsing is recorded in the task test artifact",
+        "current-state.md still says local assistants are helper capabilities, not core agents"
+      ]
+    },
+    {
+      "task_id": "TASK-037",
+      "title": "Define HPOM system scope",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-live",
+      "output_paths": [
+        "artifacts/planning/hpom-scope-definition.md",
+        "shared/agent-capability-matrix.md",
+        "shared/architecture.md",
+        "shared/current-state.md",
+        "shared/decisions.md",
+        "shared/hpom.md",
+        "shared/unresolved-questions.md",
+        "tasks/TASK-037.json"
+      ],
+      "acceptance_criteria": [
+        "shared/hpom.md defines the HPOM acronym, boundary, inputs, outputs, and relationship to MAP/HCOM/local assistants",
+        "shared/agent-capability-matrix.md lists what each current worker/model/tool is good at and what to avoid",
+        "The HPOM plan states whether HPOM is a protocol, operating model, orchestration layer, or command-center workflow",
+        "The HPOM plan lists what HPOM must not do, especially around hidden helper work, final authority, and task ownership",
+        "A command-center decision is recorded in shared/decisions.md and current-state/architecture link to the HPOM references"
+      ]
+    },
+    {
+      "task_id": "TASK-038",
+      "title": "HPOM-006: Release gate \u2014 distinguish APPROVED from RELEASED",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/artifacts/tests/release-gate-test.md",
+        "MAP_System/db/migration/",
+        "MAP_System/migration/schema.sql",
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/release_task.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_task_graph.py",
+        "MAP_System/templates/release-checklist.md",
+        "MAP_System/tests/test_release_gate.py"
+      ],
+      "acceptance_criteria": [
+        "RELEASED status exists in SQLite schema",
+        "release_task.py enforces checklist before marking RELEASED",
+        "map_task.py release subcommand works",
+        "tasks cannot go APPROVED -> RELEASED without a checklist completion record"
+      ]
+    },
+    {
+      "task_id": "TASK-039",
+      "title": "HPOM-007: Shared-state metadata \u2014 flag stale or superseded files",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-035"
+      ],
+      "owner": "claude-mako",
+      "output_paths": [
+        "MAP_System/scripts/validate_shared_state.py",
+        "MAP_System/templates/shared-state.md"
+      ],
+      "acceptance_criteria": [
+        "validate_shared_state.py finds and reports shared/ files missing required metadata",
+        "STALE or SUPERSEDED status is flagged with file path and reason",
+        "template includes all required metadata fields",
+        "script can be run standalone: python3 MAP_System/scripts/validate_shared_state.py"
+      ]
+    },
+    {
+      "task_id": "TASK-040",
+      "title": "HPOM-008: Conflict freeze \u2014 stop work when contradictions are found",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-mako",
+      "output_paths": [
+        "MAP_System/db/migration/",
+        "MAP_System/scripts/flag_conflict.py",
+        "MAP_System/templates/conflict.md"
+      ],
+      "acceptance_criteria": [
+        "CONFLICT is a valid task status in SQLite",
+        "flag_conflict.py creates a conflict record and moves task to CONFLICT",
+        "conflict record template includes: type, affected_files, conflicting_sources, decision_owner, resolution",
+        "tasks in CONFLICT cannot be claimed or promoted without resolution record"
+      ]
+    },
+    {
+      "task_id": "TASK-041",
+      "title": "HPOM-009: Decision log \u2014 enforce durable decision records",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-mako",
+      "output_paths": [
+        "MAP_System/scripts/validate_decisions.py",
+        "MAP_System/shared/DECISIONS.md",
+        "MAP_System/templates/decision.md"
+      ],
+      "acceptance_criteria": [
+        "validate_decisions.py parses shared/decisions.md and flags entries missing required fields",
+        "decision template includes: id, owner, reason, applies_to, date, supersedes, superseded_by",
+        "DECISIONS.md is a machine-readable index of active decisions"
+      ]
+    },
+    {
+      "task_id": "TASK-042",
+      "title": "HPOM-010: Project quality standards template",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-mako",
+      "output_paths": [
+        "MAP_System/templates/project-quality-standards.md",
+        "MAP_System/templates/review-checklist.md"
+      ],
+      "acceptance_criteria": [
+        "template has sections for: positive standards, anti-patterns, review checklist reference",
+        "template supports at least software and writing project types",
+        "review-checklist.md covers: scope check, criteria check, forbidden-changes check, files-reviewed list, risk identification, verdict"
+      ]
+    },
+    {
+      "task_id": "TASK-043",
+      "title": "HPOM-016: Metrics report \u2014 MAP health dashboard",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-038"
+      ],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/artifacts/tests/map-metrics-test.md",
+        "MAP_System/scripts/map_metrics.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_map_metrics.py"
+      ],
+      "acceptance_criteria": [
+        "reports task count by status",
+        "reports review queue size (SUBMITTED tasks awaiting review)",
+        "reports conflict count (tasks in CONFLICT status)",
+        "reports stale shared file count (if validate_shared_state.py exists)",
+        "script runs standalone: python3 MAP_System/scripts/map_metrics.py"
+      ]
+    },
+    {
+      "task_id": "TASK-044",
+      "title": "HPOM-003b: No-self-review gate in SQLite claim layer",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-035"
+      ],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/artifacts/tests/no-self-review-test.md",
+        "MAP_System/db/claims.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_no_self_review.py"
+      ],
+      "acceptance_criteria": [
+        "claim_task fails when reviewer agent_id matches task owner in SQLite",
+        "error is distinguishable from other claim failures (returns False with logged reason, or raises ClaimError)",
+        "tests cover: same agent blocked, different agent allowed",
+        "run_tests.sh still passes"
+      ]
+    },
+    {
+      "task_id": "TASK-045",
+      "title": "Fix exporter to preserve unknown HPOM JSON fields on sync",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/artifacts/tests/exporter-hpom-fields-test.md",
+        "MAP_System/migration/export_to_files.py",
+        "MAP_System/tests/test_exporter_hpom_fields.py"
+      ],
+      "acceptance_criteria": [
+        "HPOM fields in a task JSON survive a sync round-trip through export_to_files.py",
+        "existing task JSON fields not in SQLite schema are preserved, not stripped",
+        "tests verify round-trip preservation of objective, reviewer_role, risk",
+        "run_tests.sh still passes"
+      ]
+    },
+    {
+      "task_id": "TASK-046",
+      "title": "Backfill HPOM metadata headers on shared/ files and decisions.md",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-mako",
+      "output_paths": [
+        "MAP_System/shared/"
+      ],
+      "acceptance_criteria": [
+        "validate_shared_state.py reports 0 failures for all shared/ .md files",
+        "validate_decisions.py reports 0 MISSING_FIELD failures",
+        "No existing decision text or shared-file content was changed (only metadata added)",
+        "validate_task_graph.py still passes"
+      ]
+    },
+    {
+      "task_id": "TASK-047",
+      "title": "HPOM-004: Review gate \u2014 require review record before APPROVED",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-mako",
+      "output_paths": [
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/validate_review.py",
+        "MAP_System/templates/review-record.md"
+      ],
+      "acceptance_criteria": [
+        "validate_review.py exits 0 for well-formed review, 1 for self-review or missing fields",
+        "map_task.py approve --review-record blocks APPROVED on validate_review.py exit 1",
+        "review-record.md template includes all required HPOM header fields"
+      ]
+    },
+    {
+      "task_id": "TASK-048",
+      "title": "HPOM-011: local_runner.py \u2014 scoped Ollama invocation wrapper",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/artifacts/tests/local-runner-test.md",
+        "MAP_System/scripts/local_runner.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_local_runner.py"
+      ],
+      "acceptance_criteria": [
+        "script fails if requested model is not in the required models list",
+        "output is written to the --output path, not only stdout",
+        "a helper note is created in inbox/helpers/ with task_id, model, scope, output_path",
+        "a HELPER_INVOKED event is appended to events.jsonl",
+        "script runs standalone: python3 MAP_System/scripts/local_runner.py --help"
+      ]
+    },
+    {
+      "task_id": "TASK-049",
+      "title": "HPOM-012: aider_wrapper.py \u2014 supervised Aider edit setup with scope enforcement",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-048"
+      ],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/artifacts/tests/aider-wrapper-test.md",
+        "MAP_System/scripts/aider_wrapper.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_aider_wrapper.py"
+      ],
+      "acceptance_criteria": [
+        "script fails if git working tree has uncommitted changes to the target files",
+        "script fails if any target file is outside the task output_paths in TASK-NNN.json",
+        "helper note created in inbox/helpers/ before Aider launches",
+        "Aider is launched interactively (no --yes-always or headless flags)",
+        "script runs standalone: python3 MAP_System/scripts/aider_wrapper.py --help"
+      ]
+    },
+    {
+      "task_id": "TASK-050",
+      "title": "Fix --no-auto-commits in aider_wrapper.py FORBIDDEN_AIDER_FLAGS",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/scripts/aider_wrapper.py",
+        "MAP_System/tests/test_aider_wrapper.py"
+      ],
+      "acceptance_criteria": [
+        "--no-auto-commits is NOT in FORBIDDEN_AIDER_FLAGS",
+        "--auto-commits IS still in FORBIDDEN_AIDER_FLAGS",
+        "a test confirms --no-auto-commits passes validate_aider_args()",
+        "run_tests.sh passes 12/12"
+      ]
+    },
+    {
+      "task_id": "TASK-051",
+      "title": "Clean up OPTIONAL findings from local_runner.py TASK-048 review",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-live",
+      "output_paths": [
+        "MAP_System/scripts/local_runner.py"
+      ],
+      "acceptance_criteria": [
+        "unreachable output_path guard at line 137 removed",
+        "import uses sys.path.insert instead of try/except ModuleNotFoundError",
+        "run_tests.sh passes 12/12"
       ]
     }
   ],
@@ -54,9 +1173,11 @@
       "gate_id": "GATE-001",
       "name": "Bootstrap review",
       "required_after": "TASK-001",
-      "resume_on_approval": ["TASK-002", "TASK-003"],
+      "resume_on_approval": [
+        "TASK-002",
+        "TASK-003"
+      ],
       "on_rejection": "CHANGES_REQUESTED"
     }
   ]
 }
-

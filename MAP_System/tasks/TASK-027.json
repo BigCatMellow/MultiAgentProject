@@ -1,0 +1,33 @@
+{
+  "task_id": "TASK-027",
+  "title": "Shared docs state cleanup",
+  "task_type": "documentation",
+  "role": "documenter",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-021",
+    "TASK-022"
+  ],
+  "owner": "claude",
+  "description": "Update shared/decisions.md, shared/unresolved-questions.md, and AGENTS.md to reflect current state: SQLite claims resolved, autonomous daemon implemented, visible helper terminal policy (wezterm-tab), and current active-agent assumptions (claude+codex only).",
+  "input_paths": [],
+  "output_paths": [
+    "AGENTS.md",
+    "MAP_System/AGENTS.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/shared/requirements.md",
+    "MAP_System/shared/unresolved_questions.md",
+    "shared/decisions.md",
+    "shared/requirements.md",
+    "shared/unresolved-questions.md"
+  ],
+  "acceptance_criteria": [
+    "unresolved_questions.md: SQLite-as-coordinator question marked resolved (DEC-009)",
+    "unresolved_questions.md: autonomous daemon question marked resolved (TASK-021)",
+    "AGENTS.md: helper spawn policy updated to --terminal wezterm-tab",
+    "decisions.md: DEC-010 reserved or assigned to STATE_SNAPSHOT (TASK-026)",
+    "No references to open questions that are now answered",
+    "unresolved-questions.md: SQLite-as-coordinator question marked resolved (DEC-009)",
+    "unresolved-questions.md: autonomous daemon question marked resolved (TASK-021)"
+  ]
+}

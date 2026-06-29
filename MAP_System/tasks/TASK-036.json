@@ -1,0 +1,34 @@
+{
+  "task_id": "TASK-036",
+  "title": "Add local assistant health checks",
+  "task_type": "implementation",
+  "role": "technical_editor",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-035"
+  ],
+  "owner": "codex",
+  "description": "Add a read-only command-center health check for local helper capabilities before any local model or Aider wrapper is added. The check should report Ollama availability, required model availability, Aider availability, and whether the workflow remains helper-capability-only.",
+  "input_paths": [
+    "MAP_System/notes/local-model-helper-guide.md",
+    "MAP_System/notes/helper-agent-guide.md",
+    "MAP_System/notes/command-center-later.md",
+    "Guidelines/map-local-model-roles-5-models-and-aider.md",
+    "MAP_System/scripts/ai-command-center-cli",
+    "MAP_System/scripts/ai-command-center-shell"
+  ],
+  "output_paths": [
+    "artifacts/tests/local-assistant-health-test.md",
+    "scripts/ai-command-center-cli",
+    "scripts/local_assistant_health.py",
+    "tasks/TASK-036.json"
+  ],
+  "acceptance_criteria": [
+    "A read-only local assistant health command reports Ollama reachability without registering local models as core agents",
+    "The health command checks for llama3.2:3b, llama3.2:1b, qwen2.5-coder:3b, qwen2.5-coder:1.5b, and gemma3:4b",
+    "The health command checks whether Aider is installed and reports it as a tool/workbench, not a model",
+    "ai help exposes the health-check command without adding local assistant start wrappers",
+    "A deterministic fixture or mock test for local assistant health parsing is recorded in the task test artifact",
+    "current-state.md still says local assistants are helper capabilities, not core agents"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-022",
+  "title": "Add interrupt() and SqliteSaver checkpointing to runner",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-015"
+  ],
+  "owner": "claude",
+  "description": "Upgrade langgraph/runner.py: (1) implement a minimal MapSqliteSaver (BaseCheckpointSaver backed by map.db) in db/checkpointer.py; (2) add interrupt() calls at approval gate routing so the graph pauses for operator input; (3) add --thread-id, --approve, --reject CLI args for resuming interrupted graphs.",
+  "input_paths": [],
+  "output_paths": [
+    "artifacts/tests/checkpointer-test.md",
+    "artifacts/tests/checkpointer_test.md",
+    "db/checkpointer.py",
+    "langgraph/runner.py"
+  ],
+  "acceptance_criteria": [
+    "MapSqliteSaver implements get_tuple(), put(), put_writes(), list() backed by map.db",
+    "Runner compiled with MapSqliteSaver checkpointer when --thread-id is given",
+    "approval_gate route calls interrupt() with gate_id and gate details",
+    "Runner --approve <thread-id> resumes an interrupted graph with approval",
+    "Runner --reject <thread-id> resumes with rejection and routes to CHANGES_REQUESTED",
+    "Without --thread-id, runner behaves identically to current behavior (no regression)"
+  ]
+}
