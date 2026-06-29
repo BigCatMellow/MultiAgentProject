@@ -4,10 +4,8 @@ This directory stores machine-readable workflow policy and task graph state.
 
 ## Files
 
-- `task_graph.json` - file-backed task graph mirror.
-- `workflow.yaml` - workflow definition.
-- `runtime_policy.yaml` - runtime routing policy.
-- `approval_rules.yaml` - review and approval rules.
+- `task_graph.json` - file-backed task graph mirror (read by `validate_task_graph.py`).
+- `runtime_policy.yaml` - runtime routing policy (read by `runner.py` and `multigate_regression_test.py`).
 - `templates/` - reusable workflow and state snapshot templates.
 
 ## Rules

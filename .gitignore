@@ -18,8 +18,12 @@ MAP_System/db/map.db
 # Dependency bundles (not needed in repo)
 **/.deps/
 
-# Pathwell project — excluded from public repo; private creative work
+# Projects/ — private content excluded from public repo
 Projects/Pathwell/
+Projects/Backups/
+
+# Local trash bin — soft-delete holding area, not published
+trash/
 
 # Local Git conversion backups.
 .map-git/
