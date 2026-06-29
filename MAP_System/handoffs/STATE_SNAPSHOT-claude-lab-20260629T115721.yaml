@@ -1,0 +1,94 @@
+---
+schema: STATE_SNAPSHOT/1
+created_at: "2026-06-29T11:57:21-04:00"
+session_id: 3e00284d-ffb5-4518-97f3-4b6e41da23c5
+agent: claude-lab-fema
+task_id: SESSION
+status: COMPLETE
+intended_recipient: next-session-agent
+
+summary: >
+  AI Command Center Lab hardening session. Operator requested improvements to
+  the lab (visible helper rule, tooling gaps). Claude-lab and codex-lab worked
+  in parallel. All 23 health checks pass at close.
+
+---
+
+## Work Done This Session
+
+### Operator feedback applied
+- Rule: always use `--terminal wezterm-tab` when spawning helpers/sub-agents via hcom.
+  Never `--headless` unless operator explicitly instructs it.
+
+### Files changed (lab scripts — /home/home/.local/bin/)
+
+| File | Change |
+|---|---|
+| `ai-command-center-lab-claude` | Added `--terminal wezterm-tab` rule to `--hcom-prompt` |
+| `ai-command-center-lab-codex` | Same (done by codex-lab-zune in parallel) |
+| `ai-command-center-lab-shell` | Added `ai tell` production-vs-lab warning; `ai lab tell` shortcut; helper spawn examples; `--intent` on hcom send examples; `Ctrl+1..4` tab hint; `ai-command-center-lab-status` reference |
+| `ai` wrapper | Added `ai lab tell/codex/claude` subcommands routing to `@codex-lab-` and `@claude-lab-` |
+| `ai-command-center-lab-status` | Created by codex-lab-zune: quick operator snapshot command |
+| `ai-command-center-lab-health` | Created by codex-lab-zune: 23-check smoke test |
+
+### Files changed (WezTerm config)
+
+| File | Change |
+|---|---|
+| `~/.config/wezterm/ai-command-center-lab.lua` | Added `Ctrl+1/2/3/4` direct tab bindings |
+
+### Files changed (AI Command Center project dir — /home/home/Projects/AI Command Center/)
+
+| File | Change |
+|---|---|
+| `AGENTS.md` | Created by zune; updated by fema: added helper spawn example, `--intent` on sends, tag-broadcast dash explanation, `ai-command-center-lab-status` reference |
+| `README.md` | Created by codex-lab-zune: overview of lab purpose and common commands |
+
+---
+
+## Health State at Close
+
+- `ai-command-center-lab-health`: **23/23 PASS**
+- `ai` wrapper shell syntax: clean
+- All lab launcher scripts: syntax clean and executable
+
+---
+
+## What's Open / Next Session Ideas
+
+### Potential improvements not yet done
+
+1. **Monitor attention filter** — `ai-command-center-monitor` shows all hcom agents and all MAP
+   events. In a mixed session (lab + production), it can be noisy. A `--lab` flag or a
+   second mode that filters to `codex-lab` / `claude-lab` events would help.
+   (Zune updated Monitor to support `feed` subcommand for full activity and an attention-only
+   default — verify this is wired correctly on next session.)
+
+2. **`ai lab help`** — `ai lab` with no args prints a usage error but doesn't show lab-specific
+   help. Could route to a dedicated usage block instead of the full `ai help`.
+
+3. **Lab agent restart convenience** — if a lab agent crashes mid-session, the operator must
+   manually open a new tab and run `ai-command-center-lab-claude` or `ai-command-center-lab-codex`.
+   An `ai lab restart claude` or `ai lab restart codex` command would be cleaner.
+
+4. **Health check: `ai-command-center-lab-status` check** — the health script doesn't yet verify
+   `ai-command-center-lab-status` exists and is executable. Zune created it after the health
+   script was written.
+
+5. **First real MAP workflow** — `shared/unresolved-questions.md` and `notes/command-center-later.md`
+   both flag this as PRIORITY HIGH. The lab is the right place to run it first.
+
+6. **Git commit of HPOM sprint** — `notes/command-center-later.md` flags ~200 uncommitted files
+   from the HPOM sprint. Should be committed before Aider does broad MAP work.
+
+---
+
+## Key Files for Context
+
+- Lab scripts: `/home/home/.local/bin/ai-command-center-lab-*`
+- Main `ai` wrapper: `/home/home/.local/bin/ai`
+- WezTerm lab config: `~/.config/wezterm/ai-command-center-lab.lua`
+- Lab docs: `/home/home/Projects/AI Command Center/AGENTS.md` and `README.md`
+- MAP current state: `MAP_System/shared/current-state.md`
+- Deferred items: `MAP_System/notes/command-center-later.md`
+- Health check: `ai-command-center-lab-health` (run before making launcher changes)

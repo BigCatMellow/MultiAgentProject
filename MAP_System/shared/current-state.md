@@ -3,7 +3,7 @@
 <!-- hpom: state_owner: command-center -->
 <!-- hpom: status: CURRENT -->
 <!-- hpom: last_verified: 2026-06-29 -->
-<!-- hpom: verified_against: HPOM sprint completion 2026-06-29 -->
+<!-- hpom: verified_against: TASK-052 emergence CLI implementation 2026-06-29 -->
 <!-- hpom: confidence: HIGH -->
 <!-- hpom: supersedes: NONE -->
 <!-- hpom: superseded_by: NONE -->
@@ -22,10 +22,13 @@ Last reviewed during the MAP Markdown memory audit.
 - The autonomous claim loop lives in `scripts/agent_loop.py`.
 - File-backed task mirrors live in `tasks/` and `workflow/task_graph.json`.
 - Agent availability lives in `agents/status.json`.
-- Integration and multi-gate regression tests are wired into `scripts/run_tests.sh` (12 checks, all passing).
+- Integration and multi-gate regression tests are wired into `scripts/run_tests.sh` (13 checks, all passing).
 - Task graph validation currently passes.
 - Local Ollama helper runner lives in `scripts/local_runner.py` (TASK-048, APPROVED).
 - Supervised Aider setup wrapper lives in `scripts/aider_wrapper.py` (TASK-049, APPROVED).
+- Emergence capture tooling lives in `scripts/map_emergence.py`. It can create
+  insight, synthesis, idea, experiment, and promotion records from templates,
+  rebuild `emergence/INDEX.md`, print the registry, and validate artifact files.
 
 ### HPOM Gates (all active as of 2026-06-29)
 
@@ -61,6 +64,9 @@ Last reviewed during the MAP Markdown memory audit.
 - `local_runner.py` has two OPTIONAL cosmetic items (tracked as TASK-051).
 - Open follow-up items are tracked in `shared/improvement-backlog.md`.
 - Deferred command-center items are tracked in `notes/command-center-later.md`.
+- Command Center Lab emergence integration is being coordinated separately by
+  Claude; core CLI contract is `insight|idea|experiment|synthesis TEXT`,
+  `promote IDEA-id`, `list`, and `validate`.
 
 ## Safety Notes
 

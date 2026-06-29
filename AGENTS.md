@@ -31,6 +31,8 @@ artifacts are the source of truth.
 | When should I use a local model vs. a core agent? | `MAP_System/notes/local-model-helper-guide.md` |
 | What are the general AI collaboration protocols? | `Guidelines/` (universal — applies to any project in this workspace) |
 | What does HPOM mean and how does it work? | `MAP_System/shared/hpom.md` |
+| How do I capture an insight, idea, or experiment? | `MAP_System/emergence/README.md` |
+| How do I promote an idea into a task? | `MAP_System/emergence/IDEA_PROMOTION_RULES.md` |
 
 ## Git
 

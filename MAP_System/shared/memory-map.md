@@ -44,6 +44,9 @@ the live memory first and then pull scoped context as needed.
 
 ## Operating Runbooks
 
+- `emergence/README.md` - creative discovery layer for capturing insights, syntheses, ideas, experiments, and promotions without derailing HPOM work.
+- `emergence/INDEX.md` - registry of active emergence artifacts and IDs.
+- `emergence/templates/` - templates for insight records, synthesis notes, idea cards, experiments, and promotion records.
 - `notes/operations-runbook.md` - commands for status, tests, validation, and recovery.
 - `notes/task-authoring-guide.md` - how to create and repair task records.
 - `notes/task-metadata-repair-plan.md` - focused plan for repairing current task metadata gaps.

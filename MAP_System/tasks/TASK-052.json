@@ -1,0 +1,70 @@
+{
+  "task_id": "TASK-052",
+  "title": "Implement emergence CLI and validation",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-zanu",
+  "description": "Make the MAP emergence system usable in the Command Center Lab by adding a file-backed CLI to create, index, and validate emergence artifacts without bypassing HPOM promotion rules.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/emergence/ideas/IDEA-0001-emergence-cli.md",
+    "MAP_System/emergence/insights/INS-0001-command-center-emergence-cli.md",
+    "MAP_System/emergence/promotions/PROMO-0001-task-052-emergence-cli.md",
+    "MAP_System/emergence/templates/EXPERIMENT_TEMPLATE.md",
+    "MAP_System/emergence/templates/IDEA_CARD_TEMPLATE.md",
+    "MAP_System/handoffs/HANDOFF-TASK-052-codex-lab-zanu-to-claude-lab-nuzo.md",
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/tests/test_map_emergence.py"
+  ],
+  "acceptance_criteria": [
+    "map_emergence.py can create insight, idea, experiment, synthesis, and promotion artifacts from templates with next IDs",
+    "map_emergence.py can rebuild INDEX.md from artifact files",
+    "map_emergence.py validate reports missing required fields/placeholders and passes current artifacts",
+    "run_tests.sh includes the new emergence tests and passes"
+  ],
+  "objective": "Make the MAP emergence system operational for Command Center Lab use by adding script-level capture, index rebuild, list, and validation behavior while preserving HPOM promotion boundaries.",
+  "required_context": [
+    "AGENTS.md",
+    "MAP_System/AGENTS.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/emergence/IDEA_PROMOTION_RULES.md",
+    "MAP_System/emergence/CREATIVE_REVIEW.md",
+    "MAP_System/shared/current-state.md",
+    "Guidelines/llm-communication-rules.md"
+  ],
+  "files_in_scope": [
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/tests/test_map_emergence.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/emergence/README.md",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/templates/IDEA_CARD_TEMPLATE.md",
+    "MAP_System/emergence/templates/EXPERIMENT_TEMPLATE.md",
+    "MAP_System/emergence/insights/INS-0001-command-center-emergence-cli.md",
+    "MAP_System/emergence/ideas/IDEA-0001-emergence-cli.md",
+    "MAP_System/emergence/promotions/PROMO-0001-task-052-emergence-cli.md",
+    "MAP_System/shared/current-state.md"
+  ],
+  "forbidden_changes": [
+    "Do not change HPOM task, review, release, conflict, or claim gates",
+    "Do not make promotion records authorize implementation by themselves",
+    "Do not modify Pathwell story content",
+    "Do not spawn hidden/headless helpers"
+  ],
+  "expected_artifacts": [
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/tests/test_map_emergence.py",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/insights/INS-0001-command-center-emergence-cli.md",
+    "MAP_System/emergence/ideas/IDEA-0001-emergence-cli.md",
+    "MAP_System/emergence/promotions/PROMO-0001-task-052-emergence-cli.md"
+  ],
+  "reviewer_role": "claude-lab-nuzo",
+  "risk": "MEDIUM"
+}

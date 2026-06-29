@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-053",
+  "title": "Command Center Lab integration for emergence system",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-052"
+  ],
+  "owner": "claude-lab-nuzo",
+  "description": "Wire the MAP emergence system into the Command Center Lab UX: document it in lab AGENTS.md, add quick-capture commands to the lab shell and ai wrapper, and add a conditional health check for the emergence CLI.",
+  "input_paths": [
+    "MAP_System/emergence/README.md",
+    "MAP_System/emergence/IDEA_PROMOTION_RULES.md",
+    "MAP_System/tasks/TASK-052.json"
+  ],
+  "output_paths": [
+    "/home/home/.local/bin/ai",
+    "/home/home/.local/bin/ai-command-center-lab-health",
+    "/home/home/.local/bin/ai-command-center-lab-shell",
+    "/home/home/Projects/AI Command Center/AGENTS.md"
+  ],
+  "acceptance_criteria": [
+    "Lab AGENTS.md documents the emergence quick-capture workflow for lab agents",
+    "Lab shell useful-commands block shows ai emerge subcommands",
+    "ai emerge <subcommand> routes to map_emergence.py with graceful fallback if not yet deployed",
+    "Health check includes conditional emergence CLI check that skips cleanly if map_emergence.py absent",
+    "All 23 existing health checks still pass after changes"
+  ]
+}

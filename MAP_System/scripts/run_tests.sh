@@ -33,6 +33,7 @@ run_check exporter_hpom_fields_test python3 MAP_System/tests/test_exporter_hpom_
 run_check review_gate_test python3 MAP_System/tests/test_review_gate.py
 run_check release_gate_test python3 MAP_System/tests/test_release_gate.py
 run_check map_metrics_test python3 MAP_System/tests/test_map_metrics.py
+run_check map_emergence_test python3 MAP_System/tests/test_map_emergence.py
 run_check local_runner_test python3 MAP_System/tests/test_local_runner.py
 run_check aider_wrapper_test python3 MAP_System/tests/test_aider_wrapper.py
 run_check integration_test MAP_System/.venv/bin/python MAP_System/scripts/integration_test.py

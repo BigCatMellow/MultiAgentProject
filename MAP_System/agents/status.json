@@ -18,6 +18,12 @@
       "resume_after": null,
       "notes": ""
     },
+    "claude-lab-nuzo": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
     "claude-mako": {
       "status": "available",
       "reason": null,
@@ -31,6 +37,12 @@
       "notes": ""
     },
     "codex": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex-lab-zanu": {
       "status": "available",
       "reason": null,
       "resume_after": null,

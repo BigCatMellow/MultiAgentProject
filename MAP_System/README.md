@@ -23,6 +23,7 @@ All paths below are relative to `MAP_System/` unless stated otherwise.
 - `shared/architecture.md` - concise current architecture overview.
 - `shared/current-state.md` - live operating status and known issues.
 - `shared/memory-map.md` - guide to which Markdown files are canonical.
+- `emergence/` - creative discovery layer for insights, synthesis notes, ideas, experiments, and promotion records before work enters HPOM.
 - `workflow/` - task graph, runtime policy, approval rules, and LangGraph notes.
 - `tasks/` - one JSON file per task.
 - `artifacts/` - durable work products.

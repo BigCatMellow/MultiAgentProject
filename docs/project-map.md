@@ -20,6 +20,8 @@ active project that uses it.
 - `MAP_System/AGENTS.md` - operating rules for MAP system work.
 - `MAP_System/shared/` - durable project facts, requirements, decisions, and
   unresolved questions.
+- `MAP_System/emergence/` - creative discovery system for insights, synthesis,
+  idea cards, experiments, and promotion records before work becomes HPOM tasks.
 - `MAP_System/tasks/` - task records.
 - `MAP_System/workflow/` - workflow definitions, runtime policy, approval rules,
   and the task graph.
@@ -35,6 +37,8 @@ active project that uses it.
 - `Projects/Pathwell/AGENTS.md` - Pathwell-specific agent rules.
 - `Projects/Pathwell/Story_Files/` - canon, voice, tone, and story reference files.
 - `Projects/Pathwell/Chapters/` - active chapter text and editorial context.
+- `Projects/Pathwell/insights/`, `synthesis/`, `ideas/`, and `experiments/` -
+  Pathwell-specific emergence artifacts.
 - `Projects/Pathwell/Chapters (copy)/` - duplicate chapter material; inspect before
   using as source of truth.
 - `Projects/Pathwell/MAP_System/` - project-local MAP state for Pathwell tasks.

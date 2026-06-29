@@ -20,6 +20,9 @@ Use this checklist when starting a new AI-agent session in this workspace.
 
 ## 3. Find Current State
 
+- Pathwell latest stopping point: `Projects/Pathwell/MAP_System/handoffs/LATEST_STATE.md`
+- Pathwell latest session snapshot: newest relevant
+  `Projects/Pathwell/MAP_System/handoffs/STATE_SNAPSHOT-*`
 - Reusable MAP tasks: `MAP_System/tasks/`
 - Reusable MAP project truth: `MAP_System/shared/`
 - Reusable MAP event log: `MAP_System/events/events.jsonl`
