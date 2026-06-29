@@ -6,9 +6,10 @@ active project that uses it.
 ## Root
 
 - `README.md` - human-facing overview.
-- `AGENTS.md` - root instructions all AI agents should read.
+- `AGENTS.md` - root instructions all AI agents should read. Includes a routing table: what question → which folder.
 - `CLAUDE.md` - Claude Code pointer into the same root workflow.
 - `TASKS.md` - explains that active task boards live in project directories.
+- `Guidelines/` - **universal** AI collaboration protocols (communication rules, laziness ladder, context pruning, prompt skeleton, schema pin). Apply to any project in this workspace, not MAP-specific.
 - `start-all-agents.sh` - launches the local agent set through `hcom`.
 - `launchers/` - desktop files for terminal and command-center launchers.
 - `archive/` - inactive scratch or retired files.

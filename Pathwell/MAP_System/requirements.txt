@@ -1,5 +1,0 @@
-# Runtime dependencies for the future executable orchestration layer.
-# Not installed during bootstrap because this workspace is currently file-backed.
-langgraph
-langchain-core
-

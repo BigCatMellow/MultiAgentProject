@@ -3,7 +3,7 @@
 ## Status
 
 - Policy status: `available`
-- Source brief: `../../Guidelines/map-local-model-roles-5-models-and-aider.md`
+- Source brief: this file (canonical — Guidelines copy removed)
 - Runtime status: `helper-capability-only`
 - Core-agent status: `not-registered`
 - Owner: `command-center`

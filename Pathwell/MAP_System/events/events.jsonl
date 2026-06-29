@@ -1,2 +1,0 @@
-{"created_at":"2026-06-17T14:30:00-04:00","type":"DECISION_RECORDED","task_id":null,"sender":"codex","summary":"Bootstrapped file-backed collaboration workspace for Codex, Claude Code, and future LangGraph orchestration.","artifact_paths":["AGENTS.md","CLAUDE.md","workflow/task_graph.json","langgraph/README.md"]}
-

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=Claude Code
-Comment=Open Claude Code in a terminal
-Exec=gnome-terminal -- /home/home/.local/bin/launch-claude-terminal
-Icon=utilities-terminal
-Terminal=false
-Categories=Development;
