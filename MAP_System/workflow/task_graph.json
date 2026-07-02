@@ -1851,6 +1851,28 @@
       "acceptance_criteria": [
         "Screen panel, lab banner, and mention hint are invisible whenever their hidden attribute is set"
       ]
+    },
+    {
+      "task_id": "TASK-092",
+      "title": "CommandCenterUI: local-model plain-English gists for agent messages",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js"
+      ],
+      "acceptance_criteria": [
+        "Agent messages gain one-sentence plain-English gists produced by the local Ollama model, appearing within ~30s without blocking chat delivery",
+        "Original verbatim text always one click away and clearly distinguished from the paraphrase; operator/system messages never paraphrased",
+        "Feature degrades gracefully (raw messages, no errors) when Ollama is down; sidebar toggle disables it entirely",
+        "Summaries cached per event id; each message summarized at most once across restarts"
+      ]
     }
   ],
   "approval_gates": [

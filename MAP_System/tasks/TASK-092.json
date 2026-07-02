@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-092",
+  "title": "CommandCenterUI: local-model plain-English gists for agent messages",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator request: a local agent should give a quick plain-English summarization of what each agent is saying so the chat feels like a conversation. Implementation per notes/local-model-helper-guide.md (summary is a preferred local-assistant output; local models never final authority): server-side background worker calls local Ollama (llama3.2:3b, 127.0.0.1:11434, temp 0.2, capped tokens) to produce one-sentence gists of protocol-heavy agent messages; cached by hcom event id in runtime/summaries.json so each message is summarized once. Eligibility: agent messages only (never the operator's own, never system notes), \u0434\u043b\u0438\u043d\u0430/marker heuristic. UI shows the gist as the bubble with a clearly-marked toggle to the verbatim original (paraphrase must never silently replace the record); sidebar toggle to turn the feature off, persisted client-side. Summaries backfill asynchronously (~10s warm) via a new read-only endpoint; chat delivery never waits on the model.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js"
+  ],
+  "acceptance_criteria": [
+    "Agent messages gain one-sentence plain-English gists produced by the local Ollama model, appearing within ~30s without blocking chat delivery",
+    "Original verbatim text always one click away and clearly distinguished from the paraphrase; operator/system messages never paraphrased",
+    "Feature degrades gracefully (raw messages, no errors) when Ollama is down; sidebar toggle disables it entirely",
+    "Summaries cached per event id; each message summarized at most once across restarts"
+  ]
+}
