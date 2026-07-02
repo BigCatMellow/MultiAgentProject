@@ -45,6 +45,12 @@ LIVE_STATUSES = {"active", "listening", "waiting", "blocked"}
 STALE_AGE_SECONDS = 1800  # status unchanged this long => presumed dead
 PROBE_SCHEDULE_MINUTES = [15, 45, 90, 150, 240, 330]  # capped backoff per incident
 TRANSCRIPT_TAIL_BYTES = 65536
+CHECKIN_IDLE_SECONDS = 7200  # 2h live-but-idle with no claim/declaration => check-in
+CHECKIN_SAFE_STATUSES = {"listening"}  # ONLY these hcom states are check-in eligible:
+# blocked/waiting sessions are stuck on prompts or dependencies, not drifting
+# (TASK-084 review finding 1)
+STANDBY_REASONS = {"awaiting_work"}  # declared idle: never check-in-nudged
+CHECKIN_TASK_ID = "TASK-084"  # check-in events attribute here, not to the RnS incident task
 
 NUDGE_PROMPT = (
     "Rise & Shine (RnS limit watcher, TASK-083): your session appears to have "
@@ -109,11 +115,20 @@ def detect_silent_stops(prev_live, current_live, status_data, already_reported):
 # ---------------------------------------------------------------- v2 logic
 
 def classify_live(entry):
-    """An hcom agent entry counts as live only if its status is a live state
-    AND its status age is fresh. Dead sessions keep their last status while
-    the age grows unbounded -- the overnight incident's exact shape."""
+    """An hcom agent entry counts as live if its status is a live state AND
+    its session process still exists.
+
+    `process_bound` is the authoritative signal when present (TASK-084): an
+    idle-but-alive agent can sit listening for hours (check-in territory,
+    not incident territory), while a dead session keeps its last status with
+    the process gone. When hcom doesn't report process_bound, fall back to
+    the staleness heuristic from the overnight incident (TASK-083): a status
+    unchanged for 30+ minutes is presumed dead."""
     if entry.get("status") not in LIVE_STATUSES:
         return False
+    bound = entry.get("process_bound")
+    if bound is not None:
+        return bool(bound)
     age = entry.get("status_age_seconds")
     if isinstance(age, (int, float)) and age > STALE_AGE_SECONDS:
         return False
@@ -209,13 +224,60 @@ def probe_action(incident, now):
     return "nudge" if now >= due else "wait"
 
 
+def decide_checkins(snapshot, status_data, claimed_agents, state, now):
+    """Pure (TASK-084 / IDEA-0007): live agents that are neither working a
+    claimed task nor declared standby, idle past the check-in threshold.
+
+    Safety boundaries from the idea card: a declared reason of any kind
+    suppresses (awaiting_work, out_of_tokens, ...), an IN_PROGRESS claim
+    suppresses, non-'available' durable status suppresses, and re-nudges are
+    throttled to one per idle window."""
+    due = []
+    agents = status_data.get("agents", {})
+    last_checkins = state.get("checkins", {})
+    for name, entry in sorted(snapshot.items()):
+        if not classify_live(entry):
+            continue  # not live: RnS incident territory, not check-in territory
+        if entry.get("status") not in CHECKIN_SAFE_STATUSES:
+            continue  # active = working; blocked/waiting = stuck, not drifting
+        age = entry.get("status_age_seconds")
+        if not isinstance(age, (int, float)) or age < CHECKIN_IDLE_SECONDS:
+            continue
+        durable = agents.get(name, {})
+        if durable.get("reason"):
+            continue  # declared standby/limit/blocked/etc.
+        if durable.get("status") not in (None, "available"):
+            continue
+        if name in claimed_agents:
+            continue  # owns in-flight claimed work
+        last = parse_resume_after(last_checkins.get(name))
+        if last is not None and (now - last).total_seconds() < CHECKIN_IDLE_SECONDS:
+            continue  # already nudged this window
+        due.append(name)
+    return due
+
+
+def claimed_agent_ids():
+    """Agents currently holding IN_PROGRESS claims in SQLite; None on failure."""
+    try:
+        import sqlite3
+        con = sqlite3.connect(ROOT / "map.db")
+        rows = con.execute(
+            "SELECT DISTINCT claimed_by FROM tasks "
+            "WHERE status='IN_PROGRESS' AND claimed_by IS NOT NULL").fetchall()
+        con.close()
+        return {r[0] for r in rows}
+    except Exception:
+        return None
+
+
 # ------------------------------------------------------------- side effects
 
-def append_event(event_type, summary, artifact_paths=None, dry_run=False):
+def append_event(event_type, summary, artifact_paths=None, dry_run=False, task_id=None):
     event = {
         "created_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "type": event_type,
-        "task_id": TASK_ID,
+        "task_id": task_id or TASK_ID,
         "sender": SENDER,
         "summary": summary,
         "artifact_paths": artifact_paths or [],
@@ -361,6 +423,28 @@ def poll_once(dry_run=False):
                     dry_run=dry_run)
 
         state["last_live"] = live_now
+
+        # check-in path (TASK-084): message-only, never a spawn
+        claimed = claimed_agent_ids()
+        if claimed is not None:
+            state.setdefault("checkins", {})
+            for name in decide_checkins(snapshot, status_data, claimed, state, now):
+                msg = (f"!NOTE RnS check-in: you've been idle "
+                       f"{int(snapshot[name].get('status_age_seconds', 0) // 3600)}h+ with no "
+                       f"claimed task and no standby declaration. Is there something you "
+                       f"should be doing? If your queue is genuinely empty, run: python3 "
+                       f"MAP_System/scripts/declare_standby.py {name}")
+                if dry_run:
+                    print(f"[dry-run] would check-in nudge {name}: {msg}")
+                else:
+                    subprocess.run(["hcom", "send", f"@{name}", "--intent", "request",
+                                    "--name", SENDER, "--", msg],
+                                   capture_output=True, text=True, timeout=30)
+                state["checkins"][name] = now.isoformat(timespec="seconds")
+                append_event("PROGRESS",
+                    f"RnS check-in nudge sent to {name}: live but idle past "
+                    f"{CHECKIN_IDLE_SECONDS // 3600}h with no claim and no standby "
+                    f"declaration.", dry_run=dry_run, task_id=CHECKIN_TASK_ID)
 
     save_state(state, dry_run=dry_run)
 

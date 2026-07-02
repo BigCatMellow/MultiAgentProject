@@ -1,0 +1,60 @@
+{
+  "task_id": "TASK-084",
+  "title": "RnS v2.1: declared-idle protocol and 2h check-in nudges",
+  "task_type": "implementation",
+  "role": "technical_lead",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-083"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Implement IDEA-0007/PROMO-0006 per operator #15495: (1) scripts/declare_standby.py -- agents declare standby/awaiting_work when their queue is empty, SQLite-first then export (mirror lesson); (2) watcher check-in path -- live agents with no IN_PROGRESS claim, durable status available, and hcom idle 2h+ get a message-only nudge (never a spawn), at most once per 2h window; (3) safety boundaries from the idea card enforced: declared standby suppresses, claims suppress, no auto work assignment, no headless anything.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/README.md",
+    "MAP_System/agents/status.json",
+    "MAP_System/emergence/ideas/IDEA-0007-declared-idle-checkin-protocol.md",
+    "MAP_System/emergence/promotions/PROMO-0006-declared-idle-checkin.md",
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/declare_standby.py",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "decide_checkins is pure and tested: claim suppresses, declaration suppresses, short idle suppresses, 2h+ undeclared idle nudges, renudge throttled to one per window",
+    "declare_standby.py writes SQLite first and exports; --back returns agent to available",
+    "Check-ins are hcom messages only -- no hcom r, no session spawns",
+    "Dry-run against live state before restart; suite passes"
+  ],
+  "objective": "Give MAP the declared-idle primitive: agents say when they're intentionally done, and the watcher politely checks in on live agents that drift 2+ hours with no claim and no declaration.",
+  "required_context": [
+    "MAP_System/emergence/ideas/IDEA-0007-declared-idle-checkin-protocol.md (incl. safety boundaries + promotion shape)",
+    "MAP_System/emergence/promotions/PROMO-0006-declared-idle-checkin.md",
+    "hcom #15495 (operator request), #15531/15562 (limo merge + dry-run-first)",
+    "SYN-0001 mirror lesson: SQLite is the source; status.json is an export"
+  ],
+  "files_in_scope": [
+    "MAP_System/agents/README.md",
+    "MAP_System/agents/status.json",
+    "MAP_System/emergence/ideas/IDEA-0007-declared-idle-checkin-protocol.md",
+    "MAP_System/emergence/promotions/PROMO-0006-declared-idle-checkin.md",
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/declare_standby.py",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "forbidden_changes": [
+    "No session spawns from the check-in path (message only)",
+    "No automatic work assignment in nudge text or behavior",
+    "No nudges to agents with a declared reason, an IN_PROGRESS claim, or non-available durable status",
+    "No direct status.json writes (SQLite first, then export)"
+  ],
+  "expected_artifacts": [
+    "watcher check-in path + tests",
+    "declare_standby.py helper",
+    "protocol/README doc updates",
+    "live dry-run evidence (zero false nudges on current state) before restart"
+  ],
+  "reviewer_role": "technical_lead (codex-lab-limo)",
+  "risk": "Low-medium: worst case is noisy messages, not spawned sessions. Mitigations: 2h threshold, once-per-window throttle, dry-run-first live validation per limo's experiment framing."
+}

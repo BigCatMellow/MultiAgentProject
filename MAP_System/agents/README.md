@@ -25,8 +25,13 @@ The file mixes three kinds of identity. Read it with these rules:
 ## Field conventions
 
 - `status`: `available` | `busy` | `standby` | `inactive` | `offline`
-- `reason`: `out_of_tokens` | `session_ended` | `long_term_unavailable` |
-  `operator_relay_only` | `tool_identity` | null
+- `reason`: `out_of_tokens` | `awaiting_work` | `session_ended` |
+  `long_term_unavailable` | `operator_relay_only` | `tool_identity` | null
+- `awaiting_work` = **declared idle** (TASK-084): the agent finished its
+  queue and said so via `scripts/declare_standby.py`. RnS check-in nudges
+  skip declared agents; undeclared live agents idle 2h+ with no claim get
+  a "should you be doing something?" message. Declare with
+  `declare_standby.py <name>`, undeclare with `--back`.
 - `resume_after`: must be an **ISO-8601 timestamp** when `reason` is
   `out_of_tokens` — the limit watcher (`scripts/limit_watcher.py`, TASK-080)
   auto-resumes agents from it and flags free text as unparseable rather than

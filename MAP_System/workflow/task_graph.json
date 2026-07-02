@@ -1678,6 +1678,33 @@
         "Transcript reset-time extraction used when available, with backoff as fallback, never blocking on it",
         "Protocol note updated and branded RnS; suite passes"
       ]
+    },
+    {
+      "task_id": "TASK-084",
+      "title": "RnS v2.1: declared-idle protocol and 2h check-in nudges",
+      "task_type": "implementation",
+      "role": "technical_lead",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-083"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/agents/README.md",
+        "MAP_System/agents/status.json",
+        "MAP_System/emergence/ideas/IDEA-0007-declared-idle-checkin-protocol.md",
+        "MAP_System/emergence/promotions/PROMO-0006-declared-idle-checkin.md",
+        "MAP_System/notes/limit-exhaustion-protocol.md",
+        "MAP_System/scripts/declare_standby.py",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "decide_checkins is pure and tested: claim suppresses, declaration suppresses, short idle suppresses, 2h+ undeclared idle nudges, renudge throttled to one per window",
+        "declare_standby.py writes SQLite first and exports; --back returns agent to available",
+        "Check-ins are hcom messages only -- no hcom r, no session spawns",
+        "Dry-run against live state before restart; suite passes"
+      ]
     }
   ],
   "approval_gates": [

@@ -109,6 +109,21 @@ unbounded. v2 handles this:
 This means steps 1-4 above are now the *optimization* (a recorded reset
 time gets one precise nudge instead of probing), not the requirement.
 
+### v2.1: declared idle and check-in nudges (TASK-084 / IDEA-0007)
+
+RnS also distinguishes **declared idle** from **drifted idle**:
+
+- When your queue is empty, declare it:
+  `python3 MAP_System/scripts/declare_standby.py <your-name>` (SQLite-first,
+  auto-exports). Run it with `--back` when you pick up work again. Declared
+  agents are never check-in nudged.
+- A live agent that is idle 2+ hours with **no** IN_PROGRESS claim and **no**
+  declaration gets a message-only check-in ("is there something you should be
+  doing?"), at most once per 2h window. Never a session spawn, never an
+  auto-assignment — per IDEA-0007's safety boundaries.
+- Liveness for this purpose uses hcom's `process_bound` (idle-but-alive vs
+  dead-with-frozen-status), with the staleness heuristic as fallback.
+
 ## Relation to existing pieces
 
 - `agents/status.json` — already has the fields; this protocol makes agents

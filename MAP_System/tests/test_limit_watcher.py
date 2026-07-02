@@ -198,6 +198,61 @@ def test_reset_time_parsing():
     assert got.hour == 16
 
 
+def test_process_bound_liveness_contract():
+    """TASK-084: process_bound separates idle-but-alive (check-in territory)
+    from dead-with-frozen-status (incident territory). Age heuristic remains
+    the fallback when process_bound is absent (TASK-083 incident shape)."""
+    from limit_watcher import classify_live
+
+    assert classify_live({"status": "listening", "status_age_seconds": 3 * 3600,
+                          "process_bound": True}) is True     # idle but alive
+    assert classify_live({"status": "active", "status_age_seconds": 3 * 3600,
+                          "process_bound": False}) is False   # zombie entry
+    assert classify_live({"status": "active", "status_age_seconds": 21600}) is False  # fallback
+    assert classify_live({"status": "listening", "status_age_seconds": 5,
+                          "process_bound": True}) is True
+
+
+def test_checkin_decision_logic():
+    """TASK-084 / IDEA-0007: check-in nudges hit only live agents idle 2h+
+    with no claim and no declaration. Every safety boundary from the idea
+    card is a suppression case."""
+    from limit_watcher import decide_checkins
+
+    idle3h = {"status": "listening", "status_age_seconds": 3 * 3600, "process_bound": True}
+    idle1h = {"status": "listening", "status_age_seconds": 3600, "process_bound": True}
+    working = {"status": "active", "status_age_seconds": 3 * 3600, "process_bound": True}
+    dead = {"status": "listening", "status_age_seconds": 7 * 3600, "process_bound": False}
+
+    st = status(rose={"status": "available"}, limo={"status": "available"})
+
+    # the drifted agent gets a check-in
+    assert decide_checkins({"rose": idle3h}, st, set(), {"checkins": {}}, NOW) == ["rose"]
+    # blocked/waiting sessions are stuck, not drifting -- never check-in nudged
+    # (TASK-084 review finding 1)
+    blocked3h = {"status": "blocked", "status_age_seconds": 3 * 3600, "process_bound": True}
+    waiting3h = {"status": "waiting", "status_age_seconds": 3 * 3600, "process_bound": True}
+    assert decide_checkins({"rose": blocked3h}, st, set(), {"checkins": {}}, NOW) == []
+    assert decide_checkins({"rose": waiting3h}, st, set(), {"checkins": {}}, NOW) == []
+    # short idle, visibly active, or dead: no check-in
+    assert decide_checkins({"rose": idle1h}, st, set(), {"checkins": {}}, NOW) == []
+    assert decide_checkins({"rose": working}, st, set(), {"checkins": {}}, NOW) == []
+    assert decide_checkins({"rose": dead}, st, set(), {"checkins": {}}, NOW) == []
+    # an IN_PROGRESS claim suppresses
+    assert decide_checkins({"rose": idle3h}, st, {"rose"}, {"checkins": {}}, NOW) == []
+    # a declared reason suppresses (awaiting_work, out_of_tokens, anything)
+    st_declared = status(rose={"status": "standby", "reason": "awaiting_work"})
+    assert decide_checkins({"rose": idle3h}, st_declared, set(), {"checkins": {}}, NOW) == []
+    # non-available durable status suppresses
+    st_inactive = status(rose={"status": "inactive", "reason": None})
+    assert decide_checkins({"rose": idle3h}, st_inactive, set(), {"checkins": {}}, NOW) == []
+    # renudge throttle: one per window
+    recent = {"checkins": {"rose": (NOW - timedelta(minutes=30)).isoformat()}}
+    assert decide_checkins({"rose": idle3h}, st, set(), recent, NOW) == []
+    old = {"checkins": {"rose": (NOW - timedelta(hours=3)).isoformat()}}
+    assert decide_checkins({"rose": idle3h}, st, set(), old, NOW) == ["rose"]
+
+
 def main():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in tests:
