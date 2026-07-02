@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Export MAP_System/map.db task state back to JSON files."""
+"""Export MAP_System/map.db task state back to JSON files.
+
+Note: agents/status.json is an operational routing view, not a full dump of the
+SQLite agents table. Inactive historical session rows and system/tool identities
+that are not already present in the mirror or tied to active tasks are filtered
+out so old identities do not reappear as routable agents after reseeding.
+"""
 
 from __future__ import annotations
 

@@ -1968,15 +1968,17 @@
       "title": "Purge reseed-resurrected historical agents from the SQLite agents table",
       "task_type": "maintenance",
       "role": "state_steward",
-      "status": "CHANGES_REQUESTED",
+      "status": "APPROVED",
       "dependencies": [
         "TASK-090"
       ],
       "owner": "codex-lab-limo",
       "output_paths": [
+        "MAP_System/agents/README.md",
         "MAP_System/agents/status.json",
         "MAP_System/events/events.jsonl",
         "MAP_System/graph/runner.py",
+        "MAP_System/migration/export_to_files.py",
         "MAP_System/scripts/run_tests.sh",
         "MAP_System/tasks/TASK-096.json",
         "MAP_System/tests/test_runner_task_classification.py",

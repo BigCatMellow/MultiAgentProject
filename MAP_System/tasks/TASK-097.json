@@ -3,7 +3,7 @@
   "title": "Purge reseed-resurrected historical agents from the SQLite agents table",
   "task_type": "maintenance",
   "role": "state_steward",
-  "status": "CHANGES_REQUESTED",
+  "status": "APPROVED",
   "dependencies": [
     "TASK-090"
   ],
@@ -11,9 +11,11 @@
   "description": "The revived LangGraph runner (venv rebuilt during TASK-095) shows ~10 dead historical sessions as available in map.db agents: claude-lab-fema/fifi/kiri/miro, codex-lab-kana/lepa/memo/milo/nora/zune, plus limit-watcher as an agent. These are reseed fallout from the 2026-07-02 map.db rebuild: the mirror churn was cleaned (TASK-086 era) but the underlying SQLite rows kept status=available, un-doing the TASK-082 16->6 reconcile at the source. Also: TASK-096 shows READY in SQLite while it was retired as duplicate-BLOCKED in the graph mirror -- same two-readers-one-truth pattern (SYN-0001). Fix at the SQLite source per TASK-082 semantics (inactive/session_ended for historical sessions, tool_identity for limit-watcher), export, verify reconcile_agents.py and the runner agree, and align TASK-096 status across db/mirrors.",
   "input_paths": [],
   "output_paths": [
+    "MAP_System/agents/README.md",
     "MAP_System/agents/status.json",
     "MAP_System/events/events.jsonl",
     "MAP_System/graph/runner.py",
+    "MAP_System/migration/export_to_files.py",
     "MAP_System/scripts/run_tests.sh",
     "MAP_System/tasks/TASK-096.json",
     "MAP_System/tests/test_runner_task_classification.py",

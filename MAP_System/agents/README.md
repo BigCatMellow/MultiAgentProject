@@ -41,6 +41,10 @@ The file mixes three kinds of identity. Read it with these rules:
 
 - Reconcile against live reality:
   `hcom list --json > /tmp/live.json && python3 MAP_System/scripts/reconcile_agents.py --hcom-json /tmp/live.json`
+- `status.json` is a filtered operational export of the SQLite `agents` table,
+  not a full table dump. The exporter keeps agents already present in the
+  mirror and agents tied to active tasks, and omits inactive historical session
+  rows and system/tool identities that are not operational routing targets.
 - Agents update their own entry at limit time per the limit-exhaustion
   protocol; the watcher and reconcile report catch what they miss.
 - Do not route work from this file alone; check hcom first
