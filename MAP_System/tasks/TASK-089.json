@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-089",
+  "title": "CommandCenterUI all-in-one: lab lifecycle + agent screens in-app",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator direction: opening the UI must work like opening the wezterm lab -- an all-in-one entry point. (1) Lab lifecycle: on app open, if the lab is down (no lab agents in hcom), start it via the existing ai-command-center-lab launcher (watcher + wezterm agent tabs stay visible per lab protocol; the UI is the operator's front-end on top). Sidebar shows lab state with a manual Start button as fallback. (2) Agent screens: per-agent screen viewer in the app fed by hcom term <name> --json (read-only poll), plus a guarded inject endpoint (hcom term inject) so the operator can respond to approval prompts without switching to wezterm. Inject requires same-origin, name validated against live hcom instances, text capped. PROMO-0004 security second pass applies (inject is a new write-capable surface).",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/app/window.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js"
+  ],
+  "acceptance_criteria": [
+    "Opening the app with the lab down brings the lab up (watcher + agents) without further operator action; lab state visible in the sidebar",
+    "Clicking an agent opens a live view of its terminal screen inside the app",
+    "Operator can send text/Enter to an agent terminal from the app to answer prompts (same-origin guarded, validated name, capped text)",
+    "hcom term reads are read-only; inject only fires on explicit operator action"
+  ]
+}

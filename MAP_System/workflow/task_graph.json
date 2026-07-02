@@ -1789,6 +1789,29 @@
         "Composer is always visible at the bottom and the presence sidebar always visible on the left, regardless of feed length; only the message feed scrolls",
         "F5/Ctrl+R reloads the page inside the WebKit window"
       ]
+    },
+    {
+      "task_id": "TASK-089",
+      "title": "CommandCenterUI all-in-one: lab lifecycle + agent screens in-app",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/app/window.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js"
+      ],
+      "acceptance_criteria": [
+        "Opening the app with the lab down brings the lab up (watcher + agents) without further operator action; lab state visible in the sidebar",
+        "Clicking an agent opens a live view of its terminal screen inside the app",
+        "Operator can send text/Enter to an agent terminal from the app to answer prompts (same-origin guarded, validated name, capped text)",
+        "hcom term reads are read-only; inject only fires on explicit operator action"
+      ]
     }
   ],
   "approval_gates": [
