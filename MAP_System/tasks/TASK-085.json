@@ -1,0 +1,47 @@
+{
+  "task_id": "TASK-085",
+  "title": "Lab autostart: watcher + startup orientation on lab open",
+  "task_type": "implementation",
+  "role": "technical_lead",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-084"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Operator #15779: everything should launch when the AI Command Center Lab opens, and agents should ask on their own from the get go. Wire start-limit-watcher.sh (idempotent) into the ai-command-center-lab launcher, and extend both lab agent startup prompts with a boot-orientation routine: undeclare standby, read latest handoff/snapshot + status, check runner route, then send bigboss one message -- a resume plan if in-flight work exists, or a priorities request if the queue is empty.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/.local/bin/ai-command-center-lab",
+    "/home/home/.local/bin/ai-command-center-lab-claude",
+    "/home/home/.local/bin/ai-command-center-lab-codex"
+  ],
+  "acceptance_criteria": [
+    "Watcher starts idempotently on lab open and its failure cannot block the lab from opening",
+    "Both lab agents get a startup-orientation instruction ending in exactly one proactive hcom message to bigboss",
+    "bash -n passes on all edited scripts; existing behavior (tabs, tags, visibility rules) unchanged"
+  ],
+  "objective": "One action (open the lab) brings up the whole system: monitor, both agents with proactive startup orientation, and the RnS watcher -- nothing needs manual restarting after a reboot.",
+  "required_context": [
+    "hcom #15779 (operator request)",
+    "/home/home/.config/wezterm/ai-command-center-lab.lua (tab spawn flow)",
+    "MAP_System/scripts/start-limit-watcher.sh (idempotent, pidfile+identity guarded)",
+    "MAP_System/notes/limit-exhaustion-protocol.md (declare_standby --back on wake)"
+  ],
+  "files_in_scope": [
+    "/home/home/.local/bin/ai-command-center-lab",
+    "/home/home/.local/bin/ai-command-center-lab-claude",
+    "/home/home/.local/bin/ai-command-center-lab-codex"
+  ],
+  "forbidden_changes": [
+    "No changes to tab structure, hcom tags, or visibility rules",
+    "No headless anything",
+    "Watcher start must not be able to abort lab launch (set -eu guard)"
+  ],
+  "expected_artifacts": [
+    "launcher starts watcher idempotently before wezterm exec",
+    "both agent prompts gain the boot-orientation paragraph",
+    "bash -n clean on all three scripts"
+  ],
+  "reviewer_role": "technical_lead (codex-lab-limo)",
+  "risk": "Low: additive lines to launch scripts; watcher start guarded non-fatal; prompts are text-only changes."
+}
