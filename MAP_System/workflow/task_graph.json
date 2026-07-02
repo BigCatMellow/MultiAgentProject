@@ -1655,6 +1655,29 @@
         "SYN/EXP decision recorded; first synthesis record is real content, not ceremony",
         "LangGraph runner routes correctly against the post-remediation task state"
       ]
+    },
+    {
+      "task_id": "TASK-083",
+      "title": "RnS v2: detect silent limit-stops and probe-resume without a recorded reset time",
+      "task_type": "implementation",
+      "role": "technical_lead",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-080"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/agents/limit-watcher-state.json",
+        "MAP_System/notes/limit-exhaustion-protocol.md",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "Liveness classification uses status + staleness, not list presence; regression test reproduces the overnight incident shape",
+        "Presumed-down agents get probe-resumes on a capped backoff (no infinite spawn attempts), cleared when the agent rises",
+        "Transcript reset-time extraction used when available, with backoff as fallback, never blocking on it",
+        "Protocol note updated and branded RnS; suite passes"
+      ]
     }
   ],
   "approval_gates": [

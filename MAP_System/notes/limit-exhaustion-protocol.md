@@ -1,4 +1,7 @@
-# Limit Exhaustion & Resume Protocol
+# Limit Exhaustion & Resume Protocol — "Rise & Shine" (RnS)
+
+Operator-assigned name (hcom #15260): **Rise & Shine / RnS** — the whole
+mechanism of noticing a limit-stopped agent and waking it after reset.
 
 Status: ACTIVE CONVENTION
 Owner: core agents (claude, codex)
@@ -82,6 +85,29 @@ deterministic background poller (no LLM) started via
 The watcher makes step 5 (the alarm) automatic, but steps 1-4 — especially
 the durable handoff — remain each agent's own responsibility. A resumed agent
 with no handoff is awake but lost.
+
+### v2: sessions that die with no final turn (TASK-083)
+
+The 2026-07-02 overnight incident proved the common case is the hard one:
+the session hits the wall with **no final turn**, writes nothing, and hcom
+keeps listing it with its last status while `status_age_seconds` grows
+unbounded. v2 handles this:
+
+- liveness = live status AND fresh status age (stale > 30 min counts as
+  down, even while listed);
+- a previously-live agent going not-live with no status record opens an
+  **incident**;
+- the watcher tail-reads the session transcript for the limit message's
+  reset time and schedules the nudge for it when found;
+- otherwise it **probe-resumes** on a capped backoff (15/45/90/150/240/330
+  minutes from detection — covers the 5h window), then gives up with a
+  loud BLOCKED event;
+- probes are visible tabs; an agent that's still rate-limited just stops
+  again and the next probe retries later; when it rises, the incident
+  closes with a PROGRESS event.
+
+This means steps 1-4 above are now the *optimization* (a recorded reset
+time gets one precise nudge instead of probing), not the requirement.
 
 ## Relation to existing pieces
 

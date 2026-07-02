@@ -88,9 +88,9 @@ def test_silent_stop_detection():
 
 
 def test_empty_hcom_list_is_data_not_failure():
-    """Regression (TASK-080 review finding 1): a successful empty hcom list
-    must return [], not None, so silent-stop detection still runs when ALL
-    previously live agents have vanished."""
+    """Regression (TASK-080 review finding 1, carried into v2's hcom_snapshot):
+    a successful empty hcom list must return {}, not None, so presumed-down
+    detection still runs when ALL previously live agents have vanished."""
     import limit_watcher as lw
 
     class FakeResult:
@@ -100,17 +100,102 @@ def test_empty_hcom_list_is_data_not_failure():
 
     real_run = lw.subprocess.run
     try:
-        lw.subprocess.run = lambda *a, **k: FakeResult(0, "")
-        assert lw.hcom_live_agents() == []  # empty success -> data
-        lw.subprocess.run = lambda *a, **k: FakeResult(0, "rose\nlimo\n")
-        assert lw.hcom_live_agents() == ["rose", "limo"]
+        lw.subprocess.run = lambda *a, **k: FakeResult(0, "[]")
+        assert lw.hcom_snapshot() == {}  # empty success -> data
+        lw.subprocess.run = lambda *a, **k: FakeResult(
+            0, '[{"name":"rose","status":"active","status_age_seconds":1}]')
+        assert list(lw.hcom_snapshot()) == ["rose"]
         lw.subprocess.run = lambda *a, **k: FakeResult(1, "")
-        assert lw.hcom_live_agents() is None  # failure -> None
+        assert lw.hcom_snapshot() is None  # failure -> None
+        lw.subprocess.run = lambda *a, **k: FakeResult(0, "not json")
+        assert lw.hcom_snapshot() is None  # garbage -> None
     finally:
         lw.subprocess.run = real_run
-    # and the all-vanished scenario produces stops end-to-end
+    # all-vanished end-to-end: everyone previously live becomes an incident
+    from limit_watcher import detect_presumed_down
     st = status(rose={"status": "available"}, limo={"status": "available"})
-    assert detect_silent_stops(["rose", "limo"], [], st, set()) == ["limo", "rose"]
+    assert detect_presumed_down(["rose", "limo"], {}, st, incidents={}) == ["limo", "rose"]
+
+
+def test_overnight_incident_shape():
+    """Regression (TASK-083, hcom #15260): a session dies with no final turn.
+    It stays LISTED in hcom with its last status, but status_age grows
+    unbounded, and status.json still says available. v1 missed this entirely;
+    v2 must classify it not-live and open an incident."""
+    from limit_watcher import classify_live, detect_presumed_down
+
+    dead = {"status": "active", "status_age_seconds": 21600}   # 6h stale
+    fresh = {"status": "listening", "status_age_seconds": 5}
+    assert classify_live(dead) is False
+    assert classify_live(fresh) is True
+    assert classify_live({"status": "stopped", "status_age_seconds": 2}) is False
+
+    snapshot = {"rose": dead, "limo": fresh}
+    st = status(rose={"status": "available"}, limo={"status": "available"})
+    down = detect_presumed_down(["rose", "limo"], snapshot, st, incidents={})
+    assert down == ["rose"]
+    # deliberately recorded agents are NOT incidents (v1 path owns them)
+    st2 = status(rose={"status": "standby", "reason": "out_of_tokens",
+                       "resume_after": "2026-07-02T15:00:00"}, limo={"status": "available"})
+    assert detect_presumed_down(["rose", "limo"], snapshot, st2, incidents={}) == []
+    # open incident not re-detected
+    assert detect_presumed_down(["rose"], {"rose": dead}, st, incidents={"rose": {}}) == []
+
+
+def test_probe_backoff_schedule():
+    from limit_watcher import probe_action, PROBE_SCHEDULE_MINUTES
+
+    detected = NOW.isoformat()
+    inc = {"detected_at": detected, "reset_at": None, "probes_sent": 0,
+           "reset_nudged": False, "gave_up": False}
+    assert probe_action(inc, NOW + timedelta(minutes=5)) == "wait"
+    assert probe_action(inc, NOW + timedelta(minutes=16)) == "nudge"
+    inc["probes_sent"] = 1
+    assert probe_action(inc, NOW + timedelta(minutes=20)) == "wait"
+    assert probe_action(inc, NOW + timedelta(minutes=46)) == "nudge"
+    inc["probes_sent"] = len(PROBE_SCHEDULE_MINUTES)
+    assert probe_action(inc, NOW + timedelta(hours=9)) == "give_up"
+    inc["gave_up"] = True
+    assert probe_action(inc, NOW + timedelta(hours=10)) == "wait"  # gives up once
+
+
+def test_probe_action_with_known_reset():
+    """Regression (TASK-083 review finding 1): retries after the scheduled
+    reset nudge must anchor to the nudge time, not detected_at — otherwise
+    every earlier backoff slot is instantly overdue and consecutive polls
+    fire probes back-to-back."""
+    from limit_watcher import probe_action
+
+    inc = {"detected_at": NOW.isoformat(),
+           "reset_at": (NOW + timedelta(hours=2)).isoformat(),
+           "probes_sent": 0, "reset_nudged": False, "gave_up": False}
+    assert probe_action(inc, NOW + timedelta(minutes=30)) == "wait"   # before reset: no probes
+    assert probe_action(inc, NOW + timedelta(hours=2, minutes=1)) == "nudge"
+    # reset nudge fires; retries re-anchor to its timestamp
+    nudge_time = NOW + timedelta(hours=2, minutes=1)
+    inc["reset_nudged"] = True
+    inc["reset_nudged_at"] = nudge_time.isoformat()
+    assert probe_action(inc, nudge_time + timedelta(minutes=2)) == "wait"   # NOT instantly overdue
+    assert probe_action(inc, nudge_time + timedelta(minutes=16)) == "nudge" # first retry slot
+    inc["probes_sent"] = 1
+    assert probe_action(inc, nudge_time + timedelta(minutes=20)) == "wait"
+    assert probe_action(inc, nudge_time + timedelta(minutes=46)) == "nudge"
+
+
+def test_reset_time_parsing():
+    from limit_watcher import parse_reset_time_from_text
+
+    now = NOW.replace(hour=10)  # 10:00 UTC
+    got = parse_reset_time_from_text("5-hour limit reached ... resets 3pm", now)
+    assert got is not None and (got.hour, got.minute) == (15, 0) and got > now
+    got = parse_reset_time_from_text("limit reached. resets at 9:30am", now)
+    assert got is not None and (got.hour, got.minute) == (9, 30) and got > now  # tomorrow
+    got = parse_reset_time_from_text("usage resets at 23:15 tonight", now)
+    assert got is not None and (got.hour, got.minute) == (23, 15)
+    assert parse_reset_time_from_text("no limit text here", now) is None
+    # last mention wins
+    got = parse_reset_time_from_text("resets 1pm ... actually resets 4pm", now)
+    assert got.hour == 16
 
 
 def main():

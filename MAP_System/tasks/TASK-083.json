@@ -1,0 +1,52 @@
+{
+  "task_id": "TASK-083",
+  "title": "RnS v2: detect silent limit-stops and probe-resume without a recorded reset time",
+  "task_type": "implementation",
+  "role": "technical_lead",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-080"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Operator incident (hcom #15260, named Rise & Shine/RnS): claude-lab-rose hit its usage limit overnight with no final turn, so it never wrote out_of_tokens/resume_after, and hcom kept listing the stopped session, so neither watcher path fired. v2 fixes both blind spots: (1) classify liveness from hcom list --json status + status_age_seconds instead of bare name presence; (2) for presumed-down agents with no recorded reset time, extract the reset time from the session transcript tail when possible, else probe-resume on a capped backoff schedule covering the 5h window.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/limit-watcher-state.json",
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "Liveness classification uses status + staleness, not list presence; regression test reproduces the overnight incident shape",
+    "Presumed-down agents get probe-resumes on a capped backoff (no infinite spawn attempts), cleared when the agent rises",
+    "Transcript reset-time extraction used when available, with backoff as fallback, never blocking on it",
+    "Protocol note updated and branded RnS; suite passes"
+  ],
+  "objective": "Make Rise & Shine actually fire in the real failure mode: sessions that die with no final turn and no status record, while still visible in hcom listings.",
+  "required_context": [
+    "hcom #15260 (operator incident report)",
+    "MAP_System/agents/limit-watcher-state.json (overnight evidence: last_live never changed, silent_reported empty)",
+    "hcom list --json fields: status, status_age_seconds, transcript_path",
+    "MAP_System/notes/limit-exhaustion-protocol.md"
+  ],
+  "files_in_scope": [
+    "MAP_System/agents/limit-watcher-state.json",
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "forbidden_changes": [
+    "No headless resumes (visibility rule)",
+    "No unbounded probe loops -- hard cap on attempts per incident",
+    "No blocking/slow transcript parsing in the poll loop (tail-read only, bounded bytes)",
+    "Do not remove v1 behavior (recorded resume_after path stays primary)"
+  ],
+  "expected_artifacts": [
+    "limit_watcher.py v2 with liveness classification + probe-resume + transcript reset extraction",
+    "tests reproducing the overnight incident shape",
+    "protocol note updated (RnS branding + v2 behavior)",
+    "watcher restarted and verified"
+  ],
+  "reviewer_role": "technical_lead (codex-lab-limo)",
+  "risk": "Medium: probe-resumes spawn paid sessions on a schedule without a known reset time. Mitigations: grace period before first probe, capped backoff (6 attempts/window), one incident record per down-event, give-up BLOCKED event, dry-run mode."
+}
