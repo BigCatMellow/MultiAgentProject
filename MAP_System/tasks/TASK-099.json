@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-099",
+  "title": "MAP effectiveness review from the recorded 2026-07-02 process",
+  "task_type": "analysis",
+  "role": "analyst",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator #18292: review MAP system effectiveness using the recorded process. Produce an evidence-based report from durable records (events.jsonl, task/review/release artifacts, git history, watcher state): throughput and cycle times for TASK-086..098, review-gate effectiveness (rework rounds and what each caught), incident log and recovery quality (map.db clobber, reseed fallout, watcher liveness, stale servers, canonical-repo staleness), coordination quality (races, duplicate cards, lock usage, handoffs), operator-intervention count vs delegation, recurring failure patterns (SYN-0001), and concrete recommendations. Peer input from lema/limo attributed. Deliverable: MAP_System/artifacts/reviews/map-effectiveness-review-2026-07-02.md.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reviews/map-effectiveness-review-2026-07-02.md"
+  ],
+  "acceptance_criteria": [
+    "Every claim in the report cites a durable record (event, artifact, commit, or task id)",
+    "Covers wins AND weaknesses with equal rigor; each weakness has a concrete recommendation",
+    "Quantified: task cycle times, rework rounds, review catch list, incident count/recovery times",
+    "Peer perspectives from lema and limo included and attributed"
+  ]
+}

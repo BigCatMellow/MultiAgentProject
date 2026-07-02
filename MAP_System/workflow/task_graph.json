@@ -2005,6 +2005,42 @@
         "Watcher main loop writes its own pid to .locks/limit-watcher.pid at startup; --once and --dry-run do not touch it",
         "Existing 15 watcher tests still pass; suite green"
       ]
+    },
+    {
+      "task_id": "TASK-099",
+      "title": "MAP effectiveness review from the recorded 2026-07-02 process",
+      "task_type": "analysis",
+      "role": "analyst",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "MAP_System/artifacts/reviews/map-effectiveness-review-2026-07-02.md"
+      ],
+      "acceptance_criteria": [
+        "Every claim in the report cites a durable record (event, artifact, commit, or task id)",
+        "Covers wins AND weaknesses with equal rigor; each weakness has a concrete recommendation",
+        "Quantified: task cycle times, rework rounds, review catch list, incident count/recovery times",
+        "Peer perspectives from lema and limo included and attributed"
+      ]
+    },
+    {
+      "task_id": "TASK-100",
+      "title": "Clarify terminal semantics for retired duplicate tasks",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "READY",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "MAP_System/scripts/validate_task_graph.py",
+        "MAP_System/tasks/TASK-096.json"
+      ],
+      "acceptance_criteria": [
+        "A graph containing only terminal tasks plus retired duplicate TASK-096 validates without requiring fake ready work",
+        "TASK-096 status semantics are consistent across SQLite, task JSON, and workflow/task_graph.json",
+        "The chosen duplicate/retired-task policy is documented or encoded in validation so future agents do not reintroduce the stall"
+      ]
     }
   ],
   "approval_gates": [

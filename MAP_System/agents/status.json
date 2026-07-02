@@ -73,8 +73,8 @@
       "notes": ""
     },
     "codex-lab-limo": {
-      "status": "available",
-      "reason": null,
+      "status": "standby",
+      "reason": "awaiting_work",
       "resume_after": null,
       "notes": "Live hcom session agent as of 2026-07-02 (TASK-082 reconcile)."
     },
