@@ -1948,7 +1948,7 @@
       "title": "RnS v2.2: work dispatcher -- nudge idle agents while claimable tasks exist",
       "task_type": "feature",
       "role": "implementer",
-      "status": "BLOCKED",
+      "status": "RETIRED",
       "dependencies": [],
       "owner": "claude-lab-zaro",
       "output_paths": [
@@ -2029,7 +2029,7 @@
       "title": "Clarify terminal semantics for retired duplicate tasks",
       "task_type": "maintenance",
       "role": "state_steward",
-      "status": "READY",
+      "status": "RELEASED",
       "dependencies": [],
       "owner": "claude-lab-zaro",
       "output_paths": [

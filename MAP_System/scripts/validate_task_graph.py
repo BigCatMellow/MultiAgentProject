@@ -85,7 +85,12 @@ def validate(graph: dict) -> list[str]:
         if not task_file.exists():
             errors.append(f"{task_id} has no matching task file at {task_file.relative_to(ROOT)}")
 
-    terminal = {"DONE", "APPROVED", "RELEASED"}
+    # RETIRED is terminal-by-decision (TASK-100): a duplicate or cancelled
+    # card closed without doing the work. It must never satisfy another
+    # task's dependency expectations of completed output, but it also must
+    # not count as a stalled task -- BLOCKED stays reserved for tasks that
+    # are genuinely waiting and SHOULD trip the stall check when alone.
+    terminal = {"DONE", "APPROVED", "RELEASED", "RETIRED"}
     active = {"READY", "IN_PROGRESS", "SUBMITTED", "REVIEW", "CHANGES_REQUESTED"}
     stalled = [t for t in tasks.values() if t.get("status") not in terminal | active]
     all_done = all(t.get("status") in terminal for t in tasks.values())

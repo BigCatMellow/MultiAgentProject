@@ -3,7 +3,7 @@
   "title": "Clarify terminal semantics for retired duplicate tasks",
   "task_type": "maintenance",
   "role": "state_steward",
-  "status": "READY",
+  "status": "RELEASED",
   "dependencies": [],
   "owner": "claude-lab-zaro",
   "description": "After TASK-099 released, validate_task_graph.py reports the graph stalled because the only non-terminal task is TASK-096, intentionally BLOCKED as a retired duplicate. Decide and implement the correct MAP semantics: either introduce/document a terminal duplicate/cancelled state, adjust validation to treat retired duplicates as non-stalling, or close TASK-096 through an approved terminal path. Keep SQLite, task JSON, and workflow graph consistent.",
