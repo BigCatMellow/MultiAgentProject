@@ -65,6 +65,19 @@ def load_tasks(conn: sqlite3.Connection) -> list[dict[str, Any]]:
 
 def load_agents(conn: sqlite3.Connection) -> dict[str, Any]:
     conn.row_factory = sqlite3.Row
+    current_agent_ids = set(read_json(AGENTS_PATH, {"agents": {}}).get("agents", {}))
+    active_agent_ids = {
+        agent_id
+        for row in conn.execute(
+            """
+            SELECT owner, claimed_by, required_agent
+            FROM tasks
+            WHERE status IN ('READY', 'IN_PROGRESS', 'SUBMITTED', 'CHANGES_REQUESTED')
+            """
+        )
+        for agent_id in row
+        if agent_id
+    }
     agents: dict[str, Any] = {}
     rows = conn.execute(
         """
@@ -75,6 +88,8 @@ def load_agents(conn: sqlite3.Connection) -> dict[str, Any]:
     ).fetchall()
     for row in rows:
         if row["agent_type"] == "system" or row["agent_id"] in SYSTEM_AGENTS:
+            continue
+        if row["agent_id"] not in current_agent_ids and row["agent_id"] not in active_agent_ids:
             continue
         agents[row["agent_id"]] = {
             "status": row["status"],

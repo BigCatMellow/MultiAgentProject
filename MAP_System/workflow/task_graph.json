@@ -1726,6 +1726,26 @@
         "Both lab agents get a startup-orientation instruction ending in exactly one proactive hcom message to bigboss",
         "bash -n passes on all edited scripts; existing behavior (tabs, tags, visibility rules) unchanged"
       ]
+    },
+    {
+      "task_id": "TASK-086",
+      "title": "CommandCenterUI standalone bring-up after repo split",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/CommandCenterUI.desktop",
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py"
+      ],
+      "acceptance_criteria": [
+        "server.py resolves the MAP workspace regardless of where CommandCenterUI lives (env override, discovery, loud failure if absent)",
+        "GET /api/snapshot returns non-empty live events/tasks/agents_status",
+        "CommandCenterUI.desktop Exec path matches the real current location",
+        "README reflects the standalone layout accurately"
+      ]
     }
   ],
   "approval_gates": [

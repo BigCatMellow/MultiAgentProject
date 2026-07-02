@@ -42,6 +42,12 @@
       "resume_after": null,
       "notes": "Historical session identity. Resume via `hcom r claude-lab-taro` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
+    "claude-lab-zaro": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
     "claude-mako": {
       "status": "inactive",
       "reason": "session_ended",

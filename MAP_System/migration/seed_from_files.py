@@ -74,31 +74,33 @@ def ensure_agent(
     status: str = "available",
     reason: str | None = None,
     resume_after: str | None = None,
+    update_existing: bool = False,
 ) -> None:
     if not agent_id:
         return
     exists = conn.execute("SELECT 1 FROM agents WHERE agent_id = ?", (agent_id,)).fetchone()
     if exists:
-        conn.execute(
-            """
-            UPDATE agents
-            SET label = ?,
-                agent_type = ?,
-                status = ?,
-                reason = ?,
-                resume_after = ?,
-                updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
-            WHERE agent_id = ?
-            """,
-            (
-                label or agent_id.replace("-", " ").title(),
-                agent_type,
-                status,
-                reason,
-                resume_after,
-                agent_id,
-            ),
-        )
+        if update_existing:
+            conn.execute(
+                """
+                UPDATE agents
+                SET label = ?,
+                    agent_type = ?,
+                    status = ?,
+                    reason = ?,
+                    resume_after = ?,
+                    updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+                WHERE agent_id = ?
+                """,
+                (
+                    label or agent_id.replace("-", " ").title(),
+                    agent_type,
+                    status,
+                    reason,
+                    resume_after,
+                    agent_id,
+                ),
+            )
         summary.record("agents", False)
         return
     conn.execute(
@@ -126,6 +128,7 @@ def seed_agents(conn: sqlite3.Connection, summary: Summary) -> None:
             status=data.get("status") or "available",
             reason=data.get("reason"),
             resume_after=data.get("resume_after"),
+            update_existing=True,
         )
 
 
@@ -214,7 +217,7 @@ def seed_tasks(conn: sqlite3.Connection, summary: Summary, graph: dict[str, Any]
                 summary,
                 "task_output_paths",
                 "INSERT OR IGNORE INTO task_output_paths (task_id, path) VALUES (?, ?)",
-                (task_id, normalize_map_path(output_path)),
+                (task_id, output_path),
             )
         for criterion in task.get("acceptance_criteria", []):
             execute_insert(
@@ -230,7 +233,14 @@ def seed_tasks(conn: sqlite3.Connection, summary: Summary, graph: dict[str, Any]
 
 
 def seed_approval_gates(conn: sqlite3.Connection, summary: Summary, graph: dict[str, Any]) -> None:
+    known_tasks = {
+        row[0]
+        for row in conn.execute("SELECT task_id FROM tasks")
+    }
     for gate in graph.get("approval_gates", []):
+        required_after = gate.get("required_after")
+        if required_after and required_after not in known_tasks:
+            required_after = None
         execute_insert(
             conn,
             summary,
@@ -242,11 +252,14 @@ def seed_approval_gates(conn: sqlite3.Connection, summary: Summary, graph: dict[
             (
                 gate["gate_id"],
                 gate.get("name") or gate["gate_id"],
-                gate.get("required_after"),
+                required_after,
                 gate.get("status") or "pending",
             ),
         )
         for task_id in gate.get("resume_on_approval", []):
+            if task_id not in known_tasks:
+                summary.record("approval_gate_resume_tasks", False)
+                continue
             execute_insert(
                 conn,
                 summary,
@@ -260,6 +273,10 @@ def seed_events(conn: sqlite3.Connection, summary: Summary) -> None:
     events_path = ROOT / "events" / "events.jsonl"
     if not events_path.exists():
         return
+    known_tasks = {
+        row[0]
+        for row in conn.execute("SELECT task_id FROM tasks")
+    }
     with events_path.open("r", encoding="utf-8") as handle:
         for line_number, line in enumerate(handle, start=1):
             if not line.strip():
@@ -276,11 +293,15 @@ def seed_events(conn: sqlite3.Connection, summary: Summary) -> None:
                 agent_type="system" if sender in SYSTEM_AGENTS else "core",
                 status="available",
             )
+            event_task_id = event.get("task_id")
+            if event_task_id and event_task_id not in known_tasks:
+                event_task_id = None
+            created_at = event.get("created_at") or event.get("timestamp")
             artifact_paths = [normalize_map_path(path) for path in event.get("artifact_paths", [])]
             event_key = (
-                event.get("created_at") or "",
+                created_at or "",
                 event.get("type") or "PROGRESS",
-                event.get("task_id") or "",
+                event_task_id or "",
                 sender or "",
                 event.get("summary") or "",
             )
@@ -308,11 +329,11 @@ def seed_events(conn: sqlite3.Connection, summary: Summary) -> None:
                 """,
                 (
                     event.get("type") or "PROGRESS",
-                    event.get("task_id"),
+                    event_task_id,
                     sender,
                     event.get("summary") or "",
                     json.dumps(artifact_paths, sort_keys=True),
-                    event.get("created_at"),
+                    created_at,
                 ),
             )
             summary.record("events", True)

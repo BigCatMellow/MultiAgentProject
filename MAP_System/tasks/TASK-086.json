@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-086",
+  "title": "CommandCenterUI standalone bring-up after repo split",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator (hcom #16101) wants /home/home/Projects/CommandCenterUI running as a standalone local UI app for the lab. The project was decoupled from MultiAgentProject during the TASK-079 repo reconciliation and is no longer nested under the repo. app/server.py derived WORKSPACE via a fixed relative-path offset (PROJECT_DIR.parents[1]) from the old nested layout; standalone it resolves to /home/home, so /api/snapshot silently returned empty MAP state. The desktop launcher and README also pointed at a stale Downloads path. Fix workspace resolution (env override + discovery + loud failure), fix launcher and docs, verify live MAP data end to end. Note: first create attempt allocated TASK-001 from an empty post-split map.db and clobbered mirrors; mirrors were git-restored and codex-lab-lema reseeded the DB (see events around 2026-07-02T12:29Z).",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/CommandCenterUI.desktop",
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py"
+  ],
+  "acceptance_criteria": [
+    "server.py resolves the MAP workspace regardless of where CommandCenterUI lives (env override, discovery, loud failure if absent)",
+    "GET /api/snapshot returns non-empty live events/tasks/agents_status",
+    "CommandCenterUI.desktop Exec path matches the real current location",
+    "README reflects the standalone layout accurately"
+  ]
+}
