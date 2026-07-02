@@ -42,6 +42,7 @@ run_check validate_task_graph_shared_outputs_test python3 MAP_System/tests/test_
 run_check validate_events_test python3 MAP_System/tests/test_validate_events.py
 run_check git_operation_lock_test python3 MAP_System/tests/test_git_operation_lock.py
 run_check reconcile_agents_test python3 MAP_System/tests/test_reconcile_agents.py
+run_check runner_task_classification_test MAP_System/.venv/bin/python MAP_System/tests/test_runner_task_classification.py
 run_check limit_watcher_test python3 MAP_System/tests/test_limit_watcher.py
 run_check local_runner_test python3 MAP_System/tests/test_local_runner.py
 run_check aider_wrapper_test python3 MAP_System/tests/test_aider_wrapper.py

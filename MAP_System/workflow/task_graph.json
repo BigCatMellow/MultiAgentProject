@@ -1818,7 +1818,7 @@
       "title": "Post-restart reconciliation: RnS incident hygiene + stale canonical-repo doc",
       "task_type": "maintenance",
       "role": "state_steward",
-      "status": "IN_PROGRESS",
+      "status": "APPROVED",
       "dependencies": [],
       "owner": "codex-lab-limo",
       "output_paths": [
@@ -1828,7 +1828,10 @@
         "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
         "MAP_System/events/events.jsonl",
         "MAP_System/handoffs/HANDOFF-TASK-090-codex-lab-limo-to-zaro.md",
-        "MAP_System/shared/canonical-repo.md"
+        "MAP_System/notes/command-center-lab-restart-startup.md",
+        "MAP_System/shared/canonical-repo.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
       ],
       "acceptance_criteria": [
         "rose and scratch-peso have durable inactive statuses with reasons; watcher no longer probes either",
@@ -1918,6 +1921,87 @@
         "Operator can approve/reject MAP gates through explicit UI actions that call existing runner/task mechanisms safely, with clear audit trail",
         "For tool prompts inside agent terminals, UI only sends explicit operator input to visible sessions and records inject audit; it must not auto-approve or hide prompts",
         "Security review verifies same-origin/localhost boundaries, target validation, and no new broad command execution surface"
+      ]
+    },
+    {
+      "task_id": "TASK-095",
+      "title": "RnS: queue-aware work-available nudges for idle agents",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "MAP_System/notes/limit-exhaustion-protocol.md",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "Watcher nudges live listening agents when claimable READY tasks exist, listing task ids, at most once per window per agent",
+        "All TASK-084 suppression cases hold (claimed, standby, out_of_tokens, non-listening, recently nudged)",
+        "No auto-claim/auto-spawn behavior; nudges are plain hcom messages",
+        "Watcher test suite passes with new cases; full suite green"
+      ]
+    },
+    {
+      "task_id": "TASK-096",
+      "title": "RnS v2.2: work dispatcher -- nudge idle agents while claimable tasks exist",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "BLOCKED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "MAP_System/notes/limit-exhaustion-protocol.md",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "Watcher nudges live listening agents when claimable READY tasks exist, listing task ids, at most once per window per agent",
+        "All TASK-084 suppression cases hold (claimed, standby, out_of_tokens, non-listening, recently nudged)",
+        "No auto-claim/auto-spawn behavior; nudges are plain hcom messages",
+        "Watcher test suite passes with new cases; full suite green"
+      ]
+    },
+    {
+      "task_id": "TASK-097",
+      "title": "Purge reseed-resurrected historical agents from the SQLite agents table",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "CHANGES_REQUESTED",
+      "dependencies": [
+        "TASK-090"
+      ],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/agents/status.json",
+        "MAP_System/events/events.jsonl",
+        "MAP_System/graph/runner.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tasks/TASK-096.json",
+        "MAP_System/tests/test_runner_task_classification.py",
+        "MAP_System/workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Runner and status.json show only genuinely available agents; historical sessions inactive with reasons per agents/README.md semantics",
+        "TASK-096 status consistent across SQLite, task JSON, and graph",
+        "reconcile_agents.py reports no unexplained drift"
+      ]
+    },
+    {
+      "task_id": "TASK-098",
+      "title": "RnS: watcher writes its own pidfile (liveness confusion hardening)",
+      "task_type": "bugfix",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "MAP_System/scripts/limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "Watcher main loop writes its own pid to .locks/limit-watcher.pid at startup; --once and --dry-run do not touch it",
+        "Existing 15 watcher tests still pass; suite green"
       ]
     }
   ],

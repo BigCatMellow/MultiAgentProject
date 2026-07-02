@@ -24,7 +24,7 @@ The durable behavior is:
 
 ## Current Implementation State
 
-- Canonical repo: `/home/home/Downloads/MultiAgentProject` (DEC-012).
+- Canonical repo: `/home/home/Projects/MultiAgentProject` (DEC-014).
 - RnS watcher scripts:
   - `MAP_System/scripts/limit_watcher.py`
   - `MAP_System/scripts/start-limit-watcher.sh`
@@ -109,7 +109,7 @@ orientation ending in exactly one proactive hcom message to `@bigboss`.
 Use this only if the lab launcher does not bring everything up.
 
 ```bash
-cd /home/home/Downloads/MultiAgentProject
+cd /home/home/Projects/MultiAgentProject
 MAP_System/scripts/start-limit-watcher.sh
 hcom list --name limo
 ```

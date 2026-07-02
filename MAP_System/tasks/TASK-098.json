@@ -1,0 +1,18 @@
+{
+  "task_id": "TASK-098",
+  "title": "RnS: watcher writes its own pidfile (liveness confusion hardening)",
+  "task_type": "bugfix",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Three separate watcher-liveness investigations happened today (limo's TASK-090 caveat, lema's TASK-095 review stale-pidfile finding, zaro's post-release check) because the pidfile is only written by the start script's shell $! and can drift from reality -- it was found containing literally '9' while the watcher (pid 520835) ran healthy. Harden: limit_watcher.py writes os.getpid() to the pidfile at startup in its long-running mode (not --once/--dry-run), so the file is authoritative for whichever process actually runs, regardless of how it was started (script, tmux, lab autostart, manual).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "Watcher main loop writes its own pid to .locks/limit-watcher.pid at startup; --once and --dry-run do not touch it",
+    "Existing 15 watcher tests still pass; suite green"
+  ]
+}

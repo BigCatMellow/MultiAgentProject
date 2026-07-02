@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -51,6 +52,9 @@ CHECKIN_SAFE_STATUSES = {"listening"}  # ONLY these hcom states are check-in eli
 # (TASK-084 review finding 1)
 STANDBY_REASONS = {"awaiting_work"}  # declared idle: never check-in-nudged
 CHECKIN_TASK_ID = "TASK-084"  # check-in events attribute here, not to the RnS incident task
+WORK_NUDGE_SECONDS = 1800  # while actionable work exists, ping an idle agent at most every 30min
+WORK_NUDGE_MIN_IDLE = 120  # don't ping someone who went idle seconds ago (mid-turn gap)
+WORK_TASK_ID = "TASK-095"  # work-dispatch events attribute here (operator #17759)
 
 NUDGE_PROMPT = (
     "Rise & Shine (RnS limit watcher, TASK-083): your session appears to have "
@@ -257,6 +261,87 @@ def decide_checkins(snapshot, status_data, claimed_agents, state, now):
     return due
 
 
+def actionable_work():
+    """Claimable/reviewable MAP work from SQLite, read-only; None on failure.
+
+    Categories (TASK-095, operator #17759): READY tasks under max attempts,
+    SUBMITTED tasks needing a non-owner review, CHANGES_REQUESTED rework, and
+    IN_PROGRESS claims whose lease has expired (coordination needed)."""
+    try:
+        import sqlite3
+        con = sqlite3.connect(f"file:{ROOT / 'map.db'}?mode=ro", uri=True)
+        work = {
+            "ready": con.execute(
+                "SELECT task_id, title, owner FROM tasks WHERE status='READY'"
+                " AND attempt < max_attempts ORDER BY task_id").fetchall(),
+            "review": con.execute(
+                "SELECT task_id, title, owner FROM tasks WHERE status='SUBMITTED'"
+                " ORDER BY task_id").fetchall(),
+            "rework": con.execute(
+                "SELECT task_id, title, owner FROM tasks WHERE status='CHANGES_REQUESTED'"
+                " ORDER BY task_id").fetchall(),
+            "stale_claim": con.execute(
+                "SELECT task_id, title, claimed_by FROM tasks WHERE status='IN_PROGRESS'"
+                " AND lease_expires_at IS NOT NULL AND lease_expires_at < datetime('now')"
+                " ORDER BY task_id").fetchall(),
+        }
+        con.close()
+        return work if any(work.values()) else {}
+    except Exception:
+        return None
+
+
+def describe_work(work, agent):
+    """Bounded, per-agent work list: reviews exclude the agent's own tasks."""
+    parts = []
+    if work.get("ready"):
+        parts.append("claimable: " + ", ".join(t for t, _, _ in work["ready"][:5]))
+    reviews = [t for t, _, owner in work.get("review", []) if owner != agent]
+    if reviews:
+        parts.append("needs non-owner review: " + ", ".join(reviews[:5]))
+    rework = [t for t, _, owner in work.get("rework", []) if owner == agent]
+    if rework:
+        parts.append("your rework: " + ", ".join(rework[:5]))
+    if work.get("stale_claim"):
+        parts.append("stale claims needing coordination: "
+                     + ", ".join(t for t, _, _ in work["stale_claim"][:5]))
+    return "; ".join(parts)
+
+
+def decide_work_nudges(snapshot, status_data, claimed_agents, work, state, now):
+    """Pure: live listening agents with no claim and no declaration, while
+    actionable work exists. Same suppression boundaries as decide_checkins
+    (TASK-084) but on a shorter throttle and no 2h idle requirement — the
+    point is 'the queue is not empty', not 'you drifted'."""
+    if not work:
+        return []
+    due = []
+    agents = status_data.get("agents", {})
+    last_nudges = state.get("work_nudges", {})
+    for name, entry in sorted(snapshot.items()):
+        if not classify_live(entry):
+            continue
+        if entry.get("status") not in CHECKIN_SAFE_STATUSES:
+            continue
+        age = entry.get("status_age_seconds")
+        if not isinstance(age, (int, float)) or age < WORK_NUDGE_MIN_IDLE:
+            continue
+        durable = agents.get(name, {})
+        if durable.get("reason"):
+            continue  # declared standby/limit/etc.
+        if durable.get("status") not in (None, "available"):
+            continue
+        if name in claimed_agents:
+            continue
+        if not describe_work(work, name):
+            continue  # everything actionable is this agent's own submission
+        last = parse_resume_after(last_nudges.get(name))
+        if last is not None and (now - last).total_seconds() < WORK_NUDGE_SECONDS:
+            continue
+        due.append(name)
+    return due
+
+
 def claimed_agent_ids():
     """Agents currently holding IN_PROGRESS claims in SQLite; None on failure."""
     try:
@@ -446,6 +531,31 @@ def poll_once(dry_run=False):
                     f"{CHECKIN_IDLE_SECONDS // 3600}h with no claim and no standby "
                     f"declaration.", dry_run=dry_run, task_id=CHECKIN_TASK_ID)
 
+        # work-dispatch path (TASK-095, operator #17759): message-only, never
+        # a claim or spawn — agents decide what to pick up.
+        if claimed is not None:
+            work = actionable_work()
+            if work is not None:
+                state.setdefault("work_nudges", {})
+                for name in decide_work_nudges(snapshot, status_data, claimed,
+                                               work, state, now):
+                    listing = describe_work(work, name)
+                    msg = (f"!NOTE RnS work dispatch: the MAP queue is not empty and "
+                           f"you hold no claim. {listing}. Claim what fits (reviews "
+                           f"need a non-owner), or declare standby: python3 "
+                           f"MAP_System/scripts/declare_standby.py {name}")
+                    if dry_run:
+                        print(f"[dry-run] would work-nudge {name}: {msg}")
+                    else:
+                        subprocess.run(["hcom", "send", f"@{name}", "--intent", "request",
+                                        "--name", SENDER, "--", msg],
+                                       capture_output=True, text=True, timeout=30)
+                    state["work_nudges"][name] = now.isoformat(timespec="seconds")
+                    append_event("PROGRESS",
+                        f"RnS work-dispatch nudge sent to {name}: actionable MAP work "
+                        f"exists ({listing[:160]}) and the agent is idle with no claim.",
+                        dry_run=dry_run, task_id=WORK_TASK_ID)
+
     save_state(state, dry_run=dry_run)
 
 
@@ -459,6 +569,15 @@ def main():
     if args.once:
         poll_once(dry_run=args.dry_run)
         return 0
+    # The long-running watcher owns its pidfile (TASK-098): shell-written $!
+    # values drifted from reality and caused repeated liveness confusion.
+    if not args.dry_run:
+        pidfile = ROOT / ".locks" / "limit-watcher.pid"
+        try:
+            pidfile.parent.mkdir(exist_ok=True)
+            pidfile.write_text(f"{os.getpid()}\n")
+        except OSError as exc:
+            print(f"warning: cannot write pidfile {pidfile}: {exc}", file=sys.stderr)
     print(f"RnS limit watcher started: interval={args.interval}s status={STATUS_FILE}")
     while True:
         poll_once(dry_run=args.dry_run)

@@ -127,6 +127,21 @@ RnS also distinguishes **declared idle** from **drifted idle**:
 - Liveness for this purpose uses hcom's `process_bound` (idle-but-alive vs
   dead-with-frozen-status), with the staleness heuristic as fallback.
 
+### v2.2: work dispatch (TASK-095, operator #17759)
+
+- While the MAP queue holds actionable work — claimable READY tasks,
+  SUBMITTED tasks needing a non-owner review, the agent's own
+  CHANGES_REQUESTED rework, or expired IN_PROGRESS leases — a live
+  *listening* agent with no claim and no declaration gets a message-only
+  work-dispatch nudge listing the items, at most once per 30 minutes.
+- Reviews of the agent's own submissions are excluded from its listing
+  (no-self-review); an agent whose only actionable item is its own
+  submission is not nudged at all.
+- Same safety boundaries as check-ins: declared standby, `out_of_tokens`,
+  non-available durable status, active/blocked/waiting hcom states, and
+  dead sessions all suppress. Never a claim, never a spawn — the nudge
+  tells the agent the queue is not empty; the agent decides.
+
 ## Relation to existing pieces
 
 - `agents/status.json` — already has the fields; this protocol makes agents

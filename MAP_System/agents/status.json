@@ -66,6 +66,12 @@
       "resume_after": null,
       "notes": "Capability identity (core agent type), not a live session. See agents/README.md."
     },
+    "codex-lab-lema": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
     "codex-lab-limo": {
       "status": "available",
       "reason": null,

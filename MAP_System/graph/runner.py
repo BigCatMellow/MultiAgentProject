@@ -301,14 +301,9 @@ def evaluate_tasks(state: MapState) -> MapState:
             ready_tasks.append(task_id)
             if task_would_benefit_from_helper(task):
                 helper_candidate_tasks.append(task_id)
-        elif status == "BLOCKED" and dependencies_satisfied:
-            if task_requires_unavailable_agent(task, state):
-                ready_tasks_waiting_for_agent.append(task_id)
-                continue
-            ready_tasks.append(task_id)
-            if task_would_benefit_from_helper(task):
-                helper_candidate_tasks.append(task_id)
-        elif status in {"READY", "BLOCKED"}:
+        elif status == "BLOCKED":
+            blocked_tasks.append(task_id)
+        elif status == "READY":
             blocked_tasks.append(task_id)
 
     return {

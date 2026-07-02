@@ -3,7 +3,7 @@
 <!-- hpom: state_owner: command-center -->
 <!-- hpom: status: CURRENT -->
 <!-- hpom: last_verified: 2026-07-02 -->
-<!-- hpom: verified_against: TASK-082 full-report coverage pass (post TASK-079/080 reconciliation and watcher) -->
+<!-- hpom: verified_against: TASK-090 post-restart canonical repo reconciliation -->
 <!-- hpom: confidence: HIGH -->
 <!-- hpom: supersedes: NONE -->
 <!-- hpom: superseded_by: NONE -->
@@ -91,12 +91,10 @@ Last reviewed during the TASK-082 full-report coverage pass.
 - Some historical artifacts still mention the old `langgraph/` directory. The live code path is `graph/`.
 - `aider_wrapper.py` has one open RECOMMENDED fix: remove `--no-auto-commits` from `FORBIDDEN_AIDER_FLAGS` (tracked as TASK-050).
 - `local_runner.py` has two OPTIONAL cosmetic items (tracked as TASK-051).
-- Repo reconciliation is COMPLETE (TASK-079, 2026-07-02): canonical repo A
-  pushed to origin at `5cb8a61`; `/home/home/Projects/MultiAgentProject` is now
-  a fresh clone of that commit with private `Projects/Pathwell` + `Projects/Backups`
-  restored from A; the old drifted copy is preserved at
-  `~/Projects/MultiAgentProject-stale-archive-20260702/` (do not use). A remains
-  the canonical working repo per DEC-012 / `shared/canonical-repo.md`.
+- Repo reconciliation is COMPLETE (TASK-079, 2026-07-02), and the active
+  canonical repo is now `/home/home/Projects/MultiAgentProject` per DEC-014 /
+  `shared/canonical-repo.md`. The earlier Downloads-path rule from DEC-012 is
+  superseded.
 - `agents/status.json` was reconciled to hcom reality on 2026-07-02 (TASK-082);
   identity-kind semantics are documented in `agents/README.md`.
 - `validate_events.py` currently reports legacy event warnings in the historical

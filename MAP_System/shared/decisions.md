@@ -161,7 +161,7 @@ Implementation order:
 
 ## DEC-012: Canonical Repo Is Downloads/MultiAgentProject
 
-Status: approved
+Status: superseded by DEC-014
 Owner: command-center (decision authority delegated to core agents via hcom #14454; recorded by claude-lab-rose, TASK-077)
 Date: 2026-07-02
 Applies-To: repo layout, git operations, cross-repo sync, Pathwell two-repo sync
@@ -191,6 +191,11 @@ Reconciliation plan (in order, after TASK-065's git-operation lock exists):
 Until step 4 completes, a freeze marker should be placed in B
 (deferred at codex-lab-limo's request until the git lock tooling exists).
 
+Supersession note, 2026-07-02: TASK-079 completed the reconciliation sequence.
+Later live lab sessions and authorized pushes moved to
+`/home/home/Projects/MultiAgentProject`. DEC-014 supersedes DEC-012's
+path-specific canonical repo rule.
+
 ## DEC-013: Synthesis And Experiment Record Types Stay Active, Not Mandatory
 
 Status: approved
@@ -209,3 +214,36 @@ experiment is warranted when a claim is testable before being promoted
 (none yet; the next candidate should use it rather than promoting untested).
 `map_emergence.py stale` treats absence of SYN/EXP records as normal, not
 as debt.
+
+## DEC-014: Canonical Repo Is Projects/MultiAgentProject
+
+Status: approved
+Owner: command-center (operator confirmation via hcom #17759; recorded by codex-lab-limo, TASK-090)
+Date: 2026-07-02
+Applies-To: repo layout, git operations, command-center lab sessions, RnS watcher state
+
+`/home/home/Projects/MultiAgentProject` is the canonical working repo for
+current MAP work.
+
+Basis:
+
+- TASK-079 completed the DEC-012 reconciliation plan.
+- The previous canonical path, `/home/home/Downloads/MultiAgentProject`, is no
+  longer the live command-center working path.
+- Current lab sessions, task state, CommandCenterUI work, RnS watcher runtime,
+  and recent authorized pushes are operating from
+  `/home/home/Projects/MultiAgentProject`.
+- Operator hcom #17759 instructed agents to stop waiting and continue work when
+  work remains; Zaro explicitly confirmed in hcom #17774 that TASK-090 should
+  treat #17759 as canonical-repo confirmation, with operator veto available on
+  review.
+
+Effect:
+
+- `MAP_System/shared/canonical-repo.md` now names
+  `/home/home/Projects/MultiAgentProject` as canonical.
+- The old Downloads path is retired/non-authoritative if it reappears.
+- Normal task-scoped commits and pushes may proceed from the Projects repo when
+  owned paths are staged, validators pass, and MAP review/release gates are
+  followed.
+- Repository-global operations still require the git operation lock.

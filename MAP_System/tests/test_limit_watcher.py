@@ -253,6 +253,55 @@ def test_checkin_decision_logic():
     assert decide_checkins({"rose": idle3h}, st, set(), old, NOW) == ["rose"]
 
 
+def test_work_dispatch_logic():
+    """TASK-095 / operator #17759: while claimable MAP work exists, idle
+    listening agents with no claim and no declaration get a bounded nudge.
+    Same safety boundaries as check-ins, shorter throttle, no 2h wait."""
+    from limit_watcher import decide_work_nudges, describe_work
+
+    idle5m = {"status": "listening", "status_age_seconds": 300, "process_bound": True}
+    fresh = {"status": "listening", "status_age_seconds": 30, "process_bound": True}
+    working = {"status": "active", "status_age_seconds": 300, "process_bound": True}
+    dead = {"status": "listening", "status_age_seconds": 7 * 3600, "process_bound": False}
+
+    st = status(rose={"status": "available"}, limo={"status": "available"})
+    work = {"ready": [("TASK-050", "Fix flags", "codex")],
+            "review": [("TASK-095", "Dispatch", "rose")],
+            "rework": [], "stale_claim": []}
+
+    # idle agent with claimable work gets a nudge
+    assert decide_work_nudges({"rose": idle5m}, st, set(), work, {"work_nudges": {}}, NOW) == ["rose"]
+    # empty queue: silence
+    assert decide_work_nudges({"rose": idle5m}, st, set(), {}, {"work_nudges": {}}, NOW) == []
+    # just-went-idle grace, visibly active, or dead session: no nudge
+    assert decide_work_nudges({"rose": fresh}, st, set(), work, {"work_nudges": {}}, NOW) == []
+    assert decide_work_nudges({"rose": working}, st, set(), work, {"work_nudges": {}}, NOW) == []
+    assert decide_work_nudges({"rose": dead}, st, set(), work, {"work_nudges": {}}, NOW) == []
+    # an open claim suppresses
+    assert decide_work_nudges({"rose": idle5m}, st, {"rose"}, work, {"work_nudges": {}}, NOW) == []
+    # declared standby / non-available durable status suppress
+    st_declared = status(rose={"status": "standby", "reason": "awaiting_work"})
+    assert decide_work_nudges({"rose": idle5m}, st_declared, set(), work, {"work_nudges": {}}, NOW) == []
+    st_inactive = status(rose={"status": "inactive", "reason": None})
+    assert decide_work_nudges({"rose": idle5m}, st_inactive, set(), work, {"work_nudges": {}}, NOW) == []
+    # throttle: one per 30min window
+    recent = {"work_nudges": {"rose": (NOW - timedelta(minutes=10)).isoformat()}}
+    assert decide_work_nudges({"rose": idle5m}, st, set(), work, recent, NOW) == []
+    old = {"work_nudges": {"rose": (NOW - timedelta(minutes=40)).isoformat()}}
+    assert decide_work_nudges({"rose": idle5m}, st, set(), work, old, NOW) == ["rose"]
+    # an agent whose only actionable item is reviewing their own submission
+    # is not nudged (no-self-review)
+    own_review_only = {"ready": [], "rework": [], "stale_claim": [],
+                       "review": [("TASK-095", "Dispatch", "rose")]}
+    assert decide_work_nudges({"rose": idle5m}, st, set(), own_review_only,
+                              {"work_nudges": {}}, NOW) == []
+    assert decide_work_nudges({"limo": idle5m}, st, set(), own_review_only,
+                              {"work_nudges": {}}, NOW) == ["limo"]
+    # describe_work: reviews exclude own tasks, rework only own
+    assert "TASK-095" not in describe_work(work, "rose")
+    assert "TASK-095" in describe_work(work, "limo")
+
+
 def main():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in tests:

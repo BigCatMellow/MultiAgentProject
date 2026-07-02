@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-095",
+  "title": "RnS: queue-aware work-available nudges for idle agents",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator #17759: agents idle while work sits in the queue; asked for 'a system like the RnS that tells you to work if there is still something to do'. Extend limit_watcher.py with a work-dispatch path: each poll, read claimable MAP tasks (READY, attempt<max) from map.db read-only; if any exist, send a message-only nudge listing them to each live listening agent, reusing the TASK-084 check-in suppression rules (listening-only, no open claim, no declared standby/out_of_tokens, once per window per agent). New nudges attribute to this task. No auto-claiming, no headless spawning -- nudges only; agents decide. Tests pin: nudge fires when ready+idle, suppressed when agent has a claim, suppressed when queue empty, once-per-window, and standby declarations respected.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "Watcher nudges live listening agents when claimable READY tasks exist, listing task ids, at most once per window per agent",
+    "All TASK-084 suppression cases hold (claimed, standby, out_of_tokens, non-listening, recently nudged)",
+    "No auto-claim/auto-spawn behavior; nudges are plain hcom messages",
+    "Watcher test suite passes with new cases; full suite green"
+  ]
+}
