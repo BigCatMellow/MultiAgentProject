@@ -1,0 +1,60 @@
+snapshot_type: STATE_SNAPSHOT
+created_at: "2026-06-30T17:42:22-04:00"
+agent_id: codex-lab-lepa
+session_id: ai-command-center-lab-darkmellow-20260630
+status: operator_requested_shutdown
+
+task_context:
+  task_id: AD-HOC-DarkMellow
+  title: Dark Mellow theme backup and feature audit
+  status: waiting_for_operator_decision
+  owner: codex-lab-lepa
+  reviewer: available_on_next_session
+
+summary:
+  - Created DarkMellow project workspace in `Projects/DarkMellow/`.
+  - Backed up live theme `/home/home/.themes/Mellow-Dark` to `Projects/DarkMellow/backups/Dark Mellow Testing/`.
+  - Compared Dark Mellow against installed Mint references `Mint-Y-Dark` and `Mint-L-Dark-Grey`.
+  - No live theme files were changed.
+  - Sent operator decision request via hcom message 12171/12081 thread.
+
+artifacts:
+  - Projects/DarkMellow/AGENTS.md
+  - Projects/DarkMellow/README.md
+  - Projects/DarkMellow/backups/Dark Mellow Testing/
+  - Projects/DarkMellow/artifacts/theme-audit-2026-06-30.md
+  - Projects/DarkMellow/artifacts/dark-mellow-testing-manifest.txt
+  - Projects/DarkMellow/artifacts/mint-y-dark-reference-manifest.txt
+  - Projects/DarkMellow/artifacts/mint-l-dark-grey-reference-manifest.txt
+  - MAP_System/events/events.jsonl
+
+findings:
+  - Dark Mellow covers `cinnamon/`, `gtk-3.0/`, `gtk-4.0/`, `metacity-1/`, shared `assets/`, and `index.theme`.
+  - Dark Mellow lacks `gtk-2.0/`, `libadwaita-1.5/`, `xfwm4/`, `openbox-3/`, and a Cinnamon `thumbnail.png` compared with fully featured Mint references.
+  - `index.theme` parsed with Python configparser and includes GtkTheme, MetacityTheme, IconTheme, and CursorTheme.
+  - `metacity-1/metacity-theme-3.xml` parsed successfully with Python XML parser.
+  - `xmllint` was unavailable in the environment.
+  - One dated backup file is inside the live theme: `/home/home/.themes/Mellow-Dark/metacity-1/metacity-theme-3.xml.before-pastel-window-buttons-20260630`.
+
+pending_operator_decision:
+  issue: Dark Mellow is backed up and coherent, but not full-featured compared with stock Mint themes.
+  options:
+    - Cinnamon-only polish: add thumbnail and move the live Metacity backup file after approval.
+    - Modern-app focus: add `libadwaita-1.5/` support first.
+    - Full Mint parity: add `gtk-2.0/`, `libadwaita-1.5/`, `xfwm4/`, and `openbox-3/` additively while preserving existing Dark Mellow files.
+  recommendation: Full Mint parity, implemented additively from Mint reference folders and recolored to the existing Dark Mellow palette.
+  needed: Operator choice before preparing or applying any live theme changes.
+
+constraints:
+  - Do not remove or overwrite existing Dark Mellow files without explicit operator approval.
+  - Do not edit `/home/home/.themes/Mellow-Dark` until the operator chooses a compatibility scope.
+  - If helpers are spawned in a future session, use `--terminal wezterm-tab`; do not use headless unless explicitly instructed.
+  - Coordinate ownership through hcom before implementation to avoid duplicate work.
+
+workspace_status:
+  known_dirty_files_before_shutdown:
+    - MAP_System/events/events.jsonl
+    - MAP_System/scripts/map_task.py
+    - MAP_System/shared/improvement-backlog.md
+  new_untracked_project:
+    - Projects/DarkMellow/

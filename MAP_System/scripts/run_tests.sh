@@ -34,6 +34,11 @@ run_check review_gate_test python3 MAP_System/tests/test_review_gate.py
 run_check release_gate_test python3 MAP_System/tests/test_release_gate.py
 run_check map_metrics_test python3 MAP_System/tests/test_map_metrics.py
 run_check map_emergence_test python3 MAP_System/tests/test_map_emergence.py
+run_check map_task_auto_id_test python3 MAP_System/tests/test_map_task_auto_id.py
+run_check map_emergence_stale_test python3 MAP_System/tests/test_map_emergence_stale.py
+run_check validate_events_test python3 MAP_System/tests/test_validate_events.py
+run_check git_operation_lock_test python3 MAP_System/tests/test_git_operation_lock.py
+run_check reconcile_agents_test python3 MAP_System/tests/test_reconcile_agents.py
 run_check local_runner_test python3 MAP_System/tests/test_local_runner.py
 run_check aider_wrapper_test python3 MAP_System/tests/test_aider_wrapper.py
 run_check integration_test MAP_System/.venv/bin/python MAP_System/scripts/integration_test.py

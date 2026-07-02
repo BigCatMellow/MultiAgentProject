@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-057",
+  "title": "Fix CommandCenterUI hcom identity UX",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex-lab-maki",
+  "description": "Make CommandCenterUI explain and handle hcom sender identity like a usable command-center app, instead of exposing confusing browser-only backend errors. Preserve audit attribution and avoid silently sending as codex-lab-maki.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/CommandCenterUI"
+  ],
+  "acceptance_criteria": [
+    "UI clearly explains current hcom sender mode and how to enable sending",
+    "Default mode does not falsely attribute operator messages to codex-lab-maki",
+    "Read-only MAP status remains usable without send identity",
+    "Claude reviews before done"
+  ]
+}

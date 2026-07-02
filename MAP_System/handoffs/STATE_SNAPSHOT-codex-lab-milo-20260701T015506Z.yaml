@@ -1,0 +1,56 @@
+snapshot_type: STATE_SNAPSHOT
+created_at: "2026-07-01T01:55:06Z"
+agent_id: codex-lab-milo
+session_id: ai-command-center-lab-darkmellow-20260701
+status: self_note_for_future_resume
+
+task_context:
+  task_id: AD-HOC-DarkMellow
+  title: Dark Mellow full Mint parity and revisit notes
+  status: live_full_parity_applied
+  owner: codex-lab-milo
+  current_followup_owner: claude-lab-kona
+
+summary:
+  - Read required MAP startup docs and operated through hcom/MAP durable files.
+  - Prepared `Projects/DarkMellow/candidates/Mellow-Dark-full-parity/`.
+  - Applied approved full Mint parity additively to `/home/home/.themes/Mellow-Dark`.
+  - Added `gtk-2.0/`, `libadwaita-1.5/`, `xfwm4/`, `openbox-3/`, and `cinnamon/thumbnail.png`.
+  - Removed nothing from the live theme.
+  - Patched Claude-reviewed libadwaita secondary sidebar colors in candidate and live.
+  - Left DarkMellow revisit notes and updated the project README.
+  - Claude later informed that it is taking remaining cosmetic items: stray backup cleanup, real Dark Mellow thumbnail, and XFWM PNG recolor.
+
+artifacts:
+  - Projects/DarkMellow/README.md
+  - Projects/DarkMellow/artifacts/revisit-notes-2026-06-30.md
+  - Projects/DarkMellow/artifacts/full-parity-candidate-2026-06-30.md
+  - Projects/DarkMellow/artifacts/mellow-dark-full-parity-candidate-manifest.txt
+  - Projects/DarkMellow/candidates/Mellow-Dark-full-parity/
+  - Projects/DarkMellow/backups/Mellow-Dark-before-full-parity-20260630-2015/
+  - /home/home/.themes/Mellow-Dark
+  - MAP_System/events/events.jsonl
+
+verification:
+  - `diff -qr Projects/DarkMellow/candidates/Mellow-Dark-full-parity /home/home/.themes/Mellow-Dark` produced no differences after apply.
+  - Live theme file count after apply was 212.
+  - Live `index.theme` parsed with Python `configparser`.
+  - Live `metacity-1/metacity-theme-3.xml` parsed with Python XML parser.
+  - `MAP_System/events/events.jsonl` validated as JSONL.
+
+known_limitations:
+  - `cinnamon/thumbnail.png` was copied from Mint-Y-Dark-Grey and is not a custom Dark Mellow thumbnail.
+  - XFWM PNG assets were copied from Mint-Y-Dark-Grey; `xfwm4/themerc` was palette-tuned, but the PNGs still need visual/recolor work.
+  - The dated Metacity backup file remained inside the live theme at last milo verification unless Claude has since moved it.
+  - No screenshot-based GTK/libadwaita/XFWM visual pass was completed by milo.
+
+coordination:
+  - claude-lab-kona sent hcom inform #12469 saying the operator asked Claude to proceed on remaining DarkMellow cosmetic items.
+  - codex-lab-milo responded that it was not mid-work and would stand down.
+  - Do not duplicate Claude's cosmetic work unless the operator explicitly reassigns it.
+
+resume_guidance:
+  - Start with `Projects/DarkMellow/artifacts/revisit-notes-2026-06-30.md`.
+  - Check current hcom/MAP events before touching DarkMellow because Claude may have advanced the cosmetic items.
+  - Preserve the live theme and rollback backup; avoid replacing Dark Mellow with a raw Mint reference.
+  - If asked to continue after Claude, compare live theme against `Projects/DarkMellow/candidates/Mellow-Dark-full-parity/` and Claude's latest artifacts before editing.

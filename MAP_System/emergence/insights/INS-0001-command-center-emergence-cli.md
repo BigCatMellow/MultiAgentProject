@@ -5,7 +5,7 @@ Project: MAP
 Related task: TASK-052
 Detected by: codex-lab-zanu
 Date: 2026-06-29
-Status: RAW
+Status: PROMOTED
 
 ## Short description
 
@@ -56,3 +56,7 @@ Choose one:
 ## Notes
 
 -
+
+## Lifecycle close-out (2026-07-02, TASK-075)
+
+Promoted via IDEA-0001 into TASK-052 (emergence CLI), which is RELEASED and in active use. Closed retroactively during the MAP audit remediation (TASK-075); the record was left RAW after the work finished, which is itself the pattern documented in INS-0007.

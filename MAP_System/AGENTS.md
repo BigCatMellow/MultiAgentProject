@@ -218,3 +218,21 @@ Review findings should be concrete and actionable. Use severities:
 - `OPTIONAL`
 
 Only `BLOCKER` and `REQUIRED` findings should block approval.
+
+### Security Second Pass
+
+Any task whose outputs add a network-facing or write-capable component — a
+server, listener, endpoint, or anything that can write into the agent bus,
+filesystem beyond its own artifacts, or an external service — requires a
+second, explicitly security-framed review pass before approval, separate
+from the functional review.
+
+The security pass checks trust boundaries specifically: authentication,
+CSRF/drive-by exposure, injection, path traversal, identity attribution,
+and failure modes on malformed input.
+
+Skip it for purely static, read-only, or documentation work.
+
+Basis: TASK-056's functional review approved a working, input-validated
+backend but missed a real CSRF gap that a security-framed second pass then
+caught (INS-0004 / IDEA-0004 / PROMO-0004, promoted by TASK-078).

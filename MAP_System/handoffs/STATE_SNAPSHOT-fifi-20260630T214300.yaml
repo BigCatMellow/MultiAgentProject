@@ -1,0 +1,66 @@
+state_owner: claude-lab-fifi
+created_at: "2026-06-30T21:43:00-04:00"
+session_ended_by: operator-kill-order
+
+# Active agents at session end (hcom list)
+agents:
+  - name: codex-lab-lepa
+    status: active
+    role: owner, AD-HOC-DarkMellow
+  - name: claude-lab-fifi
+    status: active
+    role: review standby
+  - name: claude-lab-miro
+    status: listening
+    role: idle
+  - name: codex-lab-nora
+    status: listening
+    role: idle
+
+# Work completed this session
+completed:
+  - task: AD-HOC-DarkMellow
+    owner: codex-lab-lepa
+    summary: >
+      Dark Mellow theme backed up to Projects/DarkMellow/backups/Dark Mellow Testing/.
+      Compared against Mint-Y-Dark and Mint-L-Dark-Grey. No live theme files changed.
+    artifacts:
+      - Projects/DarkMellow/backups/Dark Mellow Testing/
+      - Projects/DarkMellow/artifacts/theme-audit-2026-06-30.md
+      - Projects/DarkMellow/artifacts/dark-mellow-testing-manifest.txt
+      - Projects/DarkMellow/artifacts/mint-y-dark-reference-manifest.txt
+      - Projects/DarkMellow/artifacts/mint-l-dark-grey-reference-manifest.txt
+    key_findings:
+      - Dark Mellow is coherent for Cinnamon, GTK3, GTK4, and Metacity
+      - Missing vs full Mint themes: gtk-2.0, libadwaita-1.5, xfwm4, openbox-3
+      - Has gtk-4.0 which Mint-L-Dark-Grey lacks
+      - One dated backup file inside live theme dir (should be moved)
+
+  - task: AD-HOC-Onion-PocketOS (prior session, nora)
+    summary: >
+      PocketOS Most Played launcher tab committed as Onion-workbench c0f8971.
+      Full link blocked by missing ARM SDL/zlib/sqlite libraries.
+
+# Pending operator decisions
+pending_decisions:
+  - id: dark-mellow-compatibility-target
+    question: >
+      Which compatibility pass to prioritize for Dark Mellow?
+      Options: (1) Cinnamon-only polish (thumbnail + cleanup), 
+      (2) Full Mint parity (add gtk-2, libadwaita, xfwm4, openbox),
+      (3) Modern-app focus (libadwaita first, then gtk-4 evaluation).
+    audit_ref: Projects/DarkMellow/artifacts/theme-audit-2026-06-30.md
+
+# MAP system health (as of session start)
+map_health:
+  hpom_gates: all active
+  shared_files: all CURRENT as of 2026-06-29
+  open_backlog_items: improvement-backlog.md (2 high-priority: intake protocol, git lock)
+  tests: 13 checks passing (scripts/run_tests.sh)
+
+# Resume instructions for next session
+resume:
+  - Read this snapshot for orientation
+  - Operator decision on dark-mellow-compatibility-target needed before theme work continues
+  - No MAP tasks were claimed or modified this session; task graph is unchanged
+  - Check MAP_System/events/events.jsonl for full activity log

@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-056",
+  "title": "Build CommandCenterUI local app backend",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex-lab-maki",
+  "description": "Turn the approved Studio CommandCenterUI prototype into a real local app by adding a Python backend, live MAP/hcom read APIs, guarded hcom send endpoint, and a local launcher. Keep artifacts under Projects/CommandCenterUI unless explicit approval is granted for desktop/menu installation.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/CommandCenterUI"
+  ],
+  "acceptance_criteria": [
+    "Local app starts from a launcher script without external dependency installation",
+    "Backend serves Studio UI and exposes read-only MAP task/event/status data",
+    "Backend exposes guarded hcom send capability with explicit intent/recipient/body inputs",
+    "User has a clear path or URL to open the app",
+    "Claude reviews before TASK-056 is marked done"
+  ]
+}

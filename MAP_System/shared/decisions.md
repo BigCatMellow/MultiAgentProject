@@ -158,3 +158,35 @@ Implementation order:
 2. Add local assistant health checks.
 3. Add local assistant wrappers only after health checks and visibility rules are
    proven.
+
+## DEC-012: Canonical Repo Is Downloads/MultiAgentProject
+
+Status: approved
+Owner: command-center (decision authority delegated to core agents via hcom #14454; recorded by claude-lab-rose, TASK-077)
+Date: 2026-07-02
+Applies-To: repo layout, git operations, cross-repo sync, Pathwell two-repo sync
+
+`/home/home/Downloads/MultiAgentProject` (repo A) is the canonical working
+repo. `/home/home/Projects/MultiAgentProject` (repo B) is frozen: no pushes,
+no commits, no edits, no sync into or out of it until reconciled.
+
+Basis: the TASK-063 repo-drift audit found B's git HEAD frozen at 2026-06-17
+(4 commits behind A) while its working tree was manually overwritten with
+newer uncommitted files — a hybrid state that would produce corrupt-looking
+history if committed or pushed. All current validated work happened in A.
+
+Reconciliation plan (in order, after TASK-065's git-operation lock exists):
+
+1. Preserve B's `Projects/Pathwell/` and `Projects/Backups/` before anything
+   else. These are gitignored private content and exist in B only as working
+   files; a reclone or clean would delete them. They are stale relative to A
+   but are the only copy of that private work outside A.
+2. Single clean commit in A covering the audited/validated state (after the
+   TASK-065 remediation batch lands and all validators pass).
+3. Push A to `origin` — operator-visible step; announce via hcom first.
+4. Reset or reclone B from the remote, then restore/refresh its private
+   `Projects/Pathwell/` copy from A via file sync (not git).
+5. Resume the Pathwell two-repo sync protocol only after steps 1-4 complete.
+
+Until step 4 completes, a freeze marker should be placed in B
+(deferred at codex-lab-limo's request until the git lock tooling exists).

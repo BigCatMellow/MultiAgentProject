@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-059",
+  "title": "Review Dark_Mellow package and capture MAP insights",
+  "task_type": "review",
+  "role": "reviewer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "bigboss",
+  "description": "Perform a deeper review of the Dark_Mellow GitHub package/installer after the wallpaper issue, identify potential installer/package risks, and use MAP emergence/insight protocols to capture workflow improvements discovered during the review.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence",
+    "Projects/DarkMellow/artifacts/package-review-2026-07-01.md"
+  ],
+  "acceptance_criteria": [
+    "Review covers installer, launcher, README, desktop file, package assets, and likely cross-Mint/Cinnamon/GNOME issues",
+    "Findings are severity-ranked with concrete fixes or follow-up recommendations",
+    "At least one MAP emergence insight or idea is captured if warranted",
+    "Review and emergence artifacts are recorded durably"
+  ]
+}

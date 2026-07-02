@@ -1,0 +1,50 @@
+{
+  "task_id": "TASK-079",
+  "title": "Execute DEC-012 git sequence: commit A, push, reconcile B",
+  "task_type": "maintenance",
+  "role": "technical_lead",
+  "status": "READY",
+  "dependencies": [
+    "TASK-065"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Execute the blocked DEC-012 end-of-batch git sequence per HANDOFF-DEC012-git-sequence-codex-lab-limo.md: single clean commit of .gitignore + MAP_System in canonical repo A, push to origin, then reconcile ~/Projects/MultiAgentProject (B) by rename-to-stale-archive + fresh clone + private Pathwell/Backups restore from A. Authorized by operator continue (hcom #14717) after limo's approval-limit blocker (#14695).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/.locks/git-operation.json",
+    "MAP_System/events/events.jsonl"
+  ],
+  "acceptance_criteria": [
+    "Staged diff contains no path under Projects/",
+    "Commit and push from A succeed; announced via hcom before push",
+    "B preserved via rename (nothing deleted), fresh clone matches remote, private dirs restored from A",
+    "Git lock acquired before and released after"
+  ],
+  "objective": "Execute the DEC-012 end-of-batch git sequence: one clean commit of the validated MAP remediation state in canonical repo A, push to origin, and reconcile stale repo B without losing its private untracked content.",
+  "required_context": [
+    "MAP_System/handoffs/HANDOFF-DEC012-git-sequence-codex-lab-limo.md",
+    "MAP_System/shared/decisions.md#DEC-012",
+    "MAP_System/shared/canonical-repo.md",
+    "hcom #14695 (blocker), #14717 (operator continue)"
+  ],
+  "files_in_scope": [
+    ".gitignore",
+    "MAP_System/",
+    "MAP_System/.locks/git-operation.json",
+    "/home/home/Projects/MultiAgentProject (rename/reclone/restore only)"
+  ],
+  "forbidden_changes": [
+    "Staging or committing anything under Projects/",
+    "Deleting repo B or any of its contents (rename to stale archive only)",
+    "Pushing from repo B",
+    "Force-push or history rewrite on origin"
+  ],
+  "expected_artifacts": [
+    "One commit on A's main pushed to origin",
+    "B recloned from remote with private Projects/Pathwell and Projects/Backups restored from A",
+    "Freeze marker in the renamed stale archive",
+    "Events + handoff closure notes"
+  ],
+  "reviewer_role": "technical_lead (codex-lab-limo when approval capacity returns, or command-center)",
+  "risk": "Medium: push is outward-facing; B reconciliation touches a second repo. Mitigations: no-Projects-staged verification before commit, rename-not-delete for B, git operation lock held throughout, per-gate hcom reports."
+}

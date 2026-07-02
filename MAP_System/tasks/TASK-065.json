@@ -1,0 +1,39 @@
+{
+  "task_id": "TASK-065",
+  "title": "Implement MAP audit remediation batch",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "SUBMITTED",
+  "dependencies": [],
+  "owner": "codex-lab-limo",
+  "description": "Implement the highest-priority fixes from the MAP full report: atomic task ID allocation, emergence stale reporting, event validation, git operation locking, agent availability reconciliation, intake guidance, approval calibration, and canonical repo documentation. Avoid destructive repo reconciliation or external pushes.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task065-remediation-validation.md",
+    "MAP_System/scripts/git_operation_lock.py",
+    "MAP_System/scripts/intake_request.py",
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/scripts/map_task.py",
+    "MAP_System/scripts/reconcile_agents.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_events.py",
+    "MAP_System/shared/approval-calibration.md",
+    "MAP_System/shared/canonical-repo.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/improvement-backlog.md",
+    "MAP_System/tests/test_git_operation_lock.py",
+    "MAP_System/tests/test_map_emergence_stale.py",
+    "MAP_System/tests/test_map_task_auto_id.py",
+    "MAP_System/tests/test_reconcile_agents.py",
+    "MAP_System/tests/test_validate_events.py"
+  ],
+  "acceptance_criteria": [
+    "Add SQLite-backed automatic task ID allocation so concurrent agents do not manually collide on task numbers",
+    "Add emergence stale/content checks for placeholder records, dangling promotion refs, and open records tied to closed tasks",
+    "Add event-log validation and alias warnings for legacy event shapes",
+    "Add non-destructive git operation lock tooling",
+    "Add agent availability reconcile reporting against hcom JSON input",
+    "Document canonical repo status and approval-calibration/intake rules",
+    "Run MAP test suite and validators"
+  ]
+}

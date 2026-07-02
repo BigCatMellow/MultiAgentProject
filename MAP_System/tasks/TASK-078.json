@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-078",
+  "title": "Promote IDEA-0004 and IDEA-0005 into durable artifacts",
+  "task_type": "maintenance",
+  "role": "state_steward",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-064"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Run two full emergence pipelines to close more of report finding F3: IDEA-0005 (release-path smoke checklist, from INS-0005/DarkMellow stale-ZIP incident) becomes notes/release-path-checklist.md; IDEA-0004 (security-focused re-review for write-capable/network-facing tasks, from INS-0004/CommandCenterUI CSRF+identity incidents) becomes a Review Standard addition in MAP_System/AGENTS.md. Both via map_emergence.py promote with records closed properly.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENTS.md",
+    "MAP_System/emergence/ideas/IDEA-0004-require-a-second-security-focused-review-pass-for-any-task-that-.md",
+    "MAP_System/emergence/ideas/IDEA-0005-add-a-release-path-smoke-checklist-for-user-facing-packages.md",
+    "MAP_System/emergence/insights/INS-0004-fail-safe-identity-pattern-commandcenterui-s-browser-mode-defaul.md",
+    "MAP_System/emergence/insights/INS-0005-release-reviews-must-inspect-every-user-visible-acquisition-path.md",
+    "MAP_System/emergence/promotions/PROMO-0004-security-second-pass-review.md",
+    "MAP_System/emergence/promotions/PROMO-0005-release-path-checklist.md",
+    "MAP_System/notes/release-path-checklist.md"
+  ],
+  "acceptance_criteria": [
+    "Both promotions recorded via the emergence CLI with real content, no placeholders",
+    "Both artifacts exist and cite their source incidents",
+    "IDEA/INS-0004/0005 statuses closed as PROMOTED",
+    "AGENTS.md change submitted for peer review, not self-approved"
+  ]
+}

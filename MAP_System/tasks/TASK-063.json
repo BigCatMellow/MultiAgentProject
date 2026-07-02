@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-063",
+  "title": "Audit MAP system usage across lab projects",
+  "task_type": "audit",
+  "role": "systems_auditor",
+  "status": "SUBMITTED",
+  "dependencies": [],
+  "owner": "codex-lab-limo",
+  "description": "Pause Pathwell and audit the MAP/HPOM system across Downloads/MultiAgentProject, Downloads copies, /home/home/Projects/MultiAgentProject, and other readable /home/home/Projects workspaces, with specific attention to recent emergence/insight use.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reviews/emergence_system_audit_2026-07-01.md",
+    "MAP_System/artifacts/reviews/repo_drift_audit_downloads_vs_projects_2026-07-01.md",
+    "MAP_System/artifacts/reviews/task063-map-system-audit.md",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/insights/INS-0007-emergence-records-need-lifecycle-closeout-not-just-capture.md",
+    "MAP_System/events/events.jsonl",
+    "MAP_System/tasks/TASK-063.json",
+    "MAP_System/workflow/task_graph.json"
+  ],
+  "acceptance_criteria": [
+    "Inventory readable MAP and project locations requested by command-center",
+    "Assess root MAP task graph, HPOM gates, shared-state health, agent status, and event/task hygiene",
+    "Survey non-MAP /home/home/Projects directories for MAP-adjacent or orphaned work",
+    "Incorporate claude-lab-rose findings on emergence usage and repo drift with attribution",
+    "Record findings, risks, recommendations, and validation in a durable audit artifact"
+  ]
+}

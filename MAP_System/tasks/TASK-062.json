@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-062",
+  "title": "Clean unused Dark_Mellow GitHub artifacts",
+  "task_type": "fix",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "bigboss",
+  "description": "Remove clearly unused legacy artifacts from the published Dark_Mellow GitHub repository, such as old root-level wallpapers or obsolete archive remnants, while preserving the current installer, theme, launcher, README, and Pictures/Dark_Mellow install assets.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/DarkMellow/artifacts/task062-validation.md",
+    "Projects/DarkMellow/repo"
+  ],
+  "acceptance_criteria": [
+    "Current installer and launcher still reference only files that remain in the repository",
+    "Obsolete root-level wallpaper/menu duplicate artifacts are removed or explicitly retained with rationale",
+    "No current install assets under .themes/Mellow-Dark or Pictures/Dark_Mellow are removed",
+    "Cleanup is committed and pushed to BigCatMellow/Dark_Mellow if validation passes"
+  ]
+}

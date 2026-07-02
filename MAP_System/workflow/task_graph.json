@@ -1219,6 +1219,360 @@
         "Health check includes conditional emergence CLI check that skips cleanly if map_emergence.py absent",
         "All 23 existing health checks still pass after changes"
       ]
+    },
+    {
+      "task_id": "TASK-054",
+      "title": "Publish Dark_Mellow theme package + installer to GitHub",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex-lab-maki",
+      "output_paths": [
+        "/home/home/.themes/Mellow-Dark",
+        "Projects/DarkMellow",
+        "https://github.com/BigCatMellow/Dark_Mellow"
+      ],
+      "acceptance_criteria": [
+        "Package sources the current live /home/home/.themes/Mellow-Dark (post full-parity + cosmetic recolor), not the stale 2026-06-30T19:09Z push",
+        "Package includes assets from /home/home/Pictures/Dark_Mellow",
+        "Installer/launcher script provided for one-command install on another Mint/Cinnamon machine",
+        "Pushed to https://github.com/BigCatMellow/Dark_Mellow",
+        "No live system files modified/broken by the packaging process"
+      ]
+    },
+    {
+      "task_id": "TASK-055",
+      "title": "Build Command Center UI from prototype",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex-lab-maki",
+      "output_paths": [
+        "/home/home/Projects/AI Command Center/Command Center UI/AI command center UI",
+        "Projects/CommandCenterUI"
+      ],
+      "acceptance_criteria": [
+        "Requirements are extracted from the existing .dc.html mockups and recorded durably",
+        "A runnable Command Center UI implementation is created or updated from the prototype direction",
+        "Implementation follows MAP ownership and records progress in events/handoffs/artifacts",
+        "Claude reviews before TASK-055 is marked done or anything is published",
+        "User can launch or open the resulting UI locally"
+      ]
+    },
+    {
+      "task_id": "TASK-056",
+      "title": "Build CommandCenterUI local app backend",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex-lab-maki",
+      "output_paths": [
+        "Projects/CommandCenterUI"
+      ],
+      "acceptance_criteria": [
+        "Local app starts from a launcher script without external dependency installation",
+        "Backend serves Studio UI and exposes read-only MAP task/event/status data",
+        "Backend exposes guarded hcom send capability with explicit intent/recipient/body inputs",
+        "User has a clear path or URL to open the app",
+        "Claude reviews before TASK-056 is marked done"
+      ]
+    },
+    {
+      "task_id": "TASK-057",
+      "title": "Fix CommandCenterUI hcom identity UX",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex-lab-maki",
+      "output_paths": [
+        "Projects/CommandCenterUI"
+      ],
+      "acceptance_criteria": [
+        "UI clearly explains current hcom sender mode and how to enable sending",
+        "Default mode does not falsely attribute operator messages to codex-lab-maki",
+        "Read-only MAP status remains usable without send identity",
+        "Claude reviews before done"
+      ]
+    },
+    {
+      "task_id": "TASK-058",
+      "title": "Fix Dark_Mellow wallpaper install settings",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "DONE",
+      "dependencies": [],
+      "owner": "codex-lab-maki",
+      "output_paths": [
+        "Projects/DarkMellow/repo/install-mellow-dark.sh",
+        "https://github.com/BigCatMellow/Dark_Mellow"
+      ],
+      "acceptance_criteria": [
+        "Installer sets wallpaper URI for relevant Cinnamon/GNOME background keys",
+        "Installer sets picture-options so wallpaper is displayed instead of solid color",
+        "Shell syntax validates",
+        "Fix is pushed to GitHub after review"
+      ]
+    },
+    {
+      "task_id": "TASK-059",
+      "title": "Review Dark_Mellow package and capture MAP insights",
+      "task_type": "review",
+      "role": "reviewer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "bigboss",
+      "output_paths": [
+        "MAP_System/emergence",
+        "Projects/DarkMellow/artifacts/package-review-2026-07-01.md"
+      ],
+      "acceptance_criteria": [
+        "Review covers installer, launcher, README, desktop file, package assets, and likely cross-Mint/Cinnamon/GNOME issues",
+        "Findings are severity-ranked with concrete fixes or follow-up recommendations",
+        "At least one MAP emergence insight or idea is captured if warranted",
+        "Review and emergence artifacts are recorded durably"
+      ]
+    },
+    {
+      "task_id": "TASK-060",
+      "title": "Patch CommandCenterUI hcom send CSRF guard",
+      "task_type": "fix",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-maki",
+      "output_paths": [
+        "Projects/CommandCenterUI/app/server.py",
+        "Projects/CommandCenterUI/artifacts/task060-validation.md"
+      ],
+      "acceptance_criteria": [
+        "POST /api/hcom/send rejects cross-origin Origin or Referer when present",
+        "Same-origin or no-origin localhost tool requests continue to work through existing hcom identity gates",
+        "Malformed limit and Content-Length inputs return clean 400 JSON responses"
+      ]
+    },
+    {
+      "task_id": "TASK-061",
+      "title": "Fix Dark_Mellow stale release artifacts",
+      "task_type": "fix",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "bigboss",
+      "output_paths": [
+        "Projects/DarkMellow/artifacts/task061-validation.md",
+        "Projects/DarkMellow/repo"
+      ],
+      "acceptance_criteria": [
+        "The visible dated ZIP no longer ships the old installer without wallpaper handling",
+        "README.txt no longer contradicts README.md or current package contents",
+        "README.md clearly identifies the recommended install path and avoids pointing users at stale artifacts",
+        "Validation records archive contents or removal decision plus shell syntax checks"
+      ]
+    },
+    {
+      "task_id": "TASK-062",
+      "title": "Clean unused Dark_Mellow GitHub artifacts",
+      "task_type": "fix",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "bigboss",
+      "output_paths": [
+        "Projects/DarkMellow/artifacts/task062-validation.md",
+        "Projects/DarkMellow/repo"
+      ],
+      "acceptance_criteria": [
+        "Current installer and launcher still reference only files that remain in the repository",
+        "Obsolete root-level wallpaper/menu duplicate artifacts are removed or explicitly retained with rationale",
+        "No current install assets under .themes/Mellow-Dark or Pictures/Dark_Mellow are removed",
+        "Cleanup is committed and pushed to BigCatMellow/Dark_Mellow if validation passes"
+      ]
+    },
+    {
+      "task_id": "TASK-063",
+      "title": "Audit MAP system usage across lab projects",
+      "task_type": "audit",
+      "role": "systems_auditor",
+      "status": "SUBMITTED",
+      "dependencies": [],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/artifacts/reviews/emergence_system_audit_2026-07-01.md",
+        "MAP_System/artifacts/reviews/repo_drift_audit_downloads_vs_projects_2026-07-01.md",
+        "MAP_System/artifacts/reviews/task063-map-system-audit.md",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/insights/INS-0007-emergence-records-need-lifecycle-closeout-not-just-capture.md",
+        "MAP_System/events/events.jsonl",
+        "MAP_System/tasks/TASK-063.json",
+        "MAP_System/workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Inventory readable MAP and project locations requested by command-center",
+        "Assess root MAP task graph, HPOM gates, shared-state health, agent status, and event/task hygiene",
+        "Survey non-MAP /home/home/Projects directories for MAP-adjacent or orphaned work",
+        "Incorporate claude-lab-rose findings on emergence usage and repo drift with attribution",
+        "Record findings, risks, recommendations, and validation in a durable audit artifact"
+      ]
+    },
+    {
+      "task_id": "TASK-064",
+      "title": "Produce full operator MAP system report",
+      "task_type": "report",
+      "role": "systems_reporter",
+      "status": "SUBMITTED",
+      "dependencies": [
+        "TASK-063"
+      ],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/artifacts/reports/MAP-system-full-report-2026-07-02.md",
+        "MAP_System/tasks/TASK-064.json"
+      ],
+      "acceptance_criteria": [
+        "Use TASK-063 and supporting emergence/repo-drift audit artifacts as inputs",
+        "Explain what works, what fails, root causes, fixes, additions, changes, and priorities",
+        "Include recent emergence/insight usage and lifecycle findings",
+        "Create a readable report artifact and deliver a copy to the Desktop if permission is granted",
+        "Run relevant MAP validators before reporting completion"
+      ]
+    },
+    {
+      "task_id": "TASK-065",
+      "title": "Implement MAP audit remediation batch",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "SUBMITTED",
+      "dependencies": [],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task065-remediation-validation.md",
+        "MAP_System/scripts/git_operation_lock.py",
+        "MAP_System/scripts/intake_request.py",
+        "MAP_System/scripts/map_emergence.py",
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/reconcile_agents.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_events.py",
+        "MAP_System/shared/approval-calibration.md",
+        "MAP_System/shared/canonical-repo.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/improvement-backlog.md",
+        "MAP_System/tests/test_git_operation_lock.py",
+        "MAP_System/tests/test_map_emergence_stale.py",
+        "MAP_System/tests/test_map_task_auto_id.py",
+        "MAP_System/tests/test_reconcile_agents.py",
+        "MAP_System/tests/test_validate_events.py"
+      ],
+      "acceptance_criteria": [
+        "Add SQLite-backed automatic task ID allocation so concurrent agents do not manually collide on task numbers",
+        "Add emergence stale/content checks for placeholder records, dangling promotion refs, and open records tied to closed tasks",
+        "Add event-log validation and alias warnings for legacy event shapes",
+        "Add non-destructive git operation lock tooling",
+        "Add agent availability reconcile reporting against hcom JSON input",
+        "Document canonical repo status and approval-calibration/intake rules",
+        "Run MAP test suite and validators"
+      ]
+    },
+    {
+      "task_id": "TASK-075",
+      "title": "Close and clean root emergence record lifecycle",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-064"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/emergence/ideas/IDEA-0001-emergence-cli.md",
+        "MAP_System/emergence/ideas/IDEA-0002-text.md",
+        "MAP_System/emergence/ideas/IDEA-0003-text.md",
+        "MAP_System/emergence/ideas/IDEA-0006-announce-task-id-before-claiming-and-pin-physical-continuity-facts.md",
+        "MAP_System/emergence/insights/INS-0001-command-center-emergence-cli.md",
+        "MAP_System/emergence/insights/INS-0002-text.md",
+        "MAP_System/emergence/insights/INS-0003-text.md",
+        "MAP_System/emergence/insights/INS-0006-sequential-task-ids-collide-under-concurrent-agents.md",
+        "MAP_System/emergence/promotions/PROMO-0001-task-052-emergence-cli.md",
+        "MAP_System/emergence/promotions/PROMO-0002-idea.md",
+        "MAP_System/emergence/promotions/PROMO-0003-idea.md"
+      ],
+      "acceptance_criteria": [
+        "TASK-052 records reflect PROMOTED/PROMOTED_TO_TASK/APPROVED with honest retroactive notes",
+        "Placeholder stubs are DISMISSED/REJECTED/WITHDRAWN, not deleted",
+        "INS-0006/IDEA-0006 closed as promoted into TASK-065",
+        "map_emergence.py validate passes and INDEX.md rebuilt"
+      ]
+    },
+    {
+      "task_id": "TASK-077",
+      "title": "Phase 0: canonical repo decision record and stale-copy freeze",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "IN_PROGRESS",
+      "dependencies": [
+        "TASK-064"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "DEC-012 recorded and validate_decisions.py passes",
+        "Freeze marker present in stale copy",
+        "Reconciliation steps written down, no push performed"
+      ]
+    },
+    {
+      "task_id": "TASK-078",
+      "title": "Promote IDEA-0004 and IDEA-0005 into durable artifacts",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-064"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/AGENTS.md",
+        "MAP_System/emergence/ideas/IDEA-0004-require-a-second-security-focused-review-pass-for-any-task-that-.md",
+        "MAP_System/emergence/ideas/IDEA-0005-add-a-release-path-smoke-checklist-for-user-facing-packages.md",
+        "MAP_System/emergence/insights/INS-0004-fail-safe-identity-pattern-commandcenterui-s-browser-mode-defaul.md",
+        "MAP_System/emergence/insights/INS-0005-release-reviews-must-inspect-every-user-visible-acquisition-path.md",
+        "MAP_System/emergence/promotions/PROMO-0004-security-second-pass-review.md",
+        "MAP_System/emergence/promotions/PROMO-0005-release-path-checklist.md",
+        "MAP_System/notes/release-path-checklist.md"
+      ],
+      "acceptance_criteria": [
+        "Both promotions recorded via the emergence CLI with real content, no placeholders",
+        "Both artifacts exist and cite their source incidents",
+        "IDEA/INS-0004/0005 statuses closed as PROMOTED",
+        "AGENTS.md change submitted for peer review, not self-approved"
+      ]
+    },
+    {
+      "task_id": "TASK-079",
+      "title": "Execute DEC-012 git sequence: commit A, push, reconcile B",
+      "task_type": "maintenance",
+      "role": "technical_lead",
+      "status": "READY",
+      "dependencies": [
+        "TASK-065"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/.locks/git-operation.json",
+        "MAP_System/events/events.jsonl"
+      ],
+      "acceptance_criteria": [
+        "Staged diff contains no path under Projects/",
+        "Commit and push from A succeed; announced via hcom before push",
+        "B preserved via rename (nothing deleted), fresh clone matches remote, private dirs restored from A",
+        "Git lock acquired before and released after"
+      ]
     }
   ],
   "approval_gates": [

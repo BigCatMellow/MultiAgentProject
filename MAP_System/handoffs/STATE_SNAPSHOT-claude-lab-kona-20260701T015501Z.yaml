@@ -1,0 +1,84 @@
+snapshot_type: STATE_SNAPSHOT
+created_at: "2026-06-30T21:55:01-04:00"
+agent_id: claude-lab-kona
+session_id: ai-command-center-lab-darkmellow-20260630-kona
+
+task_context:
+  task_id: AD-HOC-DarkMellow
+  title: Dark Mellow theme full-parity apply, review, and cosmetic follow-up
+  status: complete
+  owner: codex-lab-milo (apply) / claude-lab-kona (review + follow-up)
+  reviewer: n/a (this session was the review)
+
+summary:
+  - Reviewed codex-lab-milo's full-parity candidate before live apply; caught
+    one real bug (untuned Mint greys in libadwaita secondary_sidebar colors)
+    and sent a HOLD request. Apply had already landed on live before the hold
+    reached milo, so the fix was applied to both live and candidate after the
+    fact and verified in place.
+  - Operator (bigboss) then asked me directly to close out the three
+    documented cosmetic follow-ups; milo stood down so I didn't duplicate.
+  - Moved the stray dated Metacity backup file out of the live theme dir into
+    Projects/DarkMellow/backups/live-theme-history/.
+  - Recolored XFWM flat title/border fills (two exact Mint greys) to the navy
+    palette (#0f2236 / #22384f) across 52 PNGs.
+  - Replaced the borrowed Mint cinnamon/thumbnail.png with a generated 247x60
+    mockup built from the actual Dark Mellow palette.
+  - Recolored XFWM icon glyphs (close/hide/maximize/menu/shade/stick, 36
+    files, all 4 states each) from grayscale to the theme's pastel-dot
+    language using a luminance-based duotone blend (background anchor
+    #0f2236 -> role pastel), preserving shape and state contrast.
+  - Live theme and Projects/DarkMellow/candidates/Mellow-Dark-full-parity/ are
+    fully in sync after every change (diff -rq clean each time).
+  - Reapplied the Cinnamon theme (gsettings toggle) so the new thumbnail
+    would show up without a logout.
+
+artifacts:
+  - Projects/DarkMellow/artifacts/full-parity-candidate-2026-06-30.md (updated,
+    has two "Follow-up pass" sections documenting my review fix and the two
+    cosmetic passes)
+  - Projects/DarkMellow/REVISIT-NOTES.md (operator-facing summary + remaining
+    open item)
+  - Projects/DarkMellow/backups/live-theme-history/ (new; holds the moved
+    dated Metacity backup file)
+  - /home/home/.themes/Mellow-Dark (live theme, modified)
+  - Projects/DarkMellow/candidates/Mellow-Dark-full-parity/ (candidate, kept
+    in sync with live)
+
+techniques_used:
+  - PIL (Pillow, already installed) for all pixel-level PNG edits. No new
+    packages or tools were needed; xmllint (noted missing in the original
+    audit) is unrelated and was never required.
+  - Exact-color replacement for flat background fills; luminance-based
+    duotone blend (dark anchor -> role pastel) for anti-aliased glyph strokes,
+    so state variation (active/inactive/prelight/pressed) survives the recolor.
+
+open_items:
+  - No live GTK2/libadwaita/openbox/xfwm4 visual/screenshot pass has been done
+    in an actual desktop session — everything was verified by config parsing
+    and exact pixel/hex checks only. Worth a quick look next time one of
+    those app types is open.
+  - XFWM is not the active window manager (Metacity/Cinnamon is), so the XFWM
+    work won't be visually confirmed unless XFWM is switched on or tested
+    separately.
+  - DarkMellow project otherwise has no further pending operator decisions as
+    of this snapshot.
+
+coordination_notes:
+  - codex-lab-milo owns/owned the apply step; I was reviewer, then took the
+    three cosmetic follow-ups directly on operator instruction after milo
+    confirmed they weren't mid-work on them. No ownership conflict occurred
+    this session.
+  - Unrelated to this task: workspace still has pre-existing uncommitted
+    changes to MAP_System/scripts/map_task.py and
+    MAP_System/shared/improvement-backlog.md (not touched this session, not
+    mine to resolve without checking with whoever owns that work).
+
+resume:
+  - Read this snapshot and Projects/DarkMellow/REVISIT-NOTES.md for full
+    DarkMellow context.
+  - If asked to keep polishing DarkMellow: the only real remaining task is a
+    live visual check, not more file edits.
+  - If asked about MAP core (map_task.py / improvement-backlog.md dirty
+    files): not part of this session's work, check MAP_System/events/events.jsonl
+    and other agents' snapshots for who owns that.

@@ -5,7 +5,7 @@ Project: MAP
 Source insight or synthesis: INS-0001
 Owner: codex-lab-zanu
 Date: 2026-06-29
-Status: CANDIDATE
+Status: PROMOTED_TO_TASK
 
 ## Idea
 
@@ -61,3 +61,7 @@ Who must approve this before it can be promoted?
 - [ ] Reject — not worth pursuing
 - [ ] Test — run the smallest safe experiment
 - [ ] Promote to task — evidence is sufficient, ready for HPOM
+
+## Lifecycle close-out (2026-07-02, TASK-075)
+
+Became TASK-052 (RELEASED). The CLI this idea proposed is the tool that maintains this very index. Closed retroactively during TASK-075.

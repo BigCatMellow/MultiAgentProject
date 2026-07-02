@@ -14,6 +14,7 @@ snapshots/
 exports/
 MAP_System/map.db
 MAP_System/db/map.db
+MAP_System/.locks/
 
 # Dependency bundles (not needed in repo)
 **/.deps/

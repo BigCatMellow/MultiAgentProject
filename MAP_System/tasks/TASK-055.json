@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-055",
+  "title": "Build Command Center UI from prototype",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex-lab-maki",
+  "description": "Use the prototype materials in /home/home/Projects/AI Command Center/Command Center UI/AI command center UI to build a usable AI Command Center UI through MAP-managed ownership, review, and durable artifacts. Source materials include Command Center.dc.html, Command Center - Studio.dc.html, support.js, and uploads/.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/AI Command Center/Command Center UI/AI command center UI",
+    "Projects/CommandCenterUI"
+  ],
+  "acceptance_criteria": [
+    "Requirements are extracted from the existing .dc.html mockups and recorded durably",
+    "A runnable Command Center UI implementation is created or updated from the prototype direction",
+    "Implementation follows MAP ownership and records progress in events/handoffs/artifacts",
+    "Claude reviews before TASK-055 is marked done or anything is published",
+    "User can launch or open the resulting UI locally"
+  ]
+}

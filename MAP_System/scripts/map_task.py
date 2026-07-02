@@ -128,6 +128,20 @@ def sync_files(db_path: Path, output_dir: Path | None) -> None:
     subprocess.run(cmd, cwd=ROOT.parent, check=True)
 
 
+def is_review_shape(task_type: str, role: str) -> bool:
+    return task_type.lower() == "review" or role.lower() == "reviewer"
+
+
+def next_task_id(conn: sqlite3.Connection) -> str:
+    rows = conn.execute("SELECT task_id FROM tasks WHERE task_id GLOB 'TASK-[0-9]*'").fetchall()
+    highest = 0
+    for row in rows:
+        suffix = str(row["task_id"]).split("-", 1)[-1]
+        if suffix.isdigit():
+            highest = max(highest, int(suffix))
+    return f"TASK-{highest + 1:03d}"
+
+
 def create_task(args: argparse.Namespace) -> int:
     initial_status = (
         "READY"
@@ -135,8 +149,18 @@ def create_task(args: argparse.Namespace) -> int:
         else "NEEDS_SHAPING"
     )
     with connect(args.db) as conn:
-        if conn.execute("SELECT 1 FROM tasks WHERE task_id=?", (args.task_id,)).fetchone():
-            raise UsageError(f"task already exists: {args.task_id}")
+        # Reserve auto IDs under an immediate write lock so concurrent agents do
+        # not both read the same highest TASK-NNN before either inserts.
+        conn.execute("BEGIN IMMEDIATE")
+        task_id = next_task_id(conn) if args.task_id.lower() == "auto" else args.task_id
+        if is_review_shape(args.task_type, args.role) and args.owner.lower() == args.actor.lower():
+            print(
+                f"warning: {task_id} is review-shaped and owner matches actor; "
+                "the claim gate will block self-review claims",
+                file=sys.stderr,
+            )
+        if conn.execute("SELECT 1 FROM tasks WHERE task_id=?", (task_id,)).fetchone():
+            raise UsageError(f"task already exists: {task_id}")
         ensure_agent(conn, args.owner)
         ensure_agent(conn, args.required_agent)
         conn.execute(
@@ -147,7 +171,7 @@ def create_task(args: argparse.Namespace) -> int:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)
             """,
             (
-                args.task_id,
+                task_id,
                 project_id(conn),
                 args.title,
                 args.description or "",
@@ -165,22 +189,22 @@ def create_task(args: argparse.Namespace) -> int:
                 raise UsageError(f"unknown dependency: {dep}")
             conn.execute(
                 "INSERT INTO task_dependencies (task_id, depends_on) VALUES (?, ?)",
-                (args.task_id, dep),
+                (task_id, dep),
             )
         for path in args.output_path:
             conn.execute(
                 "INSERT INTO task_output_paths (task_id, path) VALUES (?, ?)",
-                (args.task_id, path),
+                (task_id, path),
             )
         for criterion in args.criterion:
             conn.execute(
                 "INSERT INTO task_acceptance_criteria (task_id, criterion) VALUES (?, ?)",
-                (args.task_id, criterion),
+                (task_id, criterion),
             )
-    paths = [f"MAP_System/tasks/{args.task_id}.json", "MAP_System/workflow/task_graph.json"]
-    append_event(args.db, args.event_log, "PROGRESS", args.task_id, args.actor, f"Created {args.task_id}: {args.title} ({initial_status})", paths)
+    paths = [f"MAP_System/tasks/{task_id}.json", "MAP_System/workflow/task_graph.json"]
+    append_event(args.db, args.event_log, "PROGRESS", task_id, args.actor, f"Created {task_id}: {args.title} ({initial_status})", paths)
     sync_files(args.db, args.output_dir)
-    print(json.dumps({"created": args.task_id}, separators=(",", ":")))
+    print(json.dumps({"created": task_id}, separators=(",", ":")))
     return 0
 
 
@@ -247,6 +271,83 @@ def show_task(args: argparse.Namespace) -> int:
     return 0
 
 
+def log_task(args: argparse.Namespace) -> int:
+    """Print a readable timeline for a task: record + events + linked artifacts."""
+    with connect(args.db) as conn:
+        payload = task_payload(conn, args.task_id)
+
+    num = args.task_id.split("-", 1)[-1].lower()  # "052" from "TASK-052"
+    artifacts_dir = ROOT / "artifacts"
+    handoffs_dir = ROOT / "handoffs"
+
+    reviews = sorted((artifacts_dir / "reviews").glob(f"task{num}*.md"))
+    releases = sorted((artifacts_dir / "releases").glob(f"task-{num}*.md"))
+    handoffs = sorted(handoffs_dir.glob(f"*TASK-{num.upper()}*.md"))
+
+    events: list[dict] = []
+    if args.event_log.exists():
+        with args.event_log.open(encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    ev = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if ev.get("task_id") == args.task_id:
+                    events.append(ev)
+
+    sep = "─" * 60
+    print(f"\n{sep}")
+    print(f"  TASK LOG  {args.task_id}: {payload['title']}")
+    print(sep)
+
+    print(f"\nStatus   : {payload['status']}")
+    print(f"Owner    : {payload['owner']}")
+    print(f"Type     : {payload['task_type']} / {payload['role']}")
+    print(f"Created  : {payload['created_at']}")
+    print(f"Updated  : {payload['updated_at']}")
+
+    if payload.get("dependencies"):
+        print(f"Deps     : {', '.join(payload['dependencies'])}")
+
+    print("\nAcceptance criteria:")
+    for i, c in enumerate(payload.get("acceptance_criteria", []), 1):
+        print(f"  {i}. {c}")
+
+    print(f"\n{sep}")
+    print(f"  EVENT TIMELINE  ({len(events)} events)")
+    print(sep)
+    if events:
+        for ev in events:
+            ts = ev.get("created_at", "?")
+            sender = ev.get("sender", "?")
+            etype = ev.get("type", "?")
+            summary = ev.get("summary", "")
+            paths = ev.get("artifact_paths", [])
+            print(f"\n[{ts}] {etype}  ({sender})")
+            print(f"  {summary}")
+            for p in paths:
+                print(f"    → {p}")
+    else:
+        print("  (no events recorded)")
+
+    if reviews or releases or handoffs:
+        print(f"\n{sep}")
+        print("  LINKED ARTIFACTS")
+        print(sep)
+        for p in reviews:
+            print(f"  review   : MAP_System/artifacts/reviews/{p.name}")
+        for p in releases:
+            print(f"  release  : MAP_System/artifacts/releases/{p.name}")
+        for p in handoffs:
+            print(f"  handoff  : MAP_System/handoffs/{p.name}")
+
+    print(f"\n{sep}\n")
+    return 0
+
+
 def release_task_state(args: argparse.Namespace) -> int:
     cmd = [
         sys.executable,
@@ -277,7 +378,7 @@ def parse_args() -> argparse.Namespace:
     sub = parser.add_subparsers(dest="command", required=True)
 
     create = sub.add_parser("create")
-    create.add_argument("--task-id", required=True)
+    create.add_argument("--task-id", required=True, help="Task ID or 'auto' for the next atomic TASK-NNN")
     create.add_argument("--title", required=True)
     create.add_argument("--owner", required=True)
     create.add_argument("--description", default="")
@@ -315,6 +416,11 @@ def parse_args() -> argparse.Namespace:
     show = sub.add_parser("show")
     show.add_argument("task_id")
     show.set_defaults(func=show_task)
+
+    log = sub.add_parser("log", help="Print a readable timeline for a task")
+    log.add_argument("task_id")
+    log.set_defaults(func=log_task)
+
     return parser.parse_args()
 
 

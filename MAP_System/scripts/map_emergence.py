@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from datetime import date
+import json
 import re
 import sys
 from pathlib import Path
@@ -93,6 +94,7 @@ KINDS: dict[str, ArtifactKind] = {
 }
 
 PLACEHOLDER_RE = re.compile(r"<[^>\n]+>")
+STALE_TEXT_RE = re.compile(r"(?im)^\s*(text|tbd|none|idea-####)\s*$")
 SECTION_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 
 
@@ -352,6 +354,82 @@ def validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def task_statuses(task_graph: Path) -> dict[str, str]:
+    if not task_graph.exists():
+        return {}
+    payload = json.loads(task_graph.read_text(encoding="utf-8"))
+    return {
+        task["task_id"]: task.get("status", "UNKNOWN")
+        for task in payload.get("tasks", [])
+        if task.get("task_id")
+    }
+
+
+def stale_findings(root: Path, task_graph: Path) -> list[str]:
+    findings: list[str] = []
+    statuses = task_statuses(task_graph)
+    closed_task_statuses = {"APPROVED", "DONE", "RELEASED"}
+    open_artifact_statuses = {"RAW", "CANDIDATE", "PROPOSED"}
+    closed_artifact_statuses = {
+        "ADOPTED",
+        "APPROVED",
+        "ARCHIVED",
+        "DISMISSED",
+        "PARKED",
+        "PROMOTED",
+        "PROMOTED_TO_TASK",
+        "REJECTED",
+        "SUPERSEDED",
+        "WITHDRAWN",
+    }
+
+    for kind in KINDS.values():
+        for path in artifact_files(root, kind):
+            text = path.read_text(encoding="utf-8", errors="replace")
+            rel = path.relative_to(root)
+            status = extract_header(text, "Status")
+            related_task = extract_header(text, "Related task")
+            summary = extract_section(text, kind.summary_section)
+
+            if status in closed_artifact_statuses:
+                continue
+            if summary and STALE_TEXT_RE.fullmatch(summary):
+                findings.append(f"{rel}: placeholder summary content {summary!r}")
+            if re.search(r"\bIDEA-####\b", text):
+                findings.append(f"{rel}: dangling IDEA-#### placeholder")
+            if kind.name == "promotion":
+                source = extract_header(text, "Source idea")
+                if source and source != "NONE" and not re.fullmatch(r"IDEA-\d{4}", source):
+                    findings.append(f"{rel}: invalid Source idea {source!r}")
+                if re.search(r"Approved by:\s*TBD|Date:\s*TBD", text):
+                    findings.append(f"{rel}: proposed promotion has incomplete approval fields")
+            if related_task and related_task != "NONE":
+                task_status = statuses.get(related_task)
+                if task_status in closed_task_statuses and status in open_artifact_statuses:
+                    findings.append(
+                        f"{rel}: related task {related_task} is {task_status} but artifact remains {status}"
+                    )
+                elif task_status is None and related_task.startswith("TASK-"):
+                    findings.append(f"{rel}: related task {related_task} not found in task graph")
+    return findings
+
+
+def stale(args: argparse.Namespace) -> int:
+    root = args.root.resolve()
+    task_graph = args.task_graph or (root / "workflow" / "task_graph.json")
+    findings = stale_findings(root, task_graph)
+    if args.json:
+        print(json.dumps({"findings": findings, "count": len(findings)}, indent=2))
+    else:
+        if findings:
+            print("Emergence stale/content findings:")
+            for finding in findings:
+                print(f"- {finding}")
+        else:
+            print("No emergence stale/content findings.")
+    return 1 if findings and args.strict else 0
+
+
 def index_row(root: Path, kind: ArtifactKind, path: Path) -> tuple[str, str, str, str, str, str]:
     text = path.read_text(encoding="utf-8", errors="replace")
     artifact_id = extract_header(text, kind.id_label) or path.stem.split("-", 2)[0]
@@ -520,6 +598,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
     check = sub.add_parser("validate")
     check.set_defaults(func=validate)
+
+    stale_cmd = sub.add_parser("stale", help="Report stale or placeholder emergence records")
+    stale_cmd.add_argument("--task-graph", type=Path)
+    stale_cmd.add_argument("--json", action="store_true")
+    stale_cmd.add_argument("--strict", action="store_true", help="Exit non-zero when findings exist")
+    stale_cmd.set_defaults(func=stale)
 
     for kind in ["insight", "idea", "experiment", "synthesis"]:
         short = sub.add_parser(kind)

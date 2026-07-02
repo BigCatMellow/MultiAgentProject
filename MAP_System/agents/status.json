@@ -6,6 +6,12 @@
       "resume_after": "when operator restores token budget",
       "notes": ""
     },
+    "bigboss": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
     "claude": {
       "status": "available",
       "reason": null,
@@ -24,6 +30,18 @@
       "resume_after": null,
       "notes": ""
     },
+    "claude-lab-rose": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "claude-lab-taro": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
     "claude-mako": {
       "status": "available",
       "reason": null,
@@ -37,6 +55,18 @@
       "notes": ""
     },
     "codex": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex-lab-limo": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
+      "notes": ""
+    },
+    "codex-lab-maki": {
       "status": "available",
       "reason": null,
       "resume_after": null,

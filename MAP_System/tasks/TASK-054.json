@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-054",
+  "title": "Publish Dark_Mellow theme package + installer to GitHub",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "DONE",
+  "dependencies": [],
+  "owner": "codex-lab-maki",
+  "description": "Package the live Mellow-Dark theme (post full-parity + cosmetic apply) plus assets from /home/home/Pictures/Dark_Mellow into an installable release with a launcher/installer script, and push it to https://github.com/BigCatMellow/Dark_Mellow. The repo already has one earlier push (2026-06-30T19:09Z) that predates the full-parity/cosmetic work and must not be treated as current.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/.themes/Mellow-Dark",
+    "Projects/DarkMellow",
+    "https://github.com/BigCatMellow/Dark_Mellow"
+  ],
+  "acceptance_criteria": [
+    "Package sources the current live /home/home/.themes/Mellow-Dark (post full-parity + cosmetic recolor), not the stale 2026-06-30T19:09Z push",
+    "Package includes assets from /home/home/Pictures/Dark_Mellow",
+    "Installer/launcher script provided for one-command install on another Mint/Cinnamon machine",
+    "Pushed to https://github.com/BigCatMellow/Dark_Mellow",
+    "No live system files modified/broken by the packaging process"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-064",
+  "title": "Produce full operator MAP system report",
+  "task_type": "report",
+  "role": "systems_reporter",
+  "status": "SUBMITTED",
+  "dependencies": [
+    "TASK-063"
+  ],
+  "owner": "codex-lab-limo",
+  "description": "Produce a comprehensive operator-facing report on the MAP system after TASK-063: what works, what does not, why, how to fix it, what to add, what to change, and prioritized next steps. Deliver a durable MAP artifact and a Desktop copy for command-center.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/MAP-system-full-report-2026-07-02.md",
+    "MAP_System/tasks/TASK-064.json"
+  ],
+  "acceptance_criteria": [
+    "Use TASK-063 and supporting emergence/repo-drift audit artifacts as inputs",
+    "Explain what works, what fails, root causes, fixes, additions, changes, and priorities",
+    "Include recent emergence/insight usage and lifecycle findings",
+    "Create a readable report artifact and deliver a copy to the Desktop if permission is granted",
+    "Run relevant MAP validators before reporting completion"
+  ]
+}
