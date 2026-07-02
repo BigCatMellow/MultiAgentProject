@@ -1746,6 +1746,32 @@
         "CommandCenterUI.desktop Exec path matches the real current location",
         "README reflects the standalone layout accurately"
       ]
+    },
+    {
+      "task_id": "TASK-087",
+      "title": "CommandCenterUI v2: chatroom UX + native lab-wrapper window",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/CommandCenterUI.desktop",
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/app/window.py",
+        "/home/home/Projects/CommandCenterUI/run-command-center-app.sh",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js"
+      ],
+      "acceptance_criteria": [
+        "App launches as its own window (GTK/WebKit wrapper, firefox app-window fallback), not a plain browser tab",
+        "Chat feed shows live hcom messages (sender, text, time, mentions) and agent presence, updating automatically within a few seconds",
+        "Sending a message requires exactly: type text, press Enter -- no recipient/intent/identity form fields; @name in text targets agents, otherwise broadcast",
+        "Sends appear in hcom attributed to the operator identity command-center (external), never to an agent identity",
+        "Server stays 127.0.0.1-only with the same-origin POST guard intact; hcom.db opened read-only"
+      ]
     }
   ],
   "approval_gates": [

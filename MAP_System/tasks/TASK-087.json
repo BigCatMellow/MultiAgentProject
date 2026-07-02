@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-087",
+  "title": "CommandCenterUI v2: chatroom UX + native lab-wrapper window",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator feedback on the released TASK-086 app: (1) it is not really a standalone program -- it should be a wrapper for the AI Command Center Lab, i.e. its own application window, not a browser tab; (2) communications UX is terrible -- the composer demands recipients/intent/identity form-filling before sending; it must feel like a chatroom. Build: chat-first UI reading the live hcom message stream and agent presence directly from ~/.hcom/hcom.db (read-only), a one-box composer where Enter sends, @mentions parsed from the text, no-mention messages broadcast, default intent inform; sends attributed to the operator's established external identity 'command-center' via hcom send --from (no setup friction, no agent impersonation); a native GTK/WebKit window wrapper so it launches as its own program (firefox fallback); MAP task/event state kept as a secondary rail. Keep localhost-only binding and same-origin POST guard; PROMO-0004 security second pass applies.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/CommandCenterUI.desktop",
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/app/window.py",
+    "/home/home/Projects/CommandCenterUI/run-command-center-app.sh",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js"
+  ],
+  "acceptance_criteria": [
+    "App launches as its own window (GTK/WebKit wrapper, firefox app-window fallback), not a plain browser tab",
+    "Chat feed shows live hcom messages (sender, text, time, mentions) and agent presence, updating automatically within a few seconds",
+    "Sending a message requires exactly: type text, press Enter -- no recipient/intent/identity form fields; @name in text targets agents, otherwise broadcast",
+    "Sends appear in hcom attributed to the operator identity command-center (external), never to an agent identity",
+    "Server stays 127.0.0.1-only with the same-origin POST guard intact; hcom.db opened read-only"
+  ]
+}
