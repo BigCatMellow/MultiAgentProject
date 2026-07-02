@@ -1772,6 +1772,23 @@
         "Sends appear in hcom attributed to the operator identity command-center (external), never to an agent identity",
         "Server stays 127.0.0.1-only with the same-origin POST guard intact; hcom.db opened read-only"
       ]
+    },
+    {
+      "task_id": "TASK-088",
+      "title": "CommandCenterUI chat layout: feed must scroll in its own frame",
+      "task_type": "bugfix",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/app/window.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css"
+      ],
+      "acceptance_criteria": [
+        "Composer is always visible at the bottom and the presence sidebar always visible on the left, regardless of feed length; only the message feed scrolls",
+        "F5/Ctrl+R reloads the page inside the WebKit window"
+      ]
     }
   ],
   "approval_gates": [

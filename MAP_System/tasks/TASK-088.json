@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-088",
+  "title": "CommandCenterUI chat layout: feed must scroll in its own frame",
+  "task_type": "bugfix",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator feedback: the chat feed grows the whole page, so the composer is only reachable by scrolling to the page bottom and the presence sidebar by scrolling to the top. Root cause: flex/grid children default to min-height:auto, letting .feed content expand .room past the viewport instead of scrolling internally. Fix the CSS so the feed is its own scrollframe with composer and sidebar always visible, and add a reload shortcut (F5/Ctrl+R) to the WebKit window so UI fixes can be picked up without restarting the app.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/app/window.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css"
+  ],
+  "acceptance_criteria": [
+    "Composer is always visible at the bottom and the presence sidebar always visible on the left, regardless of feed length; only the message feed scrolls",
+    "F5/Ctrl+R reloads the page inside the WebKit window"
+  ]
+}
