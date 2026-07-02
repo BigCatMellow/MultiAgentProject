@@ -73,6 +73,9 @@ The manual steps above are backstopped by `scripts/limit_watcher.py`, a
 deterministic background poller (no LLM) started via
 `scripts/start-limit-watcher.sh`:
 
+- default poll interval is 90 minutes (`5400s`), chosen against the 5-hour
+  agent refresh window; pass an explicit interval to `start-limit-watcher.sh`
+  for a temporary faster or slower watcher;
 - when an agent's `out_of_tokens` + `resume_after` window passes, the watcher
   resumes it with `hcom r <name> --terminal wezterm-tab --go` — one nudge per
   window, never headless;

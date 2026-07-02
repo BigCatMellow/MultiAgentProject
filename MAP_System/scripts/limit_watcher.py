@@ -451,7 +451,7 @@ def poll_once(dry_run=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--interval", type=int, default=60, help="poll seconds")
+    parser.add_argument("--interval", type=int, default=5400, help="poll seconds")
     parser.add_argument("--once", action="store_true", help="single poll, then exit")
     parser.add_argument("--dry-run", action="store_true", help="print actions, write nothing")
     args = parser.parse_args()

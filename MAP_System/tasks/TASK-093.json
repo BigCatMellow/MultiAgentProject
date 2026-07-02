@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-093",
+  "title": "CommandCenterUI: quote/reply and attention inbox for chat",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator request hcom #17290: make CommandCenterUI chat support quoting/replying to messages and provide an easy way to see and answer questions/messages needing operator attention. Use hcom reply_to as the durable reply primitive, add message-level reply/quote affordances, render quoted context clearly, and add an attention inbox for intent=request, direct mentions of command-center/bigboss/operator aliases, and messages marked as needing reply. The inbox should jump to the source message and prefill/attach reply context without hiding the original hcom record.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js"
+  ],
+  "acceptance_criteria": [
+    "Each chat message has an ergonomic quote/reply affordance that sends hcom reply_to with visible quoted context in the composer and feed",
+    "Attention inbox lists open operator-action messages, including hcom intent=request and direct operator mentions, with jump-to-message and reply actions",
+    "Original message text remains the source of record; quotes are presentation/context and cannot silently alter hcom history",
+    "Feature works with existing polling and does not add an unsafe write endpoint beyond the existing guarded chat send path"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-094",
+  "title": "CommandCenterUI: operator approval center for gated actions",
+  "task_type": "feature",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-093"
+  ],
+  "owner": "claude-lab-zaro",
+  "description": "Operator request hcom #17290: provide an easy way in CommandCenterUI to approve or reject actions the system needs approval for, such as running a command or accessing a file. Build this as an operator approval/attention center, not blanket auto-approval. It should surface MAP pending approval gates and visible agent terminal prompts where possible; provide inspect/open-terminal and explicit approve/reject/send-input actions; record/audit any terminal injection; and keep dangerous or broad approvals manual. Do not bypass Codex/Claude security prompts or introduce hidden/headless approval behavior.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js"
+  ],
+  "acceptance_criteria": [
+    "Approval center surfaces pending MAP approval gates and attention-worthy visible terminal prompts with source agent/context",
+    "Operator can approve/reject MAP gates through explicit UI actions that call existing runner/task mechanisms safely, with clear audit trail",
+    "For tool prompts inside agent terminals, UI only sends explicit operator input to visible sessions and records inject audit; it must not auto-approve or hide prompts",
+    "Security review verifies same-origin/localhost boundaries, target validation, and no new broad command execution surface"
+  ]
+}

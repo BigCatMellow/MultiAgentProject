@@ -1,6 +1,7 @@
 #!/bin/sh
 # Start the limit watcher (TASK-080) in the background with a pidfile guard.
 # Usage: MAP_System/scripts/start-limit-watcher.sh [interval-seconds]
+# Default interval is 90 minutes (5400s), matching the 5h agent refresh window.
 #
 # The pidfile check verifies /proc/<pid>/cmdline actually contains
 # limit_watcher.py -- a bare `kill -0` gives false positives on PID reuse
@@ -11,7 +12,7 @@ set -u
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 PIDFILE="$ROOT/.locks/limit-watcher.pid"
 LOG="$ROOT/../logs/limit-watcher.log"
-INTERVAL="${1:-60}"
+INTERVAL="${1:-5400}"
 
 mkdir -p "$ROOT/.locks" "$(dirname "$LOG")"
 

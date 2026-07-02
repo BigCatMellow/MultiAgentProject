@@ -40,12 +40,18 @@ Those launcher files are outside Git. Treat this note and
 `MAP_System/artifacts/reviews/task085-review.md` as the durable repo-side
 documentation for what they are expected to do.
 
+As of 2026-07-02, repo policy changed the RnS default poll interval to 90
+minutes (`5400s`). If an external launcher still passes `60`, update it to call
+`MAP_System/scripts/start-limit-watcher.sh` with no interval argument, or pass
+`5400` explicitly.
+
 ## Startup Contract
 
 On lab open, the launcher does this in order:
 
 1. Start the AI Command Center Lab terminal layout with visible tabs.
-2. Start RnS with `MAP_System/scripts/start-limit-watcher.sh 60`.
+2. Start RnS with `MAP_System/scripts/start-limit-watcher.sh` (default
+   interval: 90 minutes / 5400 seconds).
 3. Ensure watcher startup failure does not block the lab from opening.
 4. Start or resume Codex and Claude through visible hcom terminals.
 5. Prompt each lab agent to run startup orientation before taking new work.
@@ -104,7 +110,7 @@ Use this only if the lab launcher does not bring everything up.
 
 ```bash
 cd /home/home/Downloads/MultiAgentProject
-MAP_System/scripts/start-limit-watcher.sh 60
+MAP_System/scripts/start-limit-watcher.sh
 hcom list --name limo
 ```
 

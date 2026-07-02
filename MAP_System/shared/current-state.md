@@ -24,10 +24,12 @@ Last reviewed during the TASK-082 full-report coverage pass.
 - Agent availability lives in `agents/status.json`.
 - Integration and multi-gate regression tests are wired into `scripts/run_tests.sh` (22 checks, all passing after TASK-080/081).
 - The limit watcher (`scripts/limit_watcher.py`, TASK-080, APPROVED) runs in the
-  background and auto-resumes agents after usage-limit resets: it polls
-  `agents/status.json` for `out_of_tokens` + ISO-8601 `resume_after`, resumes via
-  visible `hcom r <name> --terminal wezterm-tab` (one nudge per window), and
-  reports silent stops. Start/stop: `scripts/start-limit-watcher.sh` /
+  background and auto-resumes agents after usage-limit resets: the default poll
+  interval is 90 minutes (`5400s`), chosen against the 5-hour agent refresh
+  window. It polls `agents/status.json` for `out_of_tokens` + ISO-8601
+  `resume_after`, resumes via visible `hcom r <name> --terminal wezterm-tab`
+  (one nudge per window), and reports silent stops. Start/stop:
+  `scripts/start-limit-watcher.sh` /
   `kill $(cat .locks/limit-watcher.pid)`. Protocol: `notes/limit-exhaustion-protocol.md`.
 - `map_task.py rework` returns a CHANGES_REQUESTED task to a claimable state
   (TASK-081; closes the rework dead-end found during TASK-080's rejection).

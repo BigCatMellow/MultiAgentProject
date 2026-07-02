@@ -1873,6 +1873,52 @@
         "Feature degrades gracefully (raw messages, no errors) when Ollama is down; sidebar toggle disables it entirely",
         "Summaries cached per event id; each message summarized at most once across restarts"
       ]
+    },
+    {
+      "task_id": "TASK-093",
+      "title": "CommandCenterUI: quote/reply and attention inbox for chat",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js"
+      ],
+      "acceptance_criteria": [
+        "Each chat message has an ergonomic quote/reply affordance that sends hcom reply_to with visible quoted context in the composer and feed",
+        "Attention inbox lists open operator-action messages, including hcom intent=request and direct operator mentions, with jump-to-message and reply actions",
+        "Original message text remains the source of record; quotes are presentation/context and cannot silently alter hcom history",
+        "Feature works with existing polling and does not add an unsafe write endpoint beyond the existing guarded chat send path"
+      ]
+    },
+    {
+      "task_id": "TASK-094",
+      "title": "CommandCenterUI: operator approval center for gated actions",
+      "task_type": "feature",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-093"
+      ],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js"
+      ],
+      "acceptance_criteria": [
+        "Approval center surfaces pending MAP approval gates and attention-worthy visible terminal prompts with source agent/context",
+        "Operator can approve/reject MAP gates through explicit UI actions that call existing runner/task mechanisms safely, with clear audit trail",
+        "For tool prompts inside agent terminals, UI only sends explicit operator input to visible sessions and records inject audit; it must not auto-approve or hide prompts",
+        "Security review verifies same-origin/localhost boundaries, target validation, and no new broad command execution surface"
+      ]
     }
   ],
   "approval_gates": [
