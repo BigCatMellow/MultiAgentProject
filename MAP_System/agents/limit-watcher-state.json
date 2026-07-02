@@ -10,14 +10,6 @@
     "codex-lab-lema",
     "codex-lab-limo"
   ],
-  "incidents": {
-    "scratch-peso": {
-      "detected_at": "2026-07-02T13:12:34-04:00",
-      "reset_at": null,
-      "probes_sent": 0,
-      "reset_nudged": false,
-      "gave_up": false
-    }
-  },
+  "incidents": {},
   "checkins": {}
 }

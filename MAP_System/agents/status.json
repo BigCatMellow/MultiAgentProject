@@ -31,10 +31,10 @@
       "notes": "Historical session identity. Resume via `hcom r claude-lab-nuzo` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "claude-lab-rose": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_superseded",
       "resume_after": null,
-      "notes": "Live hcom session agent as of 2026-07-02 (TASK-082 reconcile)."
+      "notes": "Superseded by later lab sessions after 2026-07-02 restart; do not RnS probe unless explicitly resumed."
     },
     "claude-lab-taro": {
       "status": "inactive",
@@ -113,6 +113,12 @@
       "reason": "tool_identity",
       "resume_after": null,
       "notes": "Artifact of map_task.py ensure_agent(); not a real agent."
+    },
+    "scratch-peso": {
+      "status": "inactive",
+      "reason": "disposable_session_ended",
+      "resume_after": null,
+      "notes": "Disposable TASK-089 test agent intentionally stopped after validation; do not RnS probe."
     }
   }
 }

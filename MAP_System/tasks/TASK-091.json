@@ -1,0 +1,17 @@
+{
+  "task_id": "TASK-091",
+  "title": "CommandCenterUI: hidden panels visible (CSS display overrides [hidden])",
+  "task_type": "bugfix",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zaro",
+  "description": "Operator screenshot (Pictures/Screenshot from 2026-07-02 13-46-17.png) shows the agent screen panel open+empty over the chat, and the Start-lab banner visible while agents are in the room. Root cause: .screen-panel, .lab-banner, and .mention-hint set display:flex in CSS, which overrides the UA stylesheet's display:none for the HTML hidden attribute, so JS toggling .hidden has no effect. Fix with a global [hidden]{display:none!important} rule.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/src/chat.css"
+  ],
+  "acceptance_criteria": [
+    "Screen panel, lab banner, and mention hint are invisible whenever their hidden attribute is set"
+  ]
+}

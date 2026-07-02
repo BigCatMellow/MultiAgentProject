@@ -1812,6 +1812,45 @@
         "Operator can send text/Enter to an agent terminal from the app to answer prompts (same-origin guarded, validated name, capped text)",
         "hcom term reads are read-only; inject only fires on explicit operator action"
       ]
+    },
+    {
+      "task_id": "TASK-090",
+      "title": "Post-restart reconciliation: RnS incident hygiene + stale canonical-repo doc",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/agents/limit-watcher-state.json",
+        "MAP_System/agents/status.json",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+        "MAP_System/events/events.jsonl",
+        "MAP_System/handoffs/HANDOFF-TASK-090-codex-lab-limo-to-zaro.md",
+        "MAP_System/shared/canonical-repo.md"
+      ],
+      "acceptance_criteria": [
+        "rose and scratch-peso have durable inactive statuses with reasons; watcher no longer probes either",
+        "Watcher restarted cleanly; state file has no incidents for dead-on-purpose sessions",
+        "canonical-repo.md updated only after explicit bigboss confirmation, with HPOM headers refreshed",
+        "Emergence idea filed for the RnS superseded/disposable-session gap"
+      ]
+    },
+    {
+      "task_id": "TASK-091",
+      "title": "CommandCenterUI: hidden panels visible (CSS display overrides [hidden])",
+      "task_type": "bugfix",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zaro",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/src/chat.css"
+      ],
+      "acceptance_criteria": [
+        "Screen panel, lab banner, and mention hint are invisible whenever their hidden attribute is set"
+      ]
     }
   ],
   "approval_gates": [

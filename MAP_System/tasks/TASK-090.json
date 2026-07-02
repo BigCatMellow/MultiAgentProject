@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-090",
+  "title": "Post-restart reconciliation: RnS incident hygiene + stale canonical-repo doc",
+  "task_type": "maintenance",
+  "role": "state_steward",
+  "status": "IN_PROGRESS",
+  "dependencies": [],
+  "owner": "codex-lab-limo",
+  "description": "Cluster found after the RnS watcher was revived (2026-07-02 ~13:05) and probe-resumed stale incidents: (1) watcher resurrected codex-lab-limo and tried claude-lab-rose (launch_blocked) although both were superseded by the 08:27 lab restart; (2) watcher opened an incident for scratch-peso, a disposable TASK-089 test agent that was deliberately killed, probes_sent=1; (3) shared/canonical-repo.md still names /home/home/Downloads/MultiAgentProject as canonical and forbids pushing from Projects -- but that path no longer exists, every live session runs in /home/home/Projects/MultiAgentProject, and three authorized pushes went out from it today; the doc was never refreshed after TASK-079 completed. Remediation: record durable inactive/session_ended statuses for claude-lab-rose and scratch-peso at the SQLite source + export (suppresses watcher probes per its reason-field contract); clear the scratch-peso incident from limit-watcher-state.json with the watcher stopped, then restart it; refresh canonical-repo.md to post-TASK-079 reality ONLY after bigboss confirms (hcom request pending); capture the watcher-resurrects-superseded/disposable-sessions gap as an emergence idea for a v2.2 fix.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/limit-watcher-state.json",
+    "MAP_System/agents/status.json",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+    "MAP_System/events/events.jsonl",
+    "MAP_System/handoffs/HANDOFF-TASK-090-codex-lab-limo-to-zaro.md",
+    "MAP_System/shared/canonical-repo.md"
+  ],
+  "acceptance_criteria": [
+    "rose and scratch-peso have durable inactive statuses with reasons; watcher no longer probes either",
+    "Watcher restarted cleanly; state file has no incidents for dead-on-purpose sessions",
+    "canonical-repo.md updated only after explicit bigboss confirmation, with HPOM headers refreshed",
+    "Emergence idea filed for the RnS superseded/disposable-session gap"
+  ]
+}
