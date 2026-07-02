@@ -17,6 +17,12 @@ DEFAULT_DB = ROOT / "map.db"
 DEFAULT_SHARED = ROOT / "shared"
 VALIDATE_SHARED = ROOT / "scripts" / "validate_shared_state.py"
 
+EVENT_ALIASES = {
+    "REVIEW_APPROVED": "APPROVED",
+    "REVIEW_CHANGES_REQUESTED": "CHANGES_REQUESTED",
+    "task_progress": "PROGRESS",
+}
+
 
 def connect(db_path: Path) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
@@ -68,7 +74,11 @@ def event_counts(conn: sqlite3.Connection) -> dict[str, int]:
         ORDER BY event_type
         """
     ).fetchall()
-    return {row["event_type"]: row["count"] for row in rows}
+    counts: dict[str, int] = {}
+    for row in rows:
+        event_type = EVENT_ALIASES.get(row["event_type"], row["event_type"])
+        counts[event_type] = counts.get(event_type, 0) + row["count"]
+    return counts
 
 
 def collect_metrics(db_path: Path, shared_dir: Path) -> dict[str, Any]:

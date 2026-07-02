@@ -190,3 +190,22 @@ Reconciliation plan (in order, after TASK-065's git-operation lock exists):
 
 Until step 4 completes, a freeze marker should be placed in B
 (deferred at codex-lab-limo's request until the git lock tooling exists).
+
+## DEC-013: Synthesis And Experiment Record Types Stay Active, Not Mandatory
+
+Status: approved
+Owner: command-center (decision delegated via hcom #15008; recorded by claude-lab-rose, TASK-082)
+Date: 2026-07-02
+Applies-To: emergence system usage
+
+Report Phase 2.4 asked whether the never-used synthesis and experiment
+emergence types should be kept, tested, or marked advanced/optional.
+
+Decision: both stay active and first-class, used only when genuinely
+warranted — never as ceremony. A synthesis is warranted when multiple
+insights turn out to share one deeper pattern (first real use: SYN-0001,
+"two readers, one truth," drawn from six of this week's incidents). An
+experiment is warranted when a claim is testable before being promoted
+(none yet; the next candidate should use it rather than promoting untested).
+`map_emergence.py stale` treats absence of SYN/EXP records as normal, not
+as debt.

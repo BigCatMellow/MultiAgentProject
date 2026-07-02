@@ -3,7 +3,7 @@
   "title": "Phase 0: canonical repo decision record and stale-copy freeze",
   "task_type": "maintenance",
   "role": "state_steward",
-  "status": "IN_PROGRESS",
+  "status": "APPROVED",
   "dependencies": [
     "TASK-064"
   ],

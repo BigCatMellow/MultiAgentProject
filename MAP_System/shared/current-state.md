@@ -3,14 +3,14 @@
 <!-- hpom: state_owner: command-center -->
 <!-- hpom: status: CURRENT -->
 <!-- hpom: last_verified: 2026-07-02 -->
-<!-- hpom: verified_against: TASK-065 MAP audit remediation batch -->
+<!-- hpom: verified_against: TASK-082 full-report coverage pass (post TASK-079/080 reconciliation and watcher) -->
 <!-- hpom: confidence: HIGH -->
 <!-- hpom: supersedes: NONE -->
 <!-- hpom: superseded_by: NONE -->
 
 # Current State
 
-Last reviewed during the MAP audit remediation batch.
+Last reviewed during the TASK-082 full-report coverage pass.
 
 ## Live Capabilities
 
@@ -22,7 +22,19 @@ Last reviewed during the MAP audit remediation batch.
 - The autonomous claim loop lives in `scripts/agent_loop.py`.
 - File-backed task mirrors live in `tasks/` and `workflow/task_graph.json`.
 - Agent availability lives in `agents/status.json`.
-- Integration and multi-gate regression tests are wired into `scripts/run_tests.sh` (18 checks, all passing after TASK-065).
+- Integration and multi-gate regression tests are wired into `scripts/run_tests.sh` (22 checks, all passing after TASK-080/081).
+- The limit watcher (`scripts/limit_watcher.py`, TASK-080, APPROVED) runs in the
+  background and auto-resumes agents after usage-limit resets: it polls
+  `agents/status.json` for `out_of_tokens` + ISO-8601 `resume_after`, resumes via
+  visible `hcom r <name> --terminal wezterm-tab` (one nudge per window), and
+  reports silent stops. Start/stop: `scripts/start-limit-watcher.sh` /
+  `kill $(cat .locks/limit-watcher.pid)`. Protocol: `notes/limit-exhaustion-protocol.md`.
+- `map_task.py rework` returns a CHANGES_REQUESTED task to a claimable state
+  (TASK-081; closes the rework dead-end found during TASK-080's rejection).
+- A release-path smoke checklist for user-facing packages lives in
+  `notes/release-path-checklist.md` (PROMO-0005). A security second-pass rule
+  for network-facing/write-capable outputs is in `AGENTS.md` Review Standard
+  (PROMO-0004).
 - Task graph validation currently passes.
 - `scripts/map_task.py create --task-id auto` allocates the next task ID under
   a SQLite write lock so concurrent agents do not manually collide on task IDs.
@@ -77,9 +89,14 @@ Last reviewed during the MAP audit remediation batch.
 - Some historical artifacts still mention the old `langgraph/` directory. The live code path is `graph/`.
 - `aider_wrapper.py` has one open RECOMMENDED fix: remove `--no-auto-commits` from `FORBIDDEN_AIDER_FLAGS` (tracked as TASK-050).
 - `local_runner.py` has two OPTIONAL cosmetic items (tracked as TASK-051).
-- `/home/home/Projects/MultiAgentProject` is not canonical and should not be a
-  push/sync source until reconciled; use `/home/home/Downloads/MultiAgentProject`
-  as the canonical local repo per `shared/canonical-repo.md`.
+- Repo reconciliation is COMPLETE (TASK-079, 2026-07-02): canonical repo A
+  pushed to origin at `5cb8a61`; `/home/home/Projects/MultiAgentProject` is now
+  a fresh clone of that commit with private `Projects/Pathwell` + `Projects/Backups`
+  restored from A; the old drifted copy is preserved at
+  `~/Projects/MultiAgentProject-stale-archive-20260702/` (do not use). A remains
+  the canonical working repo per DEC-012 / `shared/canonical-repo.md`.
+- `agents/status.json` was reconciled to hcom reality on 2026-07-02 (TASK-082);
+  identity-kind semantics are documented in `agents/README.md`.
 - `validate_events.py` currently reports legacy event warnings in the historical
   event log; this is expected until an event-normalization task runs.
 - Open follow-up items are tracked in `shared/improvement-backlog.md`.

@@ -1,100 +1,100 @@
 {
   "agents": {
     "antigravity": {
-      "status": "standby",
-      "reason": "out_of_tokens",
-      "resume_after": "when operator restores token budget",
-      "notes": ""
+      "status": "available",
+      "reason": "operator_relay_only",
+      "resume_after": null,
+      "notes": "Reachable only via operator relay (hcom #15008). Was out_of_tokens with free-text resume_after."
     },
     "bigboss": {
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": ""
+      "notes": "The human operator."
     },
     "claude": {
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": ""
+      "notes": "Capability identity (core agent type), not a live session. See agents/README.md."
     },
     "claude-bono": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r claude-bono` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "claude-lab-nuzo": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r claude-lab-nuzo` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "claude-lab-rose": {
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": ""
+      "notes": "Live hcom session agent as of 2026-07-02 (TASK-082 reconcile)."
     },
     "claude-lab-taro": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r claude-lab-taro` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "claude-mako": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r claude-mako` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "claude-muse": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r claude-muse` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "codex": {
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": ""
+      "notes": "Capability identity (core agent type), not a live session. See agents/README.md."
     },
     "codex-lab-limo": {
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": ""
+      "notes": "Live hcom session agent as of 2026-07-02 (TASK-082 reconcile)."
     },
     "codex-lab-maki": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r codex-lab-maki` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "codex-lab-zanu": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r codex-lab-zanu` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "codex-live": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r codex-live` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "codex-tori": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r codex-tori` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "codex-vera": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "session_ended",
       "resume_after": null,
-      "notes": ""
+      "notes": "Historical session identity. Resume via `hcom r codex-vera` if its context is needed. Reconciled 2026-07-02 (TASK-082)."
     },
     "gemini": {
       "status": "standby",
@@ -103,10 +103,10 @@
       "notes": ""
     },
     "map-task": {
-      "status": "available",
-      "reason": null,
+      "status": "inactive",
+      "reason": "tool_identity",
       "resume_after": null,
-      "notes": ""
+      "notes": "Artifact of map_task.py ensure_agent(); not a real agent."
     }
   }
 }

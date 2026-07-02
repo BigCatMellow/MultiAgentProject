@@ -265,6 +265,40 @@ def set_review_state(args: argparse.Namespace, *, approved: bool) -> int:
     return 0
 
 
+def rework_task(args: argparse.Namespace) -> int:
+    with connect(args.db) as conn:
+        task = conn.execute("SELECT status, owner FROM tasks WHERE task_id=?", (args.task_id,)).fetchone()
+        if task is None:
+            raise UsageError(f"unknown task: {args.task_id}")
+        if task["status"] != "CHANGES_REQUESTED":
+            raise UsageError(f"{args.task_id} is {task['status']}, not CHANGES_REQUESTED")
+        ensure_agent(conn, args.actor)
+        conn.execute(
+            """
+            UPDATE tasks
+            SET status='READY',
+                claimed_by=NULL,
+                lease_expires_at=NULL,
+                heartbeat_at=NULL,
+                updated_at=datetime('now')
+            WHERE task_id=?
+            """,
+            (args.task_id,),
+        )
+    append_event(
+        args.db,
+        args.event_log,
+        "PROGRESS",
+        args.task_id,
+        args.actor,
+        f"{args.task_id} returned to READY for rework by {args.actor}: {args.reason}",
+        [f"MAP_System/tasks/{args.task_id}.json", "MAP_System/workflow/task_graph.json"],
+    )
+    sync_files(args.db, args.output_dir)
+    print(json.dumps({"task_id": args.task_id, "status": "READY"}, separators=(",", ":")))
+    return 0
+
+
 def show_task(args: argparse.Namespace) -> int:
     with connect(args.db) as conn:
         print(json.dumps(task_payload(conn, args.task_id), indent=2))
@@ -405,6 +439,12 @@ def parse_args() -> argparse.Namespace:
     reject.add_argument("--reviewer", required=True)
     reject.add_argument("--reason", required=True)
     reject.set_defaults(func=lambda args: set_review_state(args, approved=False))
+
+    rework = sub.add_parser("rework", help="Return a CHANGES_REQUESTED task to READY for revision")
+    rework.add_argument("task_id")
+    rework.add_argument("--actor", required=True)
+    rework.add_argument("--reason", required=True)
+    rework.set_defaults(func=rework_task)
 
     release = sub.add_parser("release")
     release.add_argument("task_id")

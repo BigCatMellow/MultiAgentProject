@@ -1,0 +1,67 @@
+{
+  "task_id": "TASK-082",
+  "title": "Full-report coverage matrix and non-tooling gap closure",
+  "task_type": "maintenance",
+  "role": "state_steward",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-080"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Operator directive hcom #15008 (AFK, full autonomy): verify every finding/phase item in artifacts/reports/MAP-system-full-report-2026-07-02.md is addressed and close the non-tooling gaps. Lanes per split with codex-lab-limo (#15032): coverage matrix, reconcile_agents run + agents/status.json reality + semantics, shared/current-state.md refresh, Phase 2.4 synthesis/experiments decision + first SYN record, Onion-workbench bridging note, LangGraph runner dry-run verification.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/Onion-workbench/claude-code-comms/COORDINATION_BRIDGE.md",
+    "MAP_System/agents/README.md",
+    "MAP_System/agents/status.json",
+    "MAP_System/artifacts/reviews/full-report-coverage-matrix-2026-07-02.md",
+    "MAP_System/artifacts/reviews/task063-review-rose.md",
+    "MAP_System/artifacts/reviews/task064-review-rose.md",
+    "MAP_System/artifacts/reviews/task065-review-rose.md",
+    "MAP_System/emergence/synthesis/",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "Every report finding F1-F9, Things-To-Add 1-7, and Phase 0-4 item has a status + evidence path or a named gap",
+    "agents/status.json reflects hcom reality; live-vs-durable semantics documented",
+    "current-state.md reflects all 2026-07-02 capabilities and passes shared-state validation",
+    "SYN/EXP decision recorded; first synthesis record is real content, not ceremony",
+    "LangGraph runner routes correctly against the post-remediation task state"
+  ],
+  "objective": "Prove the full report is addressed item-by-item and close the non-tooling gaps: agent-status truth, current-state freshness, emergence synthesis path, portfolio bridging, and LangGraph flow verification.",
+  "required_context": [
+    "MAP_System/artifacts/reports/MAP-system-full-report-2026-07-02.md",
+    "hcom #15008 (operator directive), #15032 (lane split)",
+    "MAP_System/scripts/reconcile_agents.py",
+    "MAP_System/graph/runner.py"
+  ],
+  "files_in_scope": [
+    "/home/home/Projects/Onion-workbench/claude-code-comms/ (bridging note only)",
+    "/home/home/Projects/Onion-workbench/claude-code-comms/COORDINATION_BRIDGE.md",
+    "MAP_System/agents/README.md",
+    "MAP_System/agents/status.json",
+    "MAP_System/artifacts/reviews/full-report-coverage-matrix-2026-07-02.md",
+    "MAP_System/artifacts/reviews/task063-review-rose.md",
+    "MAP_System/artifacts/reviews/task064-review-rose.md",
+    "MAP_System/artifacts/reviews/task065-review-rose.md",
+    "MAP_System/emergence/synthesis/",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "forbidden_changes": [
+    "No edits to TASK-081's tooling paths (map_task.py, validate_task_graph.py, map_metrics.py)",
+    "No status.json edits that contradict a live agent's own record",
+    "No forced/ceremonial emergence records -- real content or none"
+  ],
+  "expected_artifacts": [
+    "full-report-coverage-matrix-2026-07-02.md with per-item evidence",
+    "reconciled agents/status.json + semantics documentation",
+    "refreshed shared/current-state.md passing validation",
+    "SYN-0001 + recorded synthesis/experiments decision",
+    "Onion bridging note",
+    "runner dry-run evidence in the matrix"
+  ],
+  "reviewer_role": "state_steward (codex-lab-limo)",
+  "risk": "Low: documentation and state reconciliation; only cross-repo write is one bridging note in Onion-workbench."
+}

@@ -5,7 +5,7 @@ Project: MAP
 Related task: TASK-063
 Detected by: codex-lab-limo + claude-lab-rose
 Date: 2026-07-01
-Status: RAW
+Status: PROMOTED
 
 ## Short description
 
@@ -76,3 +76,11 @@ Choose one:
   `validate --strict-content` mode that flags released/approved related tasks
   whose emergence records remain RAW/CANDIDATE/PROPOSED, plus placeholder
   content such as `text` and `IDEA-####`.
+
+## Lifecycle close-out (2026-07-02, TASK-081)
+
+Promoted into the MAP remediation batch: TASK-065 added `map_emergence.py
+stale`, TASK-075 cleaned the existing placeholder/dangling lifecycle records,
+TASK-078 completed two full promotion pipelines, and TASK-081 closed the
+remaining report follow-up loops. The insight's recommended stale-record
+report and lifecycle habit are now active MAP tooling and process.

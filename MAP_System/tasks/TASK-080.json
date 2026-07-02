@@ -1,0 +1,56 @@
+{
+  "task_id": "TASK-080",
+  "title": "Limit watcher: auto-resume agents after usage-limit resets",
+  "task_type": "implementation",
+  "role": "technical_lead",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-065"
+  ],
+  "owner": "claude-lab-rose",
+  "description": "Operator-requested (2026-07-02): a deterministic background watcher that monitors agents/status.json for out_of_tokens entries with resume_after timestamps, auto-resumes those agents via visible hcom tabs when their limit window resets, detects agents that stopped silently without recording status, and logs durable events. Non-LLM polling script; implements the automation half of notes/limit-exhaustion-protocol.md.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/limit-watcher-state.json",
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/scripts/start-limit-watcher.sh",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "Watcher nudges an agent at most once per resume_after window (no spawn loops)",
+    "All resumes use --terminal wezterm-tab, never headless, per operator visibility rule",
+    "Unparseable resume_after values are skipped with a durable warning, not guessed",
+    "Silent stops (agent gone from hcom without status.json update) produce a durable event",
+    "Test registered in run_tests.sh and full suite passes"
+  ],
+  "objective": "Close the last gap in limit-exhaustion recovery: a watcher process that is not itself subject to usage limits, so agent resume no longer depends on a dying agent scheduling its own alarm.",
+  "required_context": [
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/agents/status.json",
+    "hcom r flags: --terminal, --hcom-prompt, --go",
+    "MAP_System/scripts/run_tests.sh test registration pattern"
+  ],
+  "files_in_scope": [
+    "MAP_System/agents/limit-watcher-state.json",
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/scripts/start-limit-watcher.sh",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "forbidden_changes": [
+    "No headless agent spawning (operator visibility rule)",
+    "No LLM/Ollama inference in the polling loop",
+    "No writes to agents/status.json entries owned by live agents (watcher only reads status; it writes its own state file)",
+    "No automatic retry storms: one nudge per agent per resume window"
+  ],
+  "expected_artifacts": [
+    "scripts/limit_watcher.py with --once/--dry-run modes",
+    "scripts/start-limit-watcher.sh launcher with pidfile guard",
+    "tests/test_limit_watcher.py registered in run_tests.sh",
+    "protocol note updated to reference the watcher",
+    "watcher running in background, verified alive"
+  ],
+  "reviewer_role": "technical_lead (codex-lab-limo)",
+  "risk": "Medium-low: the watcher spawns paid agent sessions automatically at reset time. Mitigations: once-per-window state tracking, visible terminal tabs, dry-run mode, durable event per action, easily killable via pidfile."
+}

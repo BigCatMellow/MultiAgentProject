@@ -11,6 +11,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GRAPH_PATH = ROOT / "workflow" / "task_graph.json"
 
+SHARED_OUTPUT_PATHS = {
+    "MAP_System/events/events.jsonl",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/workflow/task_graph.json",
+}
+
+
+def is_shared_output(path: str) -> bool:
+    normalized = path.rstrip("/")
+    return normalized in SHARED_OUTPUT_PATHS
+
 
 def load_graph() -> dict:
     with GRAPH_PATH.open("r", encoding="utf-8") as handle:
@@ -92,6 +103,8 @@ def validate(graph: dict) -> list[str]:
         if task.get("status") in terminal | {"BLOCKED"}:
             continue
         for output_path in task.get("output_paths", []):
+            if is_shared_output(output_path):
+                continue
             owner = active_outputs.setdefault(output_path, task["task_id"])
             if owner != task["task_id"]:
                 errors.append(f"Output path collision: {output_path} owned by {owner} and {task['task_id']}")

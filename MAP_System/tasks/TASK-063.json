@@ -3,7 +3,7 @@
   "title": "Audit MAP system usage across lab projects",
   "task_type": "audit",
   "role": "systems_auditor",
-  "status": "SUBMITTED",
+  "status": "APPROVED",
   "dependencies": [],
   "owner": "codex-lab-limo",
   "description": "Pause Pathwell and audit the MAP/HPOM system across Downloads/MultiAgentProject, Downloads copies, /home/home/Projects/MultiAgentProject, and other readable /home/home/Projects workspaces, with specific attention to recent emergence/insight use.",

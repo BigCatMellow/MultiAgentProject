@@ -1397,7 +1397,7 @@
       "title": "Audit MAP system usage across lab projects",
       "task_type": "audit",
       "role": "systems_auditor",
-      "status": "SUBMITTED",
+      "status": "APPROVED",
       "dependencies": [],
       "owner": "codex-lab-limo",
       "output_paths": [
@@ -1423,7 +1423,7 @@
       "title": "Produce full operator MAP system report",
       "task_type": "report",
       "role": "systems_reporter",
-      "status": "SUBMITTED",
+      "status": "APPROVED",
       "dependencies": [
         "TASK-063"
       ],
@@ -1445,7 +1445,7 @@
       "title": "Implement MAP audit remediation batch",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "SUBMITTED",
+      "status": "APPROVED",
       "dependencies": [],
       "owner": "codex-lab-limo",
       "output_paths": [
@@ -1512,7 +1512,7 @@
       "title": "Phase 0: canonical repo decision record and stale-copy freeze",
       "task_type": "maintenance",
       "role": "state_steward",
-      "status": "IN_PROGRESS",
+      "status": "APPROVED",
       "dependencies": [
         "TASK-064"
       ],
@@ -1558,20 +1558,102 @@
       "title": "Execute DEC-012 git sequence: commit A, push, reconcile B",
       "task_type": "maintenance",
       "role": "technical_lead",
-      "status": "READY",
+      "status": "APPROVED",
       "dependencies": [
         "TASK-065"
       ],
       "owner": "claude-lab-rose",
       "output_paths": [
-        "MAP_System/.locks/git-operation.json",
-        "MAP_System/events/events.jsonl"
+        "MAP_System/.locks/git-operation.json"
       ],
       "acceptance_criteria": [
         "Staged diff contains no path under Projects/",
         "Commit and push from A succeed; announced via hcom before push",
         "B preserved via rename (nothing deleted), fresh clone matches remote, private dirs restored from A",
         "Git lock acquired before and released after"
+      ]
+    },
+    {
+      "task_id": "TASK-080",
+      "title": "Limit watcher: auto-resume agents after usage-limit resets",
+      "task_type": "implementation",
+      "role": "technical_lead",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-065"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "MAP_System/agents/limit-watcher-state.json",
+        "MAP_System/notes/limit-exhaustion-protocol.md",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/scripts/start-limit-watcher.sh",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "Watcher nudges an agent at most once per resume_after window (no spawn loops)",
+        "All resumes use --terminal wezterm-tab, never headless, per operator visibility rule",
+        "Unparseable resume_after values are skipped with a durable warning, not guessed",
+        "Silent stops (agent gone from hcom without status.json update) produce a durable event",
+        "Test registered in run_tests.sh and full suite passes"
+      ]
+    },
+    {
+      "task_id": "TASK-081",
+      "title": "Close remaining MAP report tooling gaps",
+      "task_type": "implementation",
+      "role": "technical_lead",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task081-tooling-validation.md",
+        "MAP_System/emergence/insights/INS-0007-emergence-records-need-lifecycle-closeout-not-just-capture.md",
+        "MAP_System/scripts/map_metrics.py",
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_task_graph.py",
+        "MAP_System/tests/test_map_metrics_aliases.py",
+        "MAP_System/tests/test_map_task_rework.py",
+        "MAP_System/tests/test_validate_task_graph_shared_outputs.py"
+      ],
+      "acceptance_criteria": [
+        "Add a first-class task rework transition for CHANGES_REQUESTED tasks",
+        "Handle generated/shared output files in task graph validation without false-positive ownership collisions",
+        "Verify or improve create-time self-review warnings in map_task.py",
+        "Normalize event metric aliases for approved/changes-requested/progress event types",
+        "Run MAP tests and validators",
+        "Close INS-0007 lifecycle after stale-emergence tooling and cleanup are implemented"
+      ]
+    },
+    {
+      "task_id": "TASK-082",
+      "title": "Full-report coverage matrix and non-tooling gap closure",
+      "task_type": "maintenance",
+      "role": "state_steward",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-080"
+      ],
+      "owner": "claude-lab-rose",
+      "output_paths": [
+        "/home/home/Projects/Onion-workbench/claude-code-comms/COORDINATION_BRIDGE.md",
+        "MAP_System/agents/README.md",
+        "MAP_System/agents/status.json",
+        "MAP_System/artifacts/reviews/full-report-coverage-matrix-2026-07-02.md",
+        "MAP_System/artifacts/reviews/task063-review-rose.md",
+        "MAP_System/artifacts/reviews/task064-review-rose.md",
+        "MAP_System/artifacts/reviews/task065-review-rose.md",
+        "MAP_System/emergence/synthesis/",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "Every report finding F1-F9, Things-To-Add 1-7, and Phase 0-4 item has a status + evidence path or a named gap",
+        "agents/status.json reflects hcom reality; live-vs-durable semantics documented",
+        "current-state.md reflects all 2026-07-02 capabilities and passes shared-state validation",
+        "SYN/EXP decision recorded; first synthesis record is real content, not ceremony",
+        "LangGraph runner routes correctly against the post-remediation task state"
       ]
     }
   ],

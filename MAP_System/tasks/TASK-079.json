@@ -3,7 +3,7 @@
   "title": "Execute DEC-012 git sequence: commit A, push, reconcile B",
   "task_type": "maintenance",
   "role": "technical_lead",
-  "status": "READY",
+  "status": "APPROVED",
   "dependencies": [
     "TASK-065"
   ],
@@ -11,8 +11,7 @@
   "description": "Execute the blocked DEC-012 end-of-batch git sequence per HANDOFF-DEC012-git-sequence-codex-lab-limo.md: single clean commit of .gitignore + MAP_System in canonical repo A, push to origin, then reconcile ~/Projects/MultiAgentProject (B) by rename-to-stale-archive + fresh clone + private Pathwell/Backups restore from A. Authorized by operator continue (hcom #14717) after limo's approval-limit blocker (#14695).",
   "input_paths": [],
   "output_paths": [
-    "MAP_System/.locks/git-operation.json",
-    "MAP_System/events/events.jsonl"
+    "MAP_System/.locks/git-operation.json"
   ],
   "acceptance_criteria": [
     "Staged diff contains no path under Projects/",

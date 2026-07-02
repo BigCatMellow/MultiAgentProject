@@ -3,7 +3,7 @@
   "title": "Implement MAP audit remediation batch",
   "task_type": "implementation",
   "role": "implementer",
-  "status": "SUBMITTED",
+  "status": "APPROVED",
   "dependencies": [],
   "owner": "codex-lab-limo",
   "description": "Implement the highest-priority fixes from the MAP full report: atomic task ID allocation, emergence stale reporting, event validation, git operation locking, agent availability reconciliation, intake guidance, approval calibration, and canonical repo documentation. Avoid destructive repo reconciliation or external pushes.",

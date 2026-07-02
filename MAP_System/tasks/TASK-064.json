@@ -3,7 +3,7 @@
   "title": "Produce full operator MAP system report",
   "task_type": "report",
   "role": "systems_reporter",
-  "status": "SUBMITTED",
+  "status": "APPROVED",
   "dependencies": [
     "TASK-063"
   ],

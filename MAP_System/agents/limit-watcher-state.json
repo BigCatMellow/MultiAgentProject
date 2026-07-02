@@ -1,0 +1,11 @@
+{
+  "nudged": {},
+  "warned_unparseable": {
+    "antigravity": "when operator restores token budget"
+  },
+  "silent_reported": [],
+  "last_live": [
+    "claude-lab-rose",
+    "codex-lab-limo"
+  ]
+}
