@@ -5,12 +5,82 @@
   },
   "silent_reported": [],
   "last_live": [
-    "claude-lab-rose",
-    "claude-lab-zaro",
-    "codex-lab-lema",
-    "codex-lab-limo"
+    "claude-lab-mira",
+    "codex-lab-nivo"
   ],
-  "incidents": {},
+  "incidents": {
+    "claude-lab-valo": {
+      "detected_at": "2026-07-03T17:55:36-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "codex-lab-dino": {
+      "detected_at": "2026-07-03T17:55:36-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "codex-lab-lema": {
+      "detected_at": "2026-07-03T17:55:36-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "codex-lab-muva": {
+      "detected_at": "2026-07-03T17:55:36-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "claude-lab-vino": {
+      "detected_at": "2026-07-04T00:02:44-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "codex-lab-neko": {
+      "detected_at": "2026-07-04T00:02:44-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "claude-lab-magi": {
+      "detected_at": "2026-07-04T07:28:06-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "codex-lab-veto": {
+      "detected_at": "2026-07-04T07:28:06-04:00",
+      "reset_at": null,
+      "probes_sent": 6,
+      "reset_nudged": false,
+      "gave_up": true
+    },
+    "claude-lab-zera": {
+      "detected_at": "2026-07-14T08:19:16-04:00",
+      "reset_at": null,
+      "probes_sent": 0,
+      "reset_nudged": false,
+      "gave_up": false
+    },
+    "codex-lab-mozu": {
+      "detected_at": "2026-07-14T08:19:16-04:00",
+      "reset_at": null,
+      "probes_sent": 0,
+      "reset_nudged": false,
+      "gave_up": false
+    }
+  },
   "checkins": {},
-  "work_nudges": {}
+  "work_nudges": {},
+  "stale_claim_owner_nudges": {}
 }

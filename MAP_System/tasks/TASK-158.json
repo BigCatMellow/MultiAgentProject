@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-158",
+  "title": "MAP 6.13: Implement liveness reaper (real code from TASK-150 spec)",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-150"
+  ],
+  "owner": "command-center",
+  "description": "Build the actual liveness/reaper code from map-liveness-reaper-spec.md: a script that derives per-agent liveness state (last_seen, active_task, lane, state, state_since, stale_after, evidence) from agents/status.json, hcom list/events, and map.db task claims; applies the timeout policy defaults; and implements the action ladder (suspect -> nudge -> reclaim -> dead-letter -> broken) writing canonical events for every action. Read map-liveness-reaper-spec.md, scripts/limit_watcher.py (existing partial implementation to extend, not replace), db/claims.py, and agents/status.json before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/liveness_reaper.py",
+    "MAP_System/shared/liveness-state.md",
+    "MAP_System/tests/test_liveness_reaper.py"
+  ],
+  "acceptance_criteria": [
+    "Script computes the 7 state-vocabulary values (alive/working/blocked/idle/suspect/broken/standby) correctly against fixture agent/task/hcom data.",
+    "Reaper actions (nudge/reclaim/dead-letter) only occur via sanctioned DB helpers (db/claims.py) and are followed by validate_task_mirrors.py passing.",
+    "Every reaper action appends a canonical event with the fields the spec requires.",
+    "Dead-letter records are replayable back to READY without hand-editing task_graph.json, per a documented replay command and a focused test.",
+    "Circuit-breaker signals (agent_stale_once, agent_reclaimed_task, agent_repeated_stale, agent_broken, system_liveness_degraded) start accounting-only, per the spec's explicit non-blocking-by-default rule."
+  ],
+  "claimed_by": "claude-lab-zera"
+}

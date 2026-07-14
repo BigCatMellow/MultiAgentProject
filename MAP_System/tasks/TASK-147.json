@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-147",
+  "title": "MAP 6.13: Build orchestration entrypoint and decomposer contract",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Wave 1 from MAP_System/artifacts/planning/map-613-master-implementation-plan.md. Define the single command-center entrypoint and decomposer contract for turning raw operator intent into protocol-shaped dispatch packets with subtasks, dependencies, output paths, acceptance criteria, risk class, approvals, routing lane, and rollback expectation. Read AGENTS.md, MAP_System/AGENTS.md, MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/scripts/intake_request.py, MAP_System/HUMAN_INTERFACE_SYSTEM.md, and MAP_System/notes/communication-architecture.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/ORCHESTRATION_ENTRYPOINT_SYSTEM.md",
+    "MAP_System/artifacts/planning/map-decomposer-spec.md",
+    "MAP_System/scripts/intake_request.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/shared/subsystem-apis.md",
+    "MAP_System/tests/test_intake_request.py"
+  ],
+  "acceptance_criteria": [
+    "Defines one operator-intent entrypoint and when direct messages must be repackaged into a dispatch packet.",
+    "Decomposer spec defines subtasks, dependency edges, output paths, acceptance criteria, risk class, approval gates, routing lane, and rollback expectation.",
+    "Subsystem API index documents allocator, git lock, task claim, event, validator, emergence, local-helper, and status APIs.",
+    "Focused tests or documented dry runs verify intake_request.py emits the new dispatch/decomposer fields."
+  ]
+}

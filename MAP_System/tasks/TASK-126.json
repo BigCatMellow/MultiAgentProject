@@ -1,0 +1,35 @@
+{
+  "task_id": "TASK-126",
+  "title": "Backfill ProjectUpdater E/I records and make Emergence capture mandatory per-project",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Operator identified a real gap: the Emergence/Insight (E/I) system was never used during the ProjectUpdater build (TASK-123/124/125) despite emergence/README.md existing and defining project-level insights/ideas/experiments/synthesis folders. Operator directive: backfill proper insight/idea records for ProjectUpdater now, and make Emergence capture mandatory for every project going forward, enforced through MAP, not just documented as a suggestion. Scope: (1) create Projects/ProjectUpdater/{insights,ideas,experiments,synthesis} folders and backfill real INS/IDEA records for what was actually learned during the build (Playwright/Chromium install workaround, RISK-0001 export/import mitigation idea, the pattern of reviewers catching completeness gaps). (2) Update MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md and NEW_PROJECT_WIZARD.md to require emergence folder creation at bootstrap and ongoing capture during work, not just at project start. (3) Update MAP_System/CHANGE_CONTROL_SYSTEM.md's release-record convention and MAP_System/scripts/release_task.py's REQUIRED_ITEMS to add a mandatory 'Emergence capture considered' checklist line, so release_task.py mechanically blocks release without it - same enforcement mechanism as the existing 3 required checklist items. (4) Record a POLICY-class decision in shared/decisions.md per operator's direct instruction (command-center approval satisfied by the instruction itself, per DECISION_AUTHORITY_SYSTEM.md).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+    "MAP_System/NEW_PROJECT_WIZARD.md",
+    "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/scripts/release_task.py",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/templates/release-checklist.md",
+    "MAP_System/tests/test_release_gate.py",
+    "Projects/ProjectUpdater/experiments/README.md",
+    "Projects/ProjectUpdater/ideas/",
+    "Projects/ProjectUpdater/ideas/README.md",
+    "Projects/ProjectUpdater/insights/",
+    "Projects/ProjectUpdater/insights/README.md",
+    "Projects/ProjectUpdater/synthesis/README.md"
+  ],
+  "acceptance_criteria": [
+    "Projects/ProjectUpdater has real INS/IDEA records for what was learned during TASK-123-125, using map_emergence.py",
+    "PROJECT_BOOTSTRAPPING_SYSTEM.md and NEW_PROJECT_WIZARD.md require emergence folder creation at bootstrap and ongoing capture as work proceeds, not just at project start",
+    "release_task.py mechanically requires an 'Emergence capture considered' checklist line before release, same enforcement as existing 3 required items, with a passing focused test",
+    "shared/decisions.md records this as a POLICY-class decision",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the work"
+  ]
+}

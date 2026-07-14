@@ -105,6 +105,55 @@ Helper agents are not permanent identities. Each helper must have:
 
 Helpers should be stopped when their assigned work is done, stale, duplicated by another helper, or no longer relevant. Do not keep helpers running merely to keep agents busy. Do not allow helpers to bypass task ownership, approval gates, or human approval requirements.
 
+### Routine Reviewer Conflict Routing
+
+If a submitted task needs review, the available reviewer has a no-self-review
+conflict, and no clean core reviewer is immediately available, do not ask the
+operator to solve the routing problem. Use the existing helper path:
+
+1. Create a durable helper note in `MAP_System/inbox/helpers/`.
+2. Spawn a visible temporary review helper with `--terminal wezterm-tab`.
+3. Send a bounded review packet naming the task, output paths, conflict reason,
+   and required review artifact.
+4. Continue tracking the helper and integrate the result through the normal MAP
+   review and release gates.
+
+Escalate to the operator only if spawning a visible helper is blocked, the task
+needs a human decision, or the review would cross a privacy, destructive-action,
+security, or scope boundary.
+
+## Broadcast Coordinator Convention
+
+When an operator or command-center message goes to more than one core agent
+at once (a broadcast, e.g. "what did the review find?" or "go fix these
+findings"), duplicate ownership is a real risk: two agents can independently
+audit the same thing, or both claim the same fix, without either being wrong
+to try. This has worked so far only because agents happened to coordinate by
+convention (TASK-140/141: claude-lab-vino and codex-lab-neko split a review
+broadcast by announcing non-overlapping angles over hcom before starting).
+That is not a gate, so it should not be assumed to keep working by luck.
+
+Rule: the first core agent to start substantive work on a broadcast should,
+before or immediately as it starts, send the other addressed agent(s) a short
+hcom message naming the scope it is claiming (which findings, which files, or
+which recommendation number) and inviting a swap if there is a conflict.
+`--intent inform` is sufficient; do not block on a reply before starting, but
+do stop and re-split if another agent objects or was already mid-work on the
+same scope.
+
+If the broadcast is large enough that a full split needs judgment (more than
+a couple of independent pieces, or unclear boundaries), the first agent should
+propose the split explicitly and wait briefly for the other(s) to confirm or
+counter-propose, rather than each agent silently picking a lane. Record the
+agreed split in the hcom thread; a durable task file or handoff note is only
+required if the resulting work itself needs one under the normal Core
+Protocol.
+
+This is deliberately a convention, not new tooling: it targets exactly the
+gap TASK-140 found (duplicate-owner risk on broadcasts) without adding a new
+process file for something two agents can resolve by talking to each other
+first.
+
 ## Autonomous Claim Loop
 
 An autonomous task daemon is available at `MAP_System/scripts/agent_loop.py`. It claims, works, and submits tasks in a cyclic LangGraph loop without operator intervention for normal work. It pauses at `review` and `propose_helper` routes, requiring operator input before resuming.
@@ -129,7 +178,14 @@ Use `required_agent` in a task only when that exact agent is necessary. Otherwis
 
 ## Git Protocol
 
-Normal root Git is available at `/home/home/Downloads/MultiAgentProject`.
+Normal root Git is available from the canonical repo:
+
+```text
+/home/home/Projects/MultiAgentProject
+```
+
+The canonical repo decision is recorded in `shared/canonical-repo.md` and
+`shared/decisions.md` (DEC-014).
 
 Remote:
 

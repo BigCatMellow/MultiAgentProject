@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-135",
+  "title": "Integrate ProjectUpdater into CommandCenterUI",
+  "task_type": "implementation",
+  "role": "CommandCenterUI integration implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-136"
+  ],
+  "owner": "codex-lab-neko",
+  "description": "Operator asked to integrate ProjectUpdater and CommandCenterUI. Add a small CommandCenterUI integration surface that shows ProjectUpdater status from the local ProjectUpdater app/storage files where possible, provides an Open ProjectUpdater action, and documents the boundary between the static ProjectUpdater localStorage app and the localhost CommandCenterUI backend. Avoid backend/network expansion beyond localhost and keep ProjectUpdater data ownership clear.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js",
+    "MAP_System/artifacts/TASK-135-muva-integration-boundary-note.md",
+    "MAP_System/artifacts/planning/task-135-projectupdater-commandcenterui-integration-plan.md",
+    "MAP_System/tasks/"
+  ],
+  "acceptance_criteria": [
+    "CommandCenterUI exposes a ProjectUpdater panel or sidebar section that can open the ProjectUpdater app from the local project path",
+    "The backend exposes a read-only ProjectUpdater integration/status endpoint without reading browser localStorage directly or adding non-localhost dependencies",
+    "The UI makes the data boundary clear: ProjectUpdater remains localStorage-owned; CommandCenterUI can launch or summarize integration status only unless an explicit import/export path exists",
+    "Validation covers server syntax/API behavior and existing MAP task graph/events checks"
+  ]
+}

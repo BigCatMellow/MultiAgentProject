@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-113",
+  "title": "Add Risk System validation tooling",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-109",
+    "TASK-111"
+  ],
+  "owner": "codex-lab-dino",
+  "description": "Follow-on to TASK-111 from Guidelines/MAP_repo_systems_gap_review.md: after the Risk System docs/template exist and the current validator run_tests changes are approved, add focused validation tooling and tests that check Risk Register template/artifact structure without owning the prose system specification.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task-113-risk-validator.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_risk_registers.py",
+    "MAP_System/tests/test_validate_risk_registers.py"
+  ],
+  "acceptance_criteria": [
+    "Risk validator checks the required Risk Register template/artifact structure defined by TASK-111 without owning the prose system specification",
+    "Focused tests cover passing and failing risk register cases",
+    "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+  ]
+}

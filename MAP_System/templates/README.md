@@ -16,6 +16,13 @@ updates. Replace bracketed placeholders before committing the new file or entry.
 - `current-state.md` - current-state document template.
 - `compaction-summary.md` - archive summary template for brain compaction.
 - `event.jsonl` - one-line event example.
+- `research/` - Research System templates (brief, source map, source
+  evaluation, claim evidence matrix, assumption register, summary). See
+  `../RESEARCH_SYSTEM.md`.
+- `repairs/` - Self-Repair System templates (repair record, health check
+  report). See `../SELF_REPAIR_SYSTEM.md`.
+- `CONTEXT_PACKET_TEMPLATE.md` - Context System packet template. See
+  `../CONTEXT_SYSTEM.md`.
 
 Templates are examples, not canonical state. Canonical project truth belongs in
 `shared/`, task records, workflow files, and append-only events.

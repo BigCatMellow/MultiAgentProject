@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-139",
+  "title": "Fix CommandCenterUI ProjectUpdater open/status runtime",
+  "task_type": "implementation",
+  "role": "CommandCenterUI bugfix implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-neko",
+  "description": "Operator reported that CommandCenterUI's ProjectUpdater card says offline and clicking Open ProjectUpdater does nothing. Fix the released TASK-135 integration so the live app can read ProjectUpdater status and open the standalone ProjectUpdater app reliably from the localhost UI without relying on browser-permitted file:// navigation.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js",
+    "MAP_System/tasks/"
+  ],
+  "acceptance_criteria": [
+    "Live CommandCenterUI /api/project-updater/status returns 200 with ProjectUpdater app_exists true",
+    "Open ProjectUpdater uses a same-origin local backend action or otherwise works from CommandCenterUI without relying on blocked file:// navigation",
+    "Security boundary remains fixed-path localhost-only: no user-supplied path launch and no browser localStorage scraping",
+    "Validation covers server syntax, JS syntax, endpoint behavior, and MAP validators"
+  ]
+}

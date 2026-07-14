@@ -1,5 +1,7 @@
-# Runtime dependencies for the future executable orchestration layer.
-# Not installed during bootstrap because this workspace is currently file-backed.
-langgraph
-langchain-core
-
+# Runtime dependencies for the executable orchestration layer.
+# Installed in MAP_System/.venv and actively used by graph/runner.py.
+langgraph>=1.0,<2.0
+langchain-core>=1.0,<2.0
+langchain>=1.0,<2.0
+# TUI rendering layer for scripts/_mission_control_app.py (TASK-160/166/170).
+textual>=8.0

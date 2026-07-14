@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-124",
+  "title": "Fix ProjectUpdater accessibility and mobile navigation gaps",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-123"
+  ],
+  "owner": "codex-lab-lema",
+  "description": "Follow-up from ProjectUpdater accessibility audit: below 900px the app hides the only persistent navigation, and form/stateful controls lack programmatic labels/ARIA state. Implement a narrow app/index.html fix after TASK-123 without changing app architecture or storage model.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/ProjectUpdater/app/index.html"
+  ],
+  "acceptance_criteria": [
+    "Phone-width and sub-900px layouts expose keyboard-accessible navigation to Dashboard, Projects, Quick Note, and Add Project",
+    "Form controls have programmatic labels via label/for or aria-labelledby without relying only on visual .fl text or placeholders",
+    "Stateful controls expose state semantics, including filter chips and priority segmented controls, using appropriate ARIA such as aria-pressed or aria-current",
+    "Visible focus styling is clear on the dark theme for buttons and form controls",
+    "Standalone app behavior and localStorage persistence remain unchanged"
+  ]
+}

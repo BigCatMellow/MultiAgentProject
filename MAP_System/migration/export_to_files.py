@@ -22,6 +22,12 @@ TASKS_DIR = ROOT / "tasks"
 GRAPH_PATH = ROOT / "workflow" / "task_graph.json"
 AGENTS_PATH = ROOT / "agents" / "status.json"
 SYSTEM_AGENTS = {"command-center", "langgraph-runner", "reconcile"}
+NON_OPERATIONAL_REASONS = {
+    "disposable_session_ended",
+    "session_ended",
+    "session_superseded",
+    "tool_identity",
+}
 
 
 def read_json(path: Path, default: Any) -> Any:
@@ -69,9 +75,10 @@ def load_tasks(conn: sqlite3.Connection) -> list[dict[str, Any]]:
     return tasks
 
 
-def load_agents(conn: sqlite3.Connection) -> dict[str, Any]:
+def load_agents(conn: sqlite3.Connection, *, agents_path: Path = AGENTS_PATH) -> dict[str, Any]:
     conn.row_factory = sqlite3.Row
-    current_agent_ids = set(read_json(AGENTS_PATH, {"agents": {}}).get("agents", {}))
+    current = read_json(agents_path, {"agents": {}})
+    current_agent_ids = set(current.get("agents", {}))
     active_agent_ids = {
         agent_id
         for row in conn.execute(
@@ -93,7 +100,12 @@ def load_agents(conn: sqlite3.Connection) -> dict[str, Any]:
         """
     ).fetchall()
     for row in rows:
-        if row["agent_type"] == "system" or row["agent_id"] in SYSTEM_AGENTS:
+        non_operational = (
+            row["agent_type"] == "system"
+            or row["agent_id"] in SYSTEM_AGENTS
+            or row["reason"] in NON_OPERATIONAL_REASONS
+        )
+        if non_operational and row["agent_id"] not in active_agent_ids:
             continue
         if row["agent_id"] not in current_agent_ids and row["agent_id"] not in active_agent_ids:
             continue
@@ -101,13 +113,14 @@ def load_agents(conn: sqlite3.Connection) -> dict[str, Any]:
             "status": row["status"],
             "reason": row["reason"],
             "resume_after": row["resume_after"],
-            "notes": existing_agent_note(row["agent_id"]),
+            "notes": existing_agent_note(row["agent_id"], current=current),
         }
     return {"agents": agents}
 
 
-def existing_agent_note(agent_id: str) -> str:
-    current = read_json(AGENTS_PATH, {"agents": {}})
+def existing_agent_note(agent_id: str, *, current: dict[str, Any] | None = None) -> str:
+    if current is None:
+        current = read_json(AGENTS_PATH, {"agents": {}})
     return current.get("agents", {}).get(agent_id, {}).get("notes", "")
 
 
@@ -184,7 +197,7 @@ def main() -> int:
 
     with sqlite3.connect(db_path) as conn:
         tasks = load_tasks(conn)
-        agents = load_agents(conn)
+        agents = load_agents(conn, agents_path=agents_path)
 
     for task in tasks:
         changed = write_json(

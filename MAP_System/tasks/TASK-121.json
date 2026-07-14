@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-121",
+  "title": "Clean up and optimize MAP_System folder structure after gap-review build",
+  "task_type": "maintenance",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Operator requested continuation after gap fill: take a fresh MAP_System backup, then clean up/optimize the MAP_System folder structure. Apply safe non-destructive cleanup directly; route structural/destructive moves/deletes as proposals. Backup created at Projects/Backups/MAP_System-backup-2026-07-03T120105Z and verified identical before edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/README.md",
+    "MAP_System/artifacts/command-center-ui/README.md",
+    "MAP_System/artifacts/planning/README.md",
+    "MAP_System/artifacts/releases/README.md",
+    "MAP_System/artifacts/reports/README.md",
+    "MAP_System/artifacts/reports/task-121-map-folder-cleanup.md",
+    "MAP_System/artifacts/reviews/README.md",
+    "MAP_System/artifacts/tests/README.md"
+  ],
+  "acceptance_criteria": [
+    "Fresh MAP_System backup exists and is verified before edits",
+    "Folder-structure audit identifies safe cleanup, proposed structural changes, and no-op rationale where current layout is already optimal",
+    "Any applied cleanup is non-destructive, registered in output_paths, and validated",
+    "validate_task_graph.py, validate_events.py, and full run_tests.sh pass"
+  ]
+}

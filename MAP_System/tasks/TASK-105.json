@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-105",
+  "title": "Build MAP Self-Repair System (docs, templates, folder scaffold)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md priority #2: MAP has real repair behavior scattered across validate_shared_state.py, validate_decisions.py, validate_task_graph.py, validate_events.py, reconcile_agents.py, map_emergence.py stale, map_metrics.py, and local_assistant_health.py, but no formal module tying them together with repair severity levels, repair records, health check reports, automatic repair permissions, escalation rules, verification plans, and follow-up prevention rules. Build MAP_System/SELF_REPAIR_SYSTEM.md, MAP_System/repairs/README.md, and templates under MAP_System/templates/repairs/ (REPAIR_RECORD_TEMPLATE.md, HEALTH_CHECK_REPORT_TEMPLATE.md). Must cross-link to the Research System (TASK-103, stale/contradictory facts trigger repair), HPOM authority tiers (what a repair may do automatically vs propose), and Emergence (repairs worth generalizing become insights). Track process via events.jsonl and keep output_paths tight to avoid collision with codex-lab-dino's TASK-104 (research validator tooling).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/repairs/README.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/templates/README.md",
+    "MAP_System/templates/repairs/"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/SELF_REPAIR_SYSTEM.md exists and defines repair severity levels, repair records, health check reports, automatic-repair permissions, escalation rules, verification plans, and follow-up prevention rules",
+    "MAP_System/repairs/README.md exists explaining folder layout and how to run/log a repair",
+    "REPAIR_RECORD_TEMPLATE.md and HEALTH_CHECK_REPORT_TEMPLATE.md exist under MAP_System/templates/repairs/",
+    "SELF_REPAIR_SYSTEM.md explicitly cross-links Research System (stale/contradictory facts), HPOM (authority tiers for auto-repair vs propose), and Emergence (generalizable repairs become insights)",
+    "shared/decisions.md gets a new DECISION entry recording Self-Repair System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

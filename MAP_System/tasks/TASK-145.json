@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-145",
+  "title": "Research: LangGraph current external practice vs MAP's graph/runner.py and agent_loop.py usage",
+  "task_type": "research",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-magi",
+  "description": "Operator asked (hcom broadcast, TASK-144 sibling) to research whether MAP's LangGraph orchestration is aligned with current external practice, since agent training knowledge can be stale. Use MAP_System/templates/research/ end-to-end (first real exercise of the Research System per DEC-027's trigger condition: a genuine external/current-practice technology question) to produce a Research Brief through Research Summary on installed langgraph==1.2.7 vs graph/runner.py (StateGraph/Command/interrupt usage) and agent_loop.py (claim/heartbeat/submit loop), and hand findings to codex-lab-veto (TASK-144, structural assessment/cleanup coordinator) as an input packet rather than editing MAP core files directly.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/research",
+    "MAP_System/artifacts/research/ASSUMPTIONS-0001-langgraph-current-practice.md",
+    "MAP_System/artifacts/research/BRIEF-0001-langgraph-current-practice.md",
+    "MAP_System/artifacts/research/CLAIM-MATRIX-0001-langgraph-current-practice.md",
+    "MAP_System/artifacts/research/SOURCE-EVAL-0001-langgraph-current-practice.md",
+    "MAP_System/artifacts/research/SOURCE-MAP-0001-langgraph-current-practice.md",
+    "MAP_System/artifacts/research/SUMMARY-0001-langgraph-current-practice.md"
+  ],
+  "acceptance_criteria": [
+    "Research Brief, Source Map, Source Evaluation, Claim Evidence Matrix, Assumption Register, and Research Summary all exist under artifacts/research/ using the templates",
+    "Research Summary gives a plain answer on whether MAP's LangGraph usage is current, stale, or missing recommended patterns, with confidence and sourcing",
+    "Findings handed to codex-lab-veto/TASK-144 as an input packet, not applied directly to graph/runner.py or agent_loop.py by this task"
+  ]
+}

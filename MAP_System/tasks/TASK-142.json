@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-142",
+  "title": "Broadcast-coordinator convention + Research System decision + event-warning baseline cleanup",
+  "task_type": "process-improvement",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-magi",
+  "description": "Follow-up to TASK-140/141: (1) add a durable broadcast-coordinator convention to AGENTS.md/helper-agent-guide so multi-agent hcom broadcasts declare owner/scope instead of relying on ad-hoc good behavior; (2) resolve whether Research System should be exercised now or formally deferred (it is documented/validator-backed but has zero real artifacts per TASK-130); (3) normalize validate_events.py's 33-warning baseline so new warnings don't hide inside it.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENTS.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/artifacts/research/README.md",
+    "MAP_System/events/warning_baseline.json",
+    "MAP_System/notes/helper-agent-guide.md",
+    "MAP_System/scripts/validate_events.py",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/tests/test_validate_events.py"
+  ],
+  "acceptance_criteria": [
+    "Broadcast coordinator convention documented in AGENTS.md and helper-agent-guide.md",
+    "Research System has an explicit decision recorded (exercise now with a real artifact, or formally deferred with a documented reason) in shared/decisions.md",
+    "validate_events.py distinguishes/baselines known legacy warnings from new ones without silencing new warning types"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-102",
+  "title": "Prevent canonical repo path drift in MAP docs",
+  "task_type": "maintenance",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-limo",
+  "description": "Operator #18530 asked agents to fix process flaws. Concrete flaw: after DEC-014 moved the canonical repo to /home/home/Projects/MultiAgentProject, primary MAP operating docs still referenced /home/home/Downloads/MultiAgentProject as normal Git/current repo. Fix stale primary docs and add a lightweight validator so future canonical-path drift is caught before release.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENTS.md",
+    "MAP_System/notes/command-center-later.md",
+    "MAP_System/notes/git-setup.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_canonical_repo_paths.py"
+  ],
+  "acceptance_criteria": [
+    "Primary MAP operating docs no longer instruct agents to use the superseded Downloads repo as the normal/canonical working repo",
+    "A focused validator fails on unapproved references to /home/home/Downloads/MultiAgentProject in primary operating docs",
+    "The focused validator is included in MAP_System/scripts/run_tests.sh and passes"
+  ]
+}

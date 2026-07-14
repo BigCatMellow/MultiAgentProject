@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-173",
+  "title": "Implement MAP-only session replay builder",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-172"
+  ],
+  "owner": "codex-lab-mozu",
+  "description": "Follow-up from approved TASK-172: implement the first MAP-only session replay/read-model CLI using events.jsonl, task JSON, and map.db. Do not ingest hcom or transcripts in this slice.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/runtime/.gitignore",
+    "MAP_System/runtime/README.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/session_replay.py",
+    "MAP_System/tests/test_session_replay.py"
+  ],
+  "acceptance_criteria": [
+    "CLI can build a disposable local SQLite replay index from MAP events, task JSON, and map.db without writing canonical task/event/workflow sources.",
+    "CLI exposes status, task, agent, and trace read queries with deterministic JSON output suitable for mission-control integration.",
+    "Build/status report drift findings for malformed events, missing task references, mirror validation failure, and source high-water metadata.",
+    "Focused tests and full MAP validators pass; hcom ingestion and transcript indexing remain deferred."
+  ]
+}

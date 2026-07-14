@@ -3,6 +3,12 @@
 Use this guide when creating a new MAP-style project. The goal is to give AI
 agents a durable project brain that is easy to read, update, and trust.
 
+See `MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md` and
+`MAP_System/NEW_PROJECT_WIZARD.md` for the bootstrap workflow that uses
+this layout — what a new project must establish (intent, assumptions,
+research needs, quality standards, risks, decision paths) before its
+first task, and the step-by-step checklist for doing so.
+
 ## Core Principle
 
 Separate live truth from history.

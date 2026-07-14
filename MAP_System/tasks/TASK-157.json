@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-157",
+  "title": "MAP 6.13: Verify formal invariants, multi-project fit, roster, and assumptions",
+  "task_type": "audit",
+  "role": "auditor",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-148",
+    "TASK-149",
+    "TASK-153",
+    "TASK-155"
+  ],
+  "owner": "command-center",
+  "description": "Wave 9 from MAP 6.13 plan. Run the verification and audit pass: narrow formal invariant spike, MAST-style failure coverage, multi-project readiness, roster composition, and adversarial assumption red-team. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, Guidelines/6.13/MAP-System/04-MAP-Formal-Verification.md, Guidelines/6.13/MAP-Gap-Register.md, MAP_System/Projects/Pathwell references via docs/project-map.md, MAP_System/tests, and MAP_System/scripts before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-613-assumption-red-team.md",
+    "MAP_System/artifacts/audits/map-failure-taxonomy-coverage.md",
+    "MAP_System/artifacts/audits/map-formal-invariant-spike.md",
+    "MAP_System/artifacts/audits/map-multi-project-readiness.md",
+    "MAP_System/artifacts/audits/map-roster-composition.md"
+  ],
+  "acceptance_criteria": [
+    "Formal invariant spike covers allocator, task claim, and git lock with TLA+ or executable state-machine tests, and states limits of design-vs-implementation proof.",
+    "Failure taxonomy coverage maps known MAP validators/tests to multi-agent failure classes and identifies missing regression tests.",
+    "Multi-project readiness audit distinguishes global vs project-local state and covers Pathwell plus at least one other project shape.",
+    "Roster composition audit compares two-tier vs three-tier routing and agent count per tier without registering new agents by itself.",
+    "Assumption red-team challenges design assumptions, not just parameter values, and routes findings to Research, Risk, Self-Repair, or task backlog."
+  ]
+}

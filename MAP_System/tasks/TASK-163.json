@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-163",
+  "title": "MAP 6.13: Implement pre-dispatch policy checker and capability gates",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-153",
+    "TASK-156"
+  ],
+  "owner": "command-center",
+  "description": "Implementation task for approved TASK-153 and TASK-156 specs. Build the executable pre-dispatch policy checker and capability whitelist gates described by map-task-tiering-spec.md, map-pre-dispatch-policy-checker-spec.md, map-capability-whitelist-test-plan.md, and map-threat-model.md.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/pre_dispatch_policy.py",
+    "MAP_System/tests/test_capability_whitelist.py",
+    "MAP_System/tests/test_pre_dispatch_policy.py",
+    "MAP_System/tests/test_runner_policy_gate.py"
+  ],
+  "acceptance_criteria": [
+    "Implements a deterministic pre-dispatch checker that returns allow, require_approval, or reject from permission tier, destructive-action policy, decision class, risk class, trust-boundary, and task-tier metadata.",
+    "Rejects helper/local assignments for final review, final decision, broad architecture ownership, broad rewrite, destructive operation, shell/network, and canonical MAP mutation cases.",
+    "Requires command-center or owning-core approval before dispatch for destructive Tier 1 work, AUTHORITY/POLICY decisions, SECURITY/STRUCTURAL risks, and unknown-risk trust-boundary crossings.",
+    "Runner and agent-loop tests prove rejected work is not recommended/claimed and approval-required work routes to a visible gate instead of normal dispatch."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-109",
+  "title": "Add Context System validation tooling",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-104",
+    "TASK-106",
+    "TASK-107"
+  ],
+  "owner": "codex-lab-dino",
+  "description": "Follow-on to TASK-107 from Guidelines/MAP_repo_systems_gap_review.md: after the Context System docs/template exist and current validator run_tests changes are approved, add focused validation tooling and tests that check Context Packet template/artifact structure without owning the prose system specification.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task-109-context-validator.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_context_packets.py",
+    "MAP_System/tests/test_validate_context_packets.py"
+  ],
+  "acceptance_criteria": [
+    "Context validator checks the required Context Packet template/artifact structure defined by TASK-107 without owning the prose system specification",
+    "Focused tests cover passing and failing context packet cases",
+    "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+  ]
+}

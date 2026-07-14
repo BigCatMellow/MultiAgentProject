@@ -4,11 +4,18 @@
 from __future__ import annotations
 
 import sqlite3
+import sys
 from pathlib import Path
 from typing import Sequence
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT.parent) not in sys.path:
+    sys.path.insert(0, str(ROOT.parent))
+
+from MAP_System.scripts.halt_state import dispatch_block_reason_for_task  # noqa: E402
+from MAP_System.scripts.pre_dispatch_policy import evaluate_pre_dispatch  # noqa: E402
+
 DEFAULT_DB = ROOT / "map.db"
 DEFAULT_LEASE_SECONDS = 1800
 
@@ -49,7 +56,7 @@ def claim_block_reason(
     with connect(db_path) as conn:
         row = conn.execute(
             """
-            SELECT task_type, role, owner
+            SELECT task_id, project_id, title, description, task_type, role, owner
             FROM tasks
             WHERE task_id = ?
             """,
@@ -58,8 +65,21 @@ def claim_block_reason(
         if row is None:
             return "unknown_task"
 
-        owner = row[2]
-        if _is_review_task(row) and owner and owner.lower() == agent_id.lower():
+        task = {
+            "task_id": row[0],
+            "project_id": row[1],
+            "title": row[2],
+            "description": row[3],
+            "task_type": row[4],
+            "role": row[5],
+        }
+        dispatch_block = dispatch_block_reason_for_task(task)
+        if dispatch_block:
+            return dispatch_block
+
+        review_row = (row[4], row[5])
+        owner = row[6]
+        if _is_review_task(review_row) and owner and owner.lower() == agent_id.lower():
             return "self_review"
 
         has_criteria = conn.execute(
@@ -74,6 +94,26 @@ def claim_block_reason(
         ).fetchone()
         if not has_criteria:
             return "missing_acceptance_criteria"
+
+        output_paths = [
+            value
+            for (value,) in conn.execute(
+                "SELECT path FROM task_output_paths WHERE task_id = ? ORDER BY path",
+                (task_id,),
+            )
+        ]
+        acceptance_criteria = [
+            value
+            for (value,) in conn.execute(
+                "SELECT criterion FROM task_acceptance_criteria WHERE task_id = ? ORDER BY id",
+                (task_id,),
+            )
+        ]
+        task["output_paths"] = output_paths
+        task["acceptance_criteria"] = acceptance_criteria
+        policy = evaluate_pre_dispatch(task, agent_id)
+        if policy["decision"] != "allow":
+            return f"policy_{policy['decision']}:{','.join(policy['reasons'])}"
 
     return None
 

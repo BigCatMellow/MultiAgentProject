@@ -2041,6 +2041,2029 @@
         "TASK-096 status semantics are consistent across SQLite, task JSON, and workflow/task_graph.json",
         "The chosen duplicate/retired-task policy is documented or encoded in validation so future agents do not reintroduce the stall"
       ]
+    },
+    {
+      "task_id": "TASK-101",
+      "title": "Add source/mirror invariant tests for MAP exports",
+      "task_type": "maintenance",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-lema",
+      "output_paths": [
+        "MAP_System/agents/status.json",
+        "MAP_System/migration/export_to_files.py",
+        "MAP_System/migration/seed_from_files.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_task_graph.py",
+        "MAP_System/tests/test_exporter_invariants.py",
+        "MAP_System/tests/test_validate_task_graph_shared_outputs.py"
+      ],
+      "acceptance_criteria": [
+        "Tests fail if task status in SQLite diverges from exported task JSON or workflow/task_graph.json",
+        "Tests encode agents/status.json filtered operational view semantics for inactive historical/tool identities",
+        "Full MAP test suite passes"
+      ]
+    },
+    {
+      "task_id": "TASK-102",
+      "title": "Prevent canonical repo path drift in MAP docs",
+      "task_type": "maintenance",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-limo",
+      "output_paths": [
+        "MAP_System/AGENTS.md",
+        "MAP_System/notes/command-center-later.md",
+        "MAP_System/notes/git-setup.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_canonical_repo_paths.py"
+      ],
+      "acceptance_criteria": [
+        "Primary MAP operating docs no longer instruct agents to use the superseded Downloads repo as the normal/canonical working repo",
+        "A focused validator fails on unapproved references to /home/home/Downloads/MultiAgentProject in primary operating docs",
+        "The focused validator is included in MAP_System/scripts/run_tests.sh and passes"
+      ]
+    },
+    {
+      "task_id": "TASK-103",
+      "title": "Build MAP Research System (docs, templates, folder scaffold)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/research/README.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/templates/README.md",
+        "MAP_System/templates/research/"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/RESEARCH_SYSTEM.md exists and defines research question format, source map, source quality ratings, claim extraction rules, claim evidence matrix, assumption register, contradiction handling, date-sensitivity rules, research summary format, and research-to-decision workflow",
+        "MAP_System/research/README.md exists explaining folder layout and CLI/process usage",
+        "All 6 templates listed in the gap review exist under MAP_System/templates/research/",
+        "shared/decisions.md gets a new DECISION entry recording the Research System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-104",
+      "title": "Add Research System validation tooling",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-103"
+      ],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task-104-research-validator.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_research_artifacts.py",
+        "MAP_System/tests/test_validate_research_artifacts.py"
+      ],
+      "acceptance_criteria": [
+        "Research validator checks the required Research System template/artifact structure defined by TASK-103 without owning the prose system specification",
+        "Focused tests cover passing and failing research artifact/template cases",
+        "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+      ]
+    },
+    {
+      "task_id": "TASK-105",
+      "title": "Build MAP Self-Repair System (docs, templates, folder scaffold)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/emergence/README.md",
+        "MAP_System/repairs/README.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/templates/README.md",
+        "MAP_System/templates/repairs/"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/SELF_REPAIR_SYSTEM.md exists and defines repair severity levels, repair records, health check reports, automatic-repair permissions, escalation rules, verification plans, and follow-up prevention rules",
+        "MAP_System/repairs/README.md exists explaining folder layout and how to run/log a repair",
+        "REPAIR_RECORD_TEMPLATE.md and HEALTH_CHECK_REPORT_TEMPLATE.md exist under MAP_System/templates/repairs/",
+        "SELF_REPAIR_SYSTEM.md explicitly cross-links Research System (stale/contradictory facts), HPOM (authority tiers for auto-repair vs propose), and Emergence (generalizable repairs become insights)",
+        "shared/decisions.md gets a new DECISION entry recording Self-Repair System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-106",
+      "title": "Add Self-Repair System validation tooling",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-105"
+      ],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task-106-repair-validator.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_repair_artifacts.py",
+        "MAP_System/tests/test_validate_repair_artifacts.py"
+      ],
+      "acceptance_criteria": [
+        "Self-Repair validator checks the required template/artifact structure defined by TASK-105 without owning the prose system specification",
+        "Focused tests cover passing and failing repair record and health-check report cases",
+        "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+      ]
+    },
+    {
+      "task_id": "TASK-107",
+      "title": "Build MAP Context System (formalize context packets, budgets, compression)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/CONTEXT_SYSTEM.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/notes/context-routing-guide.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/templates/CONTEXT_PACKET_TEMPLATE.md",
+        "MAP_System/templates/README.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/CONTEXT_SYSTEM.md exists and defines context packet format, required/optional context by task type, forbidden context loading, stale-context handling, token-budget rules, local-summarizer role, and context compression rules",
+        "templates/CONTEXT_PACKET_TEMPLATE.md exists",
+        "CONTEXT_SYSTEM.md cross-links notes/context-routing-guide.md, shared/memory-map.md, RESEARCH_SYSTEM.md, SELF_REPAIR_SYSTEM.md, and emergence/README.md",
+        "shared/decisions.md gets a new DECISION entry recording Context System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-108",
+      "title": "Build MAP Decision/Authority System (decision classes, authority hierarchy)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-107"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/DECISION_CLASSES.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md exists and defines who can decide what, human-approval requirements, core-agent decision rights, helper recommend-only limits, local-model never-decide limits, supersession rules, and proposal-to-decision promotion",
+        "MAP_System/DECISION_CLASSES.md exists and defines a small set of decision classes (e.g. architecture, ownership, authority, policy, scope) with the approval level each requires",
+        "DECISION_AUTHORITY_SYSTEM.md cross-links shared/hpom.md, SELF_REPAIR_SYSTEM.md, RESEARCH_SYSTEM.md, and shared/decisions.md",
+        "shared/decisions.md gets a new DECISION entry recording Decision/Authority System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-109",
+      "title": "Add Context System validation tooling",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-104",
+        "TASK-106",
+        "TASK-107"
+      ],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task-109-context-validator.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_context_packets.py",
+        "MAP_System/tests/test_validate_context_packets.py"
+      ],
+      "acceptance_criteria": [
+        "Context validator checks the required Context Packet template/artifact structure defined by TASK-107 without owning the prose system specification",
+        "Focused tests cover passing and failing context packet cases",
+        "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+      ]
+    },
+    {
+      "task_id": "TASK-110",
+      "title": "Build MAP Human Interface System (operator dashboard definition)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-108"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/emergence/README.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/HUMAN_INTERFACE_SYSTEM.md exists and defines the dashboard surface: current status, pending decisions, blocked tasks, review queue, open repairs, open research questions, recent insights, agent availability, and next recommended actions",
+        "HUMAN_INTERFACE_SYSTEM.md cross-links DECISION_AUTHORITY_SYSTEM.md, SELF_REPAIR_SYSTEM.md, RESEARCH_SYSTEM.md, emergence/README.md, and shared/hpom.md",
+        "HUMAN_INTERFACE_SYSTEM.md references the existing CommandCenterUI prototype and states its relationship rather than duplicating it",
+        "shared/decisions.md gets a new DECISION entry recording Human Interface System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-111",
+      "title": "Build MAP Risk System (risk register, classes, escalation)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-110"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+        "MAP_System/RISK_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/templates/RISK_REGISTER_TEMPLATE.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/RISK_SYSTEM.md exists and defines risk classes, severity, register format, owners, review cadence, escalation, and acceptance",
+        "MAP_System/templates/RISK_REGISTER_TEMPLATE.md exists",
+        "RISK_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, DECISION_AUTHORITY_SYSTEM.md, and HUMAN_INTERFACE_SYSTEM.md",
+        "shared/decisions.md gets a new DECISION entry recording Risk System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-112",
+      "title": "Build MAP Security/Permissions System (agent permission levels, destructive-action policy)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-111"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/AGENT_PERMISSION_LEVELS.md",
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/DESTRUCTIVE_ACTION_POLICY.md",
+        "MAP_System/RISK_SYSTEM.md",
+        "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md exists and defines agent permission levels, read/write/delete boundaries, shell command permissions, network access policy, secret handling, external service policy, and trust boundary model",
+        "MAP_System/AGENT_PERMISSION_LEVELS.md exists defining concrete permission levels mapped to HPOM authority tiers",
+        "MAP_System/DESTRUCTIVE_ACTION_POLICY.md exists defining what counts as destructive and required confirmation/approval",
+        "SECURITY_PERMISSIONS_SYSTEM.md cross-links AGENTS.md Security Second Pass rule, RISK_SYSTEM.md, DECISION_AUTHORITY_SYSTEM.md, and shared/hpom.md without duplicating them",
+        "shared/decisions.md gets a new DECISION entry recording Security/Permissions System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-113",
+      "title": "Add Risk System validation tooling",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-109",
+        "TASK-111"
+      ],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task-113-risk-validator.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_risk_registers.py",
+        "MAP_System/tests/test_validate_risk_registers.py"
+      ],
+      "acceptance_criteria": [
+        "Risk validator checks the required Risk Register template/artifact structure defined by TASK-111 without owning the prose system specification",
+        "Focused tests cover passing and failing risk register cases",
+        "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+      ]
+    },
+    {
+      "task_id": "TASK-114",
+      "title": "Build MAP Change Control System (change requests, release records, rollback)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-112"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+        "MAP_System/RISK_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md exists and defines change request format, release record requirements, rollback notes, changelog policy, diff review requirement, migration notes, version tags, and artifact retirement rules",
+        "CHANGE_CONTROL_SYSTEM.md references the existing release_task.py/release-checklist flow as the working implementation of release records",
+        "CHANGE_CONTROL_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, DECISION_AUTHORITY_SYSTEM.md, and RISK_SYSTEM.md",
+        "shared/decisions.md gets a new DECISION entry recording Change Control System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-115",
+      "title": "Build MAP Project Bootstrapping System (new-project wizard, starter pack)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-114"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/NEW_PROJECT_WIZARD.md",
+        "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/RISK_SYSTEM.md",
+        "MAP_System/notes/brain-organization-guide.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md exists and defines the bootstrap workflow: what a new project must have beyond tasks (intent, assumptions, research needs, quality standards, risks, decision paths)",
+        "MAP_System/NEW_PROJECT_WIZARD.md exists as a step-by-step checklist an agent follows to bootstrap a new project brain",
+        "PROJECT_BOOTSTRAPPING_SYSTEM.md references notes/brain-organization-guide.md and extends it rather than duplicating its folder layout",
+        "PROJECT_BOOTSTRAPPING_SYSTEM.md cross-links RESEARCH_SYSTEM.md, RISK_SYSTEM.md, and DECISION_AUTHORITY_SYSTEM.md as day-one requirements for a new project",
+        "shared/decisions.md gets a new DECISION entry recording Project Bootstrapping System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-116",
+      "title": "Fix runner dependency satisfaction for RELEASED tasks",
+      "task_type": "repair",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task-116-runner-released-dependencies.md",
+        "MAP_System/graph/runner.py",
+        "MAP_System/repairs/REPAIR-0001-runner-released-dependency-drift.md",
+        "MAP_System/tests/test_runner_task_classification.py"
+      ],
+      "acceptance_criteria": [
+        "graph/runner.py treats RELEASED dependencies as satisfied consistently with validate_task_graph.py terminal status semantics",
+        "runner task-classification tests cover READY tasks whose dependencies are RELEASED",
+        "Focused runner classification test, validate_task_graph.py, validate_repair_artifacts.py, and full run_tests.sh pass"
+      ]
+    },
+    {
+      "task_id": "TASK-117",
+      "title": "Build MAP Archive/Retention System (retention rules, staleness marking)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-115"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/ARCHIVE_RETENTION_SYSTEM.md",
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+        "MAP_System/CONTEXT_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/notes/brain-compaction-guide.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/ARCHIVE_RETENTION_SYSTEM.md exists and defines archive statuses, retention rules, compaction cadence, how to mark stale artifacts, and how to distinguish history from current truth",
+        "ARCHIVE_RETENTION_SYSTEM.md extends notes/brain-compaction-guide.md rather than duplicating its compaction logic, and distinguishes archiving from CHANGE_CONTROL_SYSTEM.md's artifact retirement",
+        "ARCHIVE_RETENTION_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, CHANGE_CONTROL_SYSTEM.md, and CONTEXT_SYSTEM.md",
+        "shared/decisions.md gets a new DECISION entry recording Archive/Retention System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-118",
+      "title": "Build MAP Retrospective/Learning System (end-of-cycle review loop)",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-117"
+      ],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+        "MAP_System/RETROSPECTIVE_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/emergence/README.md",
+        "MAP_System/notes/task-authoring-guide.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/shared/improvement-backlog.md",
+        "MAP_System/templates/RETROSPECTIVE_TEMPLATE.md"
+      ],
+      "acceptance_criteria": [
+        "MAP_System/RETROSPECTIVE_SYSTEM.md exists and defines the end-of-cycle retrospective loop: what worked, what failed, what caused rework, what agents misunderstood, what rules were unclear, what should become a validator/template/decision",
+        "MAP_System/templates/RETROSPECTIVE_TEMPLATE.md exists",
+        "RETROSPECTIVE_SYSTEM.md includes a worked retrospective of the TASK-103 through TASK-117 gap-review build sequence itself, naming the repeated output_paths-omission pattern as an example finding",
+        "RETROSPECTIVE_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, emergence/README.md, shared/improvement-backlog.md, and CHANGE_CONTROL_SYSTEM.md",
+        "shared/decisions.md gets a new DECISION entry recording Retrospective System adoption",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+      ]
+    },
+    {
+      "task_id": "TASK-119",
+      "title": "Harden RnS stale-claim owner nudges",
+      "task_type": "repair",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task-119-rns-stale-claim-owner-nudge.md",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "RnS detects expired IN_PROGRESS claims as a queue-stall condition even when no READY work exists",
+        "RnS sends a throttled request to the stale claim owner/claimer with resume/submit/release/pause options instead of silently idling",
+        "Focused limit_watcher tests, validate_task_graph.py, validate_events.py, and full run_tests.sh pass"
+      ]
+    },
+    {
+      "task_id": "TASK-120",
+      "title": "Self-application structural review of MAP_System against its own new systems",
+      "task_type": "maintenance",
+      "role": "Claude (architecture critique, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/emergence/insights/INS-0010-complex-map-system-buildouts-may-need-an-explicit-process-stewar.md",
+        "MAP_System/repairs/",
+        "MAP_System/scripts/validate_risk_registers.py",
+        "MAP_System/shared/RISK_REGISTER.md"
+      ],
+      "acceptance_criteria": [
+        "A Health Check Report exists under MAP_System/repairs/ covering all validators/checks listed in SELF_REPAIR_SYSTEM.md",
+        "Structural findings are classified by severity (COSMETIC/DRIFT/BLOCKING/STRUCTURAL) per SELF_REPAIR_SYSTEM.md, with STRUCTURAL findings proposed (not applied) for command-center decision",
+        "MAP_System/shared/RISK_REGISTER.md exists (even if starting empty/near-empty) since RISK_SYSTEM.md and PROJECT_BOOTSTRAPPING_SYSTEM.md both reference it as canonical",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the review"
+      ]
+    },
+    {
+      "task_id": "TASK-121",
+      "title": "Clean up and optimize MAP_System folder structure after gap-review build",
+      "task_type": "maintenance",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/README.md",
+        "MAP_System/artifacts/command-center-ui/README.md",
+        "MAP_System/artifacts/planning/README.md",
+        "MAP_System/artifacts/releases/README.md",
+        "MAP_System/artifacts/reports/README.md",
+        "MAP_System/artifacts/reports/task-121-map-folder-cleanup.md",
+        "MAP_System/artifacts/reviews/README.md",
+        "MAP_System/artifacts/tests/README.md"
+      ],
+      "acceptance_criteria": [
+        "Fresh MAP_System backup exists and is verified before edits",
+        "Folder-structure audit identifies safe cleanup, proposed structural changes, and no-op rationale where current layout is already optimal",
+        "Any applied cleanup is non-destructive, registered in output_paths, and validated",
+        "validate_task_graph.py, validate_events.py, and full run_tests.sh pass"
+      ]
+    },
+    {
+      "task_id": "TASK-122",
+      "title": "Report on MAP process failures during self-update",
+      "task_type": "analysis",
+      "role": "reporter",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/reports/map-process-failure-report-2026-07-03.md"
+      ],
+      "acceptance_criteria": [
+        "Report focuses on failures, gaps, missing process support, and concrete examples from TASK-103 through TASK-121",
+        "Report distinguishes fixed issues from remaining risks/gaps",
+        "Report incorporates or explicitly accounts for active agent input where available",
+        "Report is durable, reviewable, and validated with task graph/events checks"
+      ]
+    },
+    {
+      "task_id": "TASK-123",
+      "title": "Implement ProjectUpdater app from Claude Design mockup",
+      "task_type": "implementation",
+      "role": "Claude (implementer, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "Projects/ProjectUpdater/app/",
+        "Projects/ProjectUpdater/events/events.jsonl",
+        "Projects/ProjectUpdater/handoffs/",
+        "Projects/ProjectUpdater/tasks/"
+      ],
+      "acceptance_criteria": [
+        "Projects/ProjectUpdater/app/index.html exists and implements Dashboard, Projects, Quick Note, and Add Project views matching the dark-theme visual design",
+        "Stale detection (daysIdle >= reminderDays) and due-soon detection (due within 7 days) compute against real current dates, not hardcoded sample values",
+        "Adding a project, saving a note, and marking a project visited all persist to localStorage and survive a page reload",
+        "App runs standalone by opening index.html in a browser with no server or build step",
+        "Manually exercised end-to-end per shared/requirements.md quality bar before submission"
+      ]
+    },
+    {
+      "task_id": "TASK-124",
+      "title": "Fix ProjectUpdater accessibility and mobile navigation gaps",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-123"
+      ],
+      "owner": "codex-lab-lema",
+      "output_paths": [
+        "Projects/ProjectUpdater/app/index.html"
+      ],
+      "acceptance_criteria": [
+        "Phone-width and sub-900px layouts expose keyboard-accessible navigation to Dashboard, Projects, Quick Note, and Add Project",
+        "Form controls have programmatic labels via label/for or aria-labelledby without relying only on visual .fl text or placeholders",
+        "Stateful controls expose state semantics, including filter chips and priority segmented controls, using appropriate ARIA such as aria-pressed or aria-current",
+        "Visible focus styling is clear on the dark theme for buttons and form controls",
+        "Standalone app behavior and localStorage persistence remain unchanged"
+      ]
+    },
+    {
+      "task_id": "TASK-125",
+      "title": "Add ProjectUpdater app regression validation tooling",
+      "task_type": "tooling",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-124"
+      ],
+      "owner": "codex-lab-muva",
+      "output_paths": [
+        "Projects/ProjectUpdater/artifacts/tests/task-125-project-updater-validator.md",
+        "Projects/ProjectUpdater/scripts/validate_project_updater.py"
+      ],
+      "acceptance_criteria": [
+        "Validator loads Projects/ProjectUpdater/app/index.html directly from file:// and exercises Dashboard, Projects, Quick Note, and Add Project flows",
+        "Validator checks localStorage persistence across reload for add-project and note/status updates",
+        "Validator checks stale, due-soon, finished, archived, and mobile-navigation/accessibility state regressions covered by TASK-123 and TASK-124",
+        "No server, build step, network dependency, or app storage-model change is introduced",
+        "Focused ProjectUpdater validator and root MAP task graph validation pass"
+      ]
+    },
+    {
+      "task_id": "TASK-126",
+      "title": "Backfill ProjectUpdater E/I records and make Emergence capture mandatory per-project",
+      "task_type": "architecture",
+      "role": "Claude (prose/architecture, HPOM tier-1)",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+        "MAP_System/NEW_PROJECT_WIZARD.md",
+        "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md",
+        "MAP_System/emergence/README.md",
+        "MAP_System/scripts/release_task.py",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/templates/release-checklist.md",
+        "MAP_System/tests/test_release_gate.py",
+        "Projects/ProjectUpdater/experiments/README.md",
+        "Projects/ProjectUpdater/ideas/",
+        "Projects/ProjectUpdater/ideas/README.md",
+        "Projects/ProjectUpdater/insights/",
+        "Projects/ProjectUpdater/insights/README.md",
+        "Projects/ProjectUpdater/synthesis/README.md"
+      ],
+      "acceptance_criteria": [
+        "Projects/ProjectUpdater has real INS/IDEA records for what was learned during TASK-123-125, using map_emergence.py",
+        "PROJECT_BOOTSTRAPPING_SYSTEM.md and NEW_PROJECT_WIZARD.md require emergence folder creation at bootstrap and ongoing capture as work proceeds, not just at project start",
+        "release_task.py mechanically requires an 'Emergence capture considered' checklist line before release, same enforcement as existing 3 required items, with a passing focused test",
+        "shared/decisions.md records this as a POLICY-class decision",
+        "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the work"
+      ]
+    },
+    {
+      "task_id": "TASK-127",
+      "title": "Audit MAP systems integration and governance adoption",
+      "task_type": "audit",
+      "role": "coordinator",
+      "status": "RETIRED",
+      "dependencies": [],
+      "owner": "codex-lab-muva",
+      "output_paths": [
+        "MAP_System/artifacts/reports/map-systems-integration-audit-2026-07-03.md",
+        "MAP_System/handoffs/HANDOFF-TASK-127-map-systems-integration.md"
+      ],
+      "acceptance_criteria": [
+        "Audit all newly adopted MAP systems from DEC-015 through DEC-026 for completeness, MAP standards alignment, cross-links, and non-duplication",
+        "Evaluate whether LangGraph, HPOM, RnS, and Emergence/Insights are actually used in task planning, delegation, review, release, and operator-facing workflow",
+        "Identify concrete gaps between written systems and runnable/enforced behavior, separating documentation gaps from validator/gate/runner gaps",
+        "Produce a prioritized follow-up task sequence with one accountable coordinator/manager role and review/delegation boundaries",
+        "Run root MAP graph/event validators and avoid direct broad rewrites outside the audit output paths"
+      ]
+    },
+    {
+      "task_id": "TASK-128",
+      "title": "Audit and integrate MAP systems under LangGraph coordination",
+      "task_type": "architecture",
+      "role": "coordinator / project manager",
+      "status": "RETIRED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/planning/map-systems-integration-coordination-plan-2026-07-03.md",
+        "MAP_System/artifacts/reports/map-systems-integration-audit-2026-07-03.md"
+      ],
+      "acceptance_criteria": [
+        "LangGraph runner state is used to plan/route the work and the report documents the route, coordinator role, delegated checks, and queue impact",
+        "Audit covers each newly built MAP system for feature completeness, MAP-standard metadata, cross-links to adjacent systems, actual operational use, and mechanical enforcement where appropriate",
+        "HPOM, RnS, and E/I are used during the task itself, with captured insight/idea records for any systemic findings worth preserving",
+        "Report identifies integrated-base gaps versus healthy no-op areas, and creates/proposes follow-up HPOM tasks for concrete fixes rather than bundling unreviewed structural changes",
+        "validate_task_graph.py, validate_events.py, map_emergence.py validate, and full run_tests.sh pass before submission"
+      ]
+    },
+    {
+      "task_id": "TASK-129",
+      "title": "MAP System Adherence Audit: verify the 11 new systems are fully-featured, cross-linked, and actually used",
+      "task_type": "maintenance",
+      "role": "Claude, acting as Process Steward per PROMO-0007/IDEA-0012",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+        "MAP_System/CONTEXT_SYSTEM.md",
+        "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/artifacts/audits/",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0012-add-a-process-adherence-watcher-role-a-lightweight-role-that-che.md",
+        "MAP_System/emergence/insights/INS-0014-systems-with-a-mechanical-release-task-gate-get-genuinely-used-r.md",
+        "MAP_System/emergence/promotions/PROMO-0007-idea-0012.md",
+        "MAP_System/repairs/",
+        "MAP_System/shared/improvement-backlog.md"
+      ],
+      "acceptance_criteria": [
+        "Every one of the 11 systems (Research through Retrospective) is checked against its own stated acceptance criteria/core principle for completeness",
+        "Cross-links between all 11 systems are verified bidirectional by direct file inspection, not assumed from memory",
+        "Real usage evidence is gathered for each system (grep-based, not just 'the doc exists') distinguishing genuinely-used from documented-but-unused",
+        "Findings are filed as Repair Records or new tasks per SELF_REPAIR_SYSTEM.md severity, not silently fixed in place",
+        "A single audit report exists under MAP_System/artifacts/audits/ summarizing all findings"
+      ]
+    },
+    {
+      "task_id": "TASK-130",
+      "title": "Gather MAP systems real-usage evidence for TASK-129",
+      "task_type": "audit",
+      "role": "evidence gatherer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-129"
+      ],
+      "owner": "codex-lab-muva",
+      "output_paths": [
+        "MAP_System/artifacts/audits/task-130-map-systems-real-usage-evidence.md"
+      ],
+      "acceptance_criteria": [
+        "Evidence note covers each newly built MAP system from Research through Retrospective plus DEC-026 Emergence enforcement where relevant",
+        "Findings distinguish actual operational/template/script usage from documentation-only mentions using reproducible grep/file evidence",
+        "No system documents, templates, validators, or runtime behavior are changed by this findings-only slice",
+        "Report is stored under MAP_System/artifacts/audits/ with unique task-scoped path coordination",
+        "Task graph and event validation pass before submission"
+      ]
+    },
+    {
+      "task_id": "TASK-131",
+      "title": "Verify bidirectional cross-links among MAP system docs for TASK-129",
+      "task_type": "audit",
+      "role": "tooling / cross-link checker",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-129"
+      ],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/artifacts/audits/system-crosslink-bidirectionality-2026-07-03.md",
+        "MAP_System/scripts/check_system_crosslinks.py"
+      ],
+      "acceptance_criteria": [
+        "Checker script enumerates the 11 system docs explicitly and parses their Related files sections rather than relying on broad whole-file mentions",
+        "Report lists every directed system-to-system Related files link, whether the reverse link exists, and every one-directional gap found",
+        "Task does not edit any *_SYSTEM.md file or silently fix link gaps",
+        "Report includes the exact command used to regenerate it and enough detail for TASK-129 to route fixes",
+        "validate_task_graph.py, validate_events.py, checker script, and relevant syntax checks pass before submission"
+      ]
+    },
+    {
+      "task_id": "TASK-132",
+      "title": "Back up MAP and optimize folder structure",
+      "task_type": "maintenance",
+      "role": "Codex folder-structure cleanup steward",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "Guidelines/MAP_repo_systems_gap_review.md",
+        "Guidelines/README.md",
+        "MAP_System/artifacts/audits/",
+        "MAP_System/artifacts/reports/",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/tasks/",
+        "Projects/Backups/"
+      ],
+      "acceptance_criteria": [
+        "Fresh post-TASK-129 MAP backup exists under Projects/Backups with timestamped path and verification metadata",
+        "Folder-structure inventory identifies active, historical, duplicate, misplaced, and candidate-move paths using existing MAP routing rules",
+        "Any cleanup/optimization changes are scoped, reversible, and documented in a report before review",
+        "Task graph/events validators pass after backup and any structure changes"
+      ]
+    },
+    {
+      "task_id": "TASK-133",
+      "title": "ProjectUpdater editing, goals, references, and open-folder actions",
+      "task_type": "implementation",
+      "role": "ProjectUpdater feature implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-dino",
+      "output_paths": [
+        "MAP_System/tasks/",
+        "Projects/ProjectUpdater/app/index.html",
+        "Projects/ProjectUpdater/artifacts/",
+        "Projects/ProjectUpdater/scripts/validate_project_updater.py",
+        "Projects/ProjectUpdater/shared/requirements.md"
+      ],
+      "acceptance_criteria": [
+        "Projects can be edited after creation, including name, area, goal, next action, status, priority, progress, reminder window, due date, and reference folder/path",
+        "Projects can be deleted with confirmation, removing related notes according to documented behavior",
+        "Users can add/change multiple project goals or goal entries without losing existing single-goal localStorage data",
+        "Project cards expose visit/open-folder actions using bounded local/offline behavior appropriate for a static app",
+        "Validator/manual checks cover edit/delete/goal/reference/open-folder behavior and existing add/note/filter persistence still passes"
+      ]
+    },
+    {
+      "task_id": "TASK-134",
+      "title": "Add ProjectUpdater project editing, goals, folders, and lab launch affordance",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RETIRED",
+      "dependencies": [
+        "TASK-125"
+      ],
+      "owner": "codex-lab-muva",
+      "output_paths": [
+        "Projects/ProjectUpdater/app/index.html",
+        "Projects/ProjectUpdater/artifacts/tests/task-133-project-management-ops.md",
+        "Projects/ProjectUpdater/scripts/validate_project_updater.py",
+        "Projects/ProjectUpdater/shared/requirements.md"
+      ],
+      "acceptance_criteria": [
+        "Projects can be edited after creation, including name, area, priority, status, progress, reminder window, due date, folder path, next action, and goal data",
+        "Projects can be deleted with a deliberate confirmation path, and related notes are removed or handled predictably without leaving broken project references",
+        "Projects support multiple goals or goal updates while preserving the existing single goal field for backward-compatible localStorage data",
+        "Each project can store a folder/path reference and expose a Command Center Lab launch/copy affordance scoped to that project without adding a backend/server/network dependency",
+        "Validator covers edit, delete, goals, folder path, lab command affordance, reload persistence, existing filters/accessibility/mobile behavior, and validators pass"
+      ]
+    },
+    {
+      "task_id": "TASK-135",
+      "title": "Integrate ProjectUpdater into CommandCenterUI",
+      "task_type": "implementation",
+      "role": "CommandCenterUI integration implementer",
+      "status": "RELEASED",
+      "dependencies": [
+        "TASK-136"
+      ],
+      "owner": "codex-lab-neko",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js",
+        "MAP_System/artifacts/TASK-135-muva-integration-boundary-note.md",
+        "MAP_System/artifacts/planning/task-135-projectupdater-commandcenterui-integration-plan.md",
+        "MAP_System/tasks/"
+      ],
+      "acceptance_criteria": [
+        "CommandCenterUI exposes a ProjectUpdater panel or sidebar section that can open the ProjectUpdater app from the local project path",
+        "The backend exposes a read-only ProjectUpdater integration/status endpoint without reading browser localStorage directly or adding non-localhost dependencies",
+        "The UI makes the data boundary clear: ProjectUpdater remains localStorage-owned; CommandCenterUI can launch or summarize integration status only unless an explicit import/export path exists",
+        "Validation covers server syntax/API behavior and existing MAP task graph/events checks"
+      ]
+    },
+    {
+      "task_id": "TASK-136",
+      "title": "Add ProjectUpdater status export for CommandCenterUI integration",
+      "task_type": "implementation",
+      "role": "Claude (ProjectUpdater implementer)",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "claude-lab-valo",
+      "output_paths": [
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0015-add-an-export-import-json-button-to-projectupdater-to-mitigate-i.md",
+        "Projects/ProjectUpdater/app/index.html",
+        "Projects/ProjectUpdater/artifacts/",
+        "Projects/ProjectUpdater/scripts/validate_project_updater.py",
+        "Projects/ProjectUpdater/shared/requirements.md"
+      ],
+      "acceptance_criteria": [
+        "ProjectUpdater has an Export status action that downloads a JSON file named project-updater-status.json with active/stale/dueSoon counts and a project list",
+        "No server, file-system-write API, or new browser permission grant is introduced - a plain download link/blob, consistent with the app's static non-goals",
+        "Existing add/edit/delete/note/filter/persistence behavior is unaffected, verified via validate_project_updater.py",
+        "IDEA-0015 is marked resolved/implemented in the emergence index once this ships"
+      ]
+    },
+    {
+      "task_id": "TASK-137",
+      "title": "Remove ProjectUpdater Areas sidebar section",
+      "task_type": "implementation",
+      "role": "ProjectUpdater UI implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-neko",
+      "output_paths": [
+        "Projects/ProjectUpdater/app/index.html",
+        "Projects/ProjectUpdater/scripts/validate_project_updater.py"
+      ],
+      "acceptance_criteria": [
+        "ProjectUpdater sidebar no longer shows an Areas heading or dynamic area shortcut list",
+        "Project area fields and card area badges remain intact",
+        "Existing ProjectUpdater regression validator still passes"
+      ]
+    },
+    {
+      "task_id": "TASK-138",
+      "title": "Document auto-helper routing for reviewer conflicts",
+      "task_type": "documentation",
+      "role": "MAP process implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-neko",
+      "output_paths": [
+        "MAP_System/AGENTS.md",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/insights/INS-0015-a-routine-no-self-review-reviewer-conflict-should-trigger-the-ex.md",
+        "MAP_System/notes/helper-agent-guide.md"
+      ],
+      "acceptance_criteria": [
+        "MAP instructions explicitly say routine no-self-review reviewer conflicts should auto-route to a visible helper when no clean core reviewer is available",
+        "Helper-agent guide includes the concrete steps for this review-conflict path",
+        "Validators pass after the documentation update"
+      ]
+    },
+    {
+      "task_id": "TASK-139",
+      "title": "Fix CommandCenterUI ProjectUpdater open/status runtime",
+      "task_type": "implementation",
+      "role": "CommandCenterUI bugfix implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-neko",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js",
+        "MAP_System/tasks/"
+      ],
+      "acceptance_criteria": [
+        "Live CommandCenterUI /api/project-updater/status returns 200 with ProjectUpdater app_exists true",
+        "Open ProjectUpdater uses a same-origin local backend action or otherwise works from CommandCenterUI without relying on blocked file:// navigation",
+        "Security boundary remains fixed-path localhost-only: no user-supplied path launch and no browser localStorage scraping",
+        "Validation covers server syntax, JS syntax, endpoint behavior, and MAP validators"
+      ]
+    },
+    {
+      "task_id": "TASK-140",
+      "title": "Audit MAP process use in Command Center Lab",
+      "task_type": "process-audit",
+      "role": "MAP process auditor and corrective implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-neko",
+      "output_paths": [
+        "MAP_System/agents/README.md",
+        "MAP_System/artifacts/reports/task-140-process-use-audit.md",
+        "MAP_System/notes/helper-agent-guide.md",
+        "MAP_System/scripts/reconcile_agents.py",
+        "MAP_System/tasks/TASK-140.json",
+        "MAP_System/tests/test_reconcile_agents.py",
+        "MAP_System/workflow/task_graph.json"
+      ],
+      "acceptance_criteria": [
+        "Audit covers recent route/task/event/helper behavior against documented MAP/HPOM processes",
+        "Findings distinguish documented-but-unused systems from operational gaps observed in recent work",
+        "Low-risk process/documentation fixes are implemented directly, while larger changes are recorded as recommendations or follow-up tasks",
+        "Audit is submitted for independent review and not self-approved"
+      ]
+    },
+    {
+      "task_id": "TASK-141",
+      "title": "MAP systems-adherence audit + emergence ID-allocation race fix",
+      "task_type": "process-audit",
+      "role": "MAP process auditor and corrective implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-vino",
+      "output_paths": [
+        "MAP_System/RETROSPECTIVE_SYSTEM.md",
+        "MAP_System/artifacts/audits/task-141-systems-adherence-followup.md",
+        "MAP_System/repairs/",
+        "MAP_System/retros/",
+        "MAP_System/scripts/map_emergence.py",
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/shared/improvement-backlog.md",
+        "MAP_System/tasks/",
+        "MAP_System/tests/test_map_task_add_output_path.py"
+      ],
+      "acceptance_criteria": [
+        "map_emergence.py's create-artifact ID allocation is race-safe under concurrent invocation (demonstrated by a before/after reproduction, not just re-running the existing test suite)",
+        "Audit artifact distinguishes genuinely-exercised systems from documented-but-unused ones, cross-referencing TASK-129/130 rather than re-deriving from scratch",
+        "A standalone RETRO-0002 record exists for the TASK-135-139 cycle using templates/RETROSPECTIVE_TEMPLATE.md",
+        "Existing map_emergence.py tests and the full MAP validator suite still pass",
+        "Task is submitted for independent review, not self-approved"
+      ]
+    },
+    {
+      "task_id": "TASK-142",
+      "title": "Broadcast-coordinator convention + Research System decision + event-warning baseline cleanup",
+      "task_type": "process-improvement",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-magi",
+      "output_paths": [
+        "MAP_System/AGENTS.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/artifacts/research/README.md",
+        "MAP_System/events/warning_baseline.json",
+        "MAP_System/notes/helper-agent-guide.md",
+        "MAP_System/scripts/validate_events.py",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/tests/test_validate_events.py"
+      ],
+      "acceptance_criteria": [
+        "Broadcast coordinator convention documented in AGENTS.md and helper-agent-guide.md",
+        "Research System has an explicit decision recorded (exercise now with a real artifact, or formally deferred with a documented reason) in shared/decisions.md",
+        "validate_events.py distinguishes/baselines known legacy warnings from new ones without silencing new warning types"
+      ]
+    },
+    {
+      "task_id": "TASK-143",
+      "title": "Add task-state mirror reconciliation gate",
+      "task_type": "implementation",
+      "role": "worker",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-veto",
+      "output_paths": [
+        "MAP_System/artifacts/reports/task-143-systems-use-note.md",
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/release_task.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_task_mirrors.py",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/improvement-backlog.md",
+        "MAP_System/tasks",
+        "MAP_System/tests/test_release_gate.py",
+        "MAP_System/tests/test_review_gate.py",
+        "MAP_System/tests/test_validate_task_mirrors.py"
+      ],
+      "acceptance_criteria": [
+        "A validator detects mismatches between SQLite task status/output_paths and task JSON mirrors plus workflow/task_graph.json for active tasks.",
+        "Release/review workflow has a documented or scripted way to run the mirror check.",
+        "Regression tests cover matching state and deliberate mismatch cases.",
+        "A durable note answers the systems-use question: which systems are used, which remain specification-only, and whether Emergence/Insights or Research needs immediate improvement."
+      ]
+    },
+    {
+      "task_id": "TASK-144",
+      "title": "Full MAP renewal assessment and cleanup cycle",
+      "task_type": "process-improvement",
+      "role": "coordinator",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-veto",
+      "output_paths": [
+        "MAP_System/artifacts/reports/task-144-map-renewal-assessment.md",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/insights/INS-0016-validator-coverage-must-include-live-command-surfaces-not-only-d.md",
+        "MAP_System/events/README.md",
+        "MAP_System/requirements.txt",
+        "MAP_System/scripts/agent-deck",
+        "MAP_System/scripts/ai-command-center-antigravity",
+        "MAP_System/scripts/ai-command-center-cli",
+        "MAP_System/scripts/ai-command-center-shell",
+        "MAP_System/scripts/validate_canonical_repo_paths.py",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/improvement-backlog.md",
+        "MAP_System/tasks",
+        "MAP_System/workflow/task_graph.json",
+        "Projects/Backups/MAP_System-backup-2026-07-04T043707Z"
+      ],
+      "acceptance_criteria": [
+        "A whole MAP_System backup exists before any renewal edits and its path is recorded in the assessment.",
+        "Assessment covers folder structure, stale wording/path drift, process gates, Emergence/Insights, Research use, LangGraph/graph use, HPOM, and open improvement backlog.",
+        "Safe high-confidence wording/process cleanups are implemented under declared output paths; larger or risky changes become explicit follow-up tasks instead of silent broad edits.",
+        "Relevant validators and tests are run, including task mirrors, task graph, shared state, decisions, events, emergence, and the full MAP test suite when feasible."
+      ]
+    },
+    {
+      "task_id": "TASK-145",
+      "title": "Research: LangGraph current external practice vs MAP's graph/runner.py and agent_loop.py usage",
+      "task_type": "research",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-magi",
+      "output_paths": [
+        "MAP_System/artifacts/research",
+        "MAP_System/artifacts/research/ASSUMPTIONS-0001-langgraph-current-practice.md",
+        "MAP_System/artifacts/research/BRIEF-0001-langgraph-current-practice.md",
+        "MAP_System/artifacts/research/CLAIM-MATRIX-0001-langgraph-current-practice.md",
+        "MAP_System/artifacts/research/SOURCE-EVAL-0001-langgraph-current-practice.md",
+        "MAP_System/artifacts/research/SOURCE-MAP-0001-langgraph-current-practice.md",
+        "MAP_System/artifacts/research/SUMMARY-0001-langgraph-current-practice.md"
+      ],
+      "acceptance_criteria": [
+        "Research Brief, Source Map, Source Evaluation, Claim Evidence Matrix, Assumption Register, and Research Summary all exist under artifacts/research/ using the templates",
+        "Research Summary gives a plain answer on whether MAP's LangGraph usage is current, stale, or missing recommended patterns, with confidence and sourcing",
+        "Findings handed to codex-lab-veto/TASK-144 as an input packet, not applied directly to graph/runner.py or agent_loop.py by this task"
+      ]
+    },
+    {
+      "task_id": "TASK-146",
+      "title": "E/I backlog triage: promote/park CANDIDATE ideas 0009-0014, add operator-friction closeout habit (IDEA-0010)",
+      "task_type": "process-improvement",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-magi",
+      "output_paths": [
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+        "MAP_System/emergence/ideas/IDEA-0010-add-a-proactive-e-i-operator-friction-scouting-loop-for-commandc.md",
+        "MAP_System/emergence/ideas/IDEA-0011-add-a-bounded-process-steward-helper-pattern-for-complex-map-sys.md",
+        "MAP_System/emergence/ideas/IDEA-0013-add-an-idea-scouting-role-a-role-cadence-responsible-for-activel.md",
+        "MAP_System/emergence/ideas/IDEA-0014-after-gap-review-implementation-run-a-backed-up-full-folder-file.md",
+        "MAP_System/emergence/promotions/PROMO-0008-idea-0010.md",
+        "MAP_System/notes/task-authoring-guide.md"
+      ],
+      "acceptance_criteria": [
+        "All 5 CANDIDATE ideas have an explicit status update with recorded reasoning (promote/park/left-candidate-with-note)",
+        "IDEA-0010's promotion includes a concrete, bounded guidance addition (closeout-habit text), not just a status flip",
+        "emergence/INDEX.md rebuilt and validate_events/map_emergence validate pass"
+      ]
+    },
+    {
+      "task_id": "TASK-147",
+      "title": "MAP 6.13: Build orchestration entrypoint and decomposer contract",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/ORCHESTRATION_ENTRYPOINT_SYSTEM.md",
+        "MAP_System/artifacts/planning/map-decomposer-spec.md",
+        "MAP_System/scripts/intake_request.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/shared/subsystem-apis.md",
+        "MAP_System/tests/test_intake_request.py"
+      ],
+      "acceptance_criteria": [
+        "Defines one operator-intent entrypoint and when direct messages must be repackaged into a dispatch packet.",
+        "Decomposer spec defines subtasks, dependency edges, output paths, acceptance criteria, risk class, approval gates, routing lane, and rollback expectation.",
+        "Subsystem API index documents allocator, git lock, task claim, event, validator, emergence, local-helper, and status APIs.",
+        "Focused tests or documented dry runs verify intake_request.py emits the new dispatch/decomposer fields."
+      ]
+    },
+    {
+      "task_id": "TASK-148",
+      "title": "MAP 6.13: Plan cold-start migration for runtime changes",
+      "task_type": "planning",
+      "role": "planner",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/planning/map-runtime-migration-inventory.md",
+        "MAP_System/artifacts/planning/map-runtime-migration-plan.md",
+        "MAP_System/artifacts/tests/map-runtime-migration-smoke.md"
+      ],
+      "acceptance_criteria": [
+        "Inventory names current canonical repo, SQLite/file mirrors, task graph, event log, hcom session state, helper notes, agent status, Pathwell/private project state, and CommandCenterUI assumptions.",
+        "Rollout plan includes order of operations, freeze/lock points, rollback points, validation commands, operator checkpoints, and do-not-proceed gates.",
+        "Smoke-check artifact lists pre/post validation commands for canonical path, task mirrors, event baseline, agent status, and CommandCenterUI state."
+      ]
+    },
+    {
+      "task_id": "TASK-149",
+      "title": "MAP 6.13: Add trace schema, calibration, and robustness grading plan",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-147"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-real-parameter-calibration.md",
+        "MAP_System/artifacts/audits/map-sensitivity-robustness-method.md",
+        "MAP_System/artifacts/planning/map-event-trace-schema.md",
+        "MAP_System/artifacts/tests/map-613-simulation-testdrive-probes.md",
+        "MAP_System/scripts/validate_events.py",
+        "MAP_System/tests/test_validate_events.py"
+      ],
+      "acceptance_criteria": [
+        "Trace schema defines trace_id, parent_event_id, actor, action, target, task_id, and thread while preserving legacy event compatibility.",
+        "Calibration plan measures shipped-defect vs false-halt cost, local-vs-cloud defect rate, file churn, compression ratio, latency, hcom volume, and operator approval load.",
+        "Robustness method classifies conclusions as robust, conditional, or unsupported across plausible parameter ranges.",
+        "Probe artifact defines acceptance tests for shared-state coordination and validator halt authority."
+      ]
+    },
+    {
+      "task_id": "TASK-150",
+      "title": "MAP 6.13: Specify liveness reaper and mission-control TUI",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-149"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/command-center-ui/README.md",
+        "MAP_System/artifacts/planning/map-liveness-reaper-spec.md",
+        "MAP_System/artifacts/planning/mission-control-tui-spec.md"
+      ],
+      "acceptance_criteria": [
+        "Liveness spec defines last_seen, active task, lane, state vocabulary, stale timeout, reaper action, dead-letter behavior, and circuit-breaker signal.",
+        "Mission-control TUI spec defines vitals bar, roster panel, flight board, attention queue, event stream, trace drill-down, and intervention keybindings.",
+        "Spec states the TUI reads durable MAP/hcom state and must not become a second source of truth.",
+        "README or planning note names Python Textual/k9s-style prototype path and explicitly defers write interventions until read-only state is correct."
+      ]
+    },
+    {
+      "task_id": "TASK-151",
+      "title": "MAP 6.13: Add cost-governance and kill-switch design",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-147",
+        "TASK-149"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/planning/map-cost-governance-spec.md",
+        "MAP_System/artifacts/planning/map-kill-switch-spec.md"
+      ],
+      "acceptance_criteria": [
+        "Cost spec defines tokens_in, tokens_out, model_tier, estimated_cost, per-task budget, per-day budget, and spend-rate breaker semantics.",
+        "Kill-switch spec defines halt flag/storage, who may set/clear it, required events, and how runner/agent-loop should respond.",
+        "Design distinguishes cost circuit breaker from failure circuit breaker and records operator-approval paths for budget overrides.",
+        "Risk register or risk note captures runaway-spend risk and mitigation."
+      ]
+    },
+    {
+      "task_id": "TASK-152",
+      "title": "MAP 6.13: Specify protocol and semantic validators with halt authority",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-147",
+        "TASK-149"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/planning/map-protocol-validator-spec.md",
+        "MAP_System/artifacts/planning/map-semantic-validator-spec.md",
+        "MAP_System/artifacts/planning/map-validator-halt-state-spec.md",
+        "MAP_System/artifacts/tests/map-validator-halt-probe.md"
+      ],
+      "acceptance_criteria": [
+        "Protocol validator spec covers hcom intent, MATOCP token form where applicable, request-format requirements, and false-positive adjudication.",
+        "Semantic validator spec states Layer 1 coverage improves catch rate but does not reduce Layer 2 false positives toward 1%; judge accuracy and calibration are separate requirements.",
+        "Halt-state spec defines blocking storage, runner/agent-loop response, root-cause/repair requirement, and clear authority.",
+        "Probe artifact defines how to demonstrate that a validator can halt dispatch, not only log."
+      ]
+    },
+    {
+      "task_id": "TASK-153",
+      "title": "MAP 6.13: Add gap scoring, task tiers, and local-helper lanes",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-147",
+        "TASK-149"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/planning/map-emergence-learning-guard-spec.md",
+        "MAP_System/artifacts/planning/map-emergence-preflight-spec.md",
+        "MAP_System/artifacts/planning/map-local-helper-lanes-spec.md",
+        "MAP_System/artifacts/planning/map-task-tiering-spec.md"
+      ],
+      "acceptance_criteria": [
+        "Task-tiering spec defines gap_score, task_tier, local_lane, escalation_reason, and promotion/dispatch expectations.",
+        "Emergence preflight spec defines capability pass, coverage pass, suggestion confidence, and when suggestions must not be silently added.",
+        "Local-helper lanes are draft-only and include repo scan, JSON/schema check, event digest, validator-log summary, markdown cleanup, and acceptance-criteria draft.",
+        "Learning-guard spec prunes heuristics that fire without preventing real defects and explains how outcome feedback can override validator-only learning."
+      ]
+    },
+    {
+      "task_id": "TASK-154",
+      "title": "MAP 6.13: Design outcome feedback and Library-layer research path",
+      "task_type": "research",
+      "role": "researcher",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-149",
+        "TASK-152"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-library-viability-measurement.md",
+        "MAP_System/artifacts/planning/map-outcome-feedback-spec.md",
+        "MAP_System/artifacts/research/BRIEF-0002-map-library-tool-candidates.md",
+        "MAP_System/artifacts/research/SOURCE-MAP-0002-map-library-tool-candidates.md",
+        "MAP_System/artifacts/research/SUMMARY-0002-map-library-tool-candidates.md"
+      ],
+      "acceptance_criteria": [
+        "Outcome feedback spec distinguishes validation pass from real-world outcome and defines validator blind-spot rate.",
+        "Research artifacts evaluate claude-bedrock, agentcairn, knowledge-graph-driver-rag hop-limit/token-budget pattern, agent-collab-skills acceptance gate, and codexia worktree/locking relevance.",
+        "Library viability measurement covers compression ratio, detail-needed rate, file churn, and staleness invalidation requirements.",
+        "Task makes no adoption decision without a Research Summary and measurement plan."
+      ]
+    },
+    {
+      "task_id": "TASK-155",
+      "title": "MAP 6.13: Design resilience controls and chaos tests",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-148",
+        "TASK-149",
+        "TASK-150",
+        "TASK-151"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/planning/map-degradation-policy.md",
+        "MAP_System/artifacts/planning/map-dependency-dag-spec.md",
+        "MAP_System/artifacts/planning/map-durable-execution-spec.md",
+        "MAP_System/artifacts/planning/map-resilience-controls-spec.md",
+        "MAP_System/artifacts/tests/map-chaos-test-plan.md"
+      ],
+      "acceptance_criteria": [
+        "Resilience spec defines idempotency registry, dead-letter queue, circuit breaker inputs/actions, and blast-radius containment expectations.",
+        "Durable execution spec defines checkpointed steps, event replay resume, and idempotency-key safety for partial retries.",
+        "Degradation policy defines fail-open/fail-closed behavior for validator, cloud tier, canonical store, local model, and absent operator.",
+        "Chaos test plan covers killed agent-loop handler, stale mirror, malformed protocol output, hung agent/reaper, mid-task resume, and committed poisoned-state recovery.",
+        "Dependency DAG spec defines decomposer-emitted edges and cycle/unresolved-dependency validation."
+      ]
+    },
+    {
+      "task_id": "TASK-156",
+      "title": "MAP 6.13: Build governance pre-dispatch and threat-model plan",
+      "task_type": "architecture",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-147",
+        "TASK-148",
+        "TASK-151"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-threat-model.md",
+        "MAP_System/artifacts/planning/map-capability-whitelist-test-plan.md",
+        "MAP_System/artifacts/planning/map-pre-dispatch-policy-checker-spec.md",
+        "MAP_System/shared/RISK_REGISTER.md"
+      ],
+      "acceptance_criteria": [
+        "Policy-checker spec emits allow, require approval, or reject based on permission level, destructive-action policy, decision class, and risk class.",
+        "Destructive-action gate behavior is defined before work assignment, not only during review.",
+        "Capability test plan verifies helpers cannot be assigned final review, final decision, broad architecture, broad rewrites, or destructive operations.",
+        "Threat model covers repo, shell, filesystem, local helpers, compression/memory proxies, MCP/connectors, hcom, and CommandCenterUI control surfaces."
+      ]
+    },
+    {
+      "task_id": "TASK-157",
+      "title": "MAP 6.13: Verify formal invariants, multi-project fit, roster, and assumptions",
+      "task_type": "audit",
+      "role": "auditor",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-148",
+        "TASK-149",
+        "TASK-153",
+        "TASK-155"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-613-assumption-red-team.md",
+        "MAP_System/artifacts/audits/map-failure-taxonomy-coverage.md",
+        "MAP_System/artifacts/audits/map-formal-invariant-spike.md",
+        "MAP_System/artifacts/audits/map-multi-project-readiness.md",
+        "MAP_System/artifacts/audits/map-roster-composition.md"
+      ],
+      "acceptance_criteria": [
+        "Formal invariant spike covers allocator, task claim, and git lock with TLA+ or executable state-machine tests, and states limits of design-vs-implementation proof.",
+        "Failure taxonomy coverage maps known MAP validators/tests to multi-agent failure classes and identifies missing regression tests.",
+        "Multi-project readiness audit distinguishes global vs project-local state and covers Pathwell plus at least one other project shape.",
+        "Roster composition audit compares two-tier vs three-tier routing and agent count per tier without registering new agents by itself.",
+        "Assumption red-team challenges design assumptions, not just parameter values, and routes findings to Research, Risk, Self-Repair, or task backlog."
+      ]
+    },
+    {
+      "task_id": "TASK-158",
+      "title": "MAP 6.13: Implement liveness reaper (real code from TASK-150 spec)",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-150"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/liveness_reaper.py",
+        "MAP_System/shared/liveness-state.md",
+        "MAP_System/tests/test_liveness_reaper.py"
+      ],
+      "acceptance_criteria": [
+        "Script computes the 7 state-vocabulary values (alive/working/blocked/idle/suspect/broken/standby) correctly against fixture agent/task/hcom data.",
+        "Reaper actions (nudge/reclaim/dead-letter) only occur via sanctioned DB helpers (db/claims.py) and are followed by validate_task_mirrors.py passing.",
+        "Every reaper action appends a canonical event with the fields the spec requires.",
+        "Dead-letter records are replayable back to READY without hand-editing task_graph.json, per a documented replay command and a focused test.",
+        "Circuit-breaker signals (agent_stale_once, agent_reclaimed_task, agent_repeated_stale, agent_broken, system_liveness_degraded) start accounting-only, per the spec's explicit non-blocking-by-default rule."
+      ]
+    },
+    {
+      "task_id": "TASK-159",
+      "title": "MAP 6.13: Implement cost governance and kill-switch halt enforcement",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-151"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/cost_governance.py",
+        "MAP_System/scripts/halt_state.py",
+        "MAP_System/tests/test_cost_governance.py",
+        "MAP_System/tests/test_halt_state.py"
+      ],
+      "acceptance_criteria": [
+        "Implements a durable, human-inspectable halt store matching map-kill-switch-spec.md with scoped states, clear evidence, and authority checks.",
+        "Implements cost telemetry/budget counter helpers from map-cost-governance-spec.md without treating unknown paid cost as zero.",
+        "Runner and agent-loop can read halt state before dispatch/claim and suppress blocked lanes while allowing permitted repair/review/local work.",
+        "Tests cover halt set/clear authority, paid-dispatch halt, global halt, cost missing/unknown handling, and runner/agent-loop blocked-dispatch behavior."
+      ]
+    },
+    {
+      "task_id": "TASK-160",
+      "title": "MAP 6.13: Build read-only mission-control TUI prototype (from TASK-150 spec)",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-150",
+        "TASK-158"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/command-center-ui/mission-control-textual-prototype.md",
+        "MAP_System/scripts/_mission_control_app.py",
+        "MAP_System/scripts/mission_control_tui.py",
+        "MAP_System/tests/test_mission_control_tui.py"
+      ],
+      "acceptance_criteria": [
+        "Prototype renders vitals/roster/flight-board/attention-queue/event-stream panels from live durable state, verified against a fixture snapshot of map.db/task files/events.",
+        "No write path exists in this version -- confirmed by a test asserting the module never calls sqlite3 connection write methods, file writes to tracked MAP state, or subprocess calls that mutate map.db/task_graph.json/events.jsonl.",
+        "On source disagreement (e.g. task_graph.json vs map.db mismatch) the UI shows a drift warning per the spec's failure-mode rules, not a silent/blank panel.",
+        "Read-only keybindings (q/r/tab/enter/esc/t/a/e/!/?) work against the fixture; intervention keys are present but visibly disabled."
+      ]
+    },
+    {
+      "task_id": "TASK-161",
+      "title": "MAP 6.13: Implement resilience controls and chaos probes",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-155",
+        "TASK-159"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/dead_letter_queue.py",
+        "MAP_System/scripts/durable_execution.py",
+        "MAP_System/scripts/resilience_controls.py",
+        "MAP_System/tests/test_chaos_resilience.py",
+        "MAP_System/tests/test_durable_execution.py",
+        "MAP_System/tests/test_resilience_controls.py"
+      ],
+      "acceptance_criteria": [
+        "Implements idempotency registry and dead-letter queue helpers matching map-resilience-controls-spec.md, with duplicate/conflict behavior and replay status validation.",
+        "Implements durable execution checkpoint records and resume helpers for claim/handler/submit/event/export boundaries without double-applying partial retries.",
+        "Adds scoped circuit-breaker/quarantine state that feeds runner-visible routing without creating a second halt source of truth.",
+        "Adds chaos tests or executable probes for killed handler, stale mirror, malformed protocol output, hung agent/reaper path, mid-task resume, and committed poisoned-state recovery."
+      ]
+    },
+    {
+      "task_id": "TASK-162",
+      "title": "MAP 6.13: Implement protocol/semantic validator L1 wiring and halt-store integration",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-152",
+        "TASK-159"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/validate_layer1.py",
+        "MAP_System/scripts/validate_protocol.py",
+        "MAP_System/tests/test_validate_layer1.py",
+        "MAP_System/tests/test_validate_protocol.py"
+      ],
+      "acceptance_criteria": [
+        "validate_layer1.py aggregates all named L1 validators into one pass/fail call with per-validator breakdown, adding no new validation logic of its own (it composes, does not reimplement).",
+        "validate_protocol.py checks hcom message shape against AGENTS.md's 6-token MATOCP subset only, with a documented false-positive adjudication field (true_positive/false_positive/waived).",
+        "A BLOCKING/STRUCTURAL finding from either validator writes into TASK-159's halt store via its API, not a new table; a focused test proves no second halt table is created.",
+        "Default severity ships capped at DRIFT (telemetry-only, no halt-store write) until explicitly reconfigured; a test proves a real defect at default config surfaces as telemetry, not a blocking halt.",
+        "map-validator-halt-probe.md's 'Protocol halt test' and 'Semantic halt test' probes pass against this implementation."
+      ]
+    },
+    {
+      "task_id": "TASK-163",
+      "title": "MAP 6.13: Implement pre-dispatch policy checker and capability gates",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-153",
+        "TASK-156"
+      ],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/pre_dispatch_policy.py",
+        "MAP_System/tests/test_capability_whitelist.py",
+        "MAP_System/tests/test_pre_dispatch_policy.py",
+        "MAP_System/tests/test_runner_policy_gate.py"
+      ],
+      "acceptance_criteria": [
+        "Implements a deterministic pre-dispatch checker that returns allow, require_approval, or reject from permission tier, destructive-action policy, decision class, risk class, trust-boundary, and task-tier metadata.",
+        "Rejects helper/local assignments for final review, final decision, broad architecture ownership, broad rewrite, destructive operation, shell/network, and canonical MAP mutation cases.",
+        "Requires command-center or owning-core approval before dispatch for destructive Tier 1 work, AUTHORITY/POLICY decisions, SECURITY/STRUCTURAL risks, and unknown-risk trust-boundary crossings.",
+        "Runner and agent-loop tests prove rejected work is not recommended/claimed and approval-required work routes to a visible gate instead of normal dispatch."
+      ]
+    },
+    {
+      "task_id": "TASK-164",
+      "title": "Harden read-only mission-control attention surfaces",
+      "task_type": "implementation",
+      "role": "core",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/scripts/_mission_control_app.py",
+        "MAP_System/scripts/mission_control_tui.py",
+        "MAP_System/tests/test_mission_control_tui.py"
+      ],
+      "acceptance_criteria": [
+        "Policy-gated and policy-rejected tasks from runner snapshots are visible in flight-board data and attention items.",
+        "Source drift and dead-letter queue pressure produce explicit attention items while preserving the read-only/no-write contract.",
+        "Focused mission-control tests and MAP validators pass."
+      ]
+    },
+    {
+      "task_id": "TASK-165",
+      "title": "Map remaining command-center implementation gaps",
+      "task_type": "planning",
+      "role": "core",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/artifacts/planning/mission-control-command-center-gap-plan.md"
+      ],
+      "acceptance_criteria": [
+        "Artifact explicitly compares current command-center state to 6.13 single-entry/operator-control requirements.",
+        "Artifact separates implemented, partial, missing, and approval-blocked work.",
+        "Artifact proposes concrete next MAP tasks or implementation increments that do not require touching external CommandCenterUI without approval."
+      ]
+    },
+    {
+      "task_id": "TASK-166",
+      "title": "Add read-only mission-control drilldowns",
+      "task_type": "implementation",
+      "role": "core",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/scripts/_mission_control_app.py",
+        "MAP_System/scripts/mission_control_tui.py",
+        "MAP_System/tests/test_mission_control_tui.py"
+      ],
+      "acceptance_criteria": [
+        "Mission-control exposes task, agent, and attention drilldown data derived from existing canonical snapshots/events without recomputing routing or writing state.",
+        "The curses TUI provides read-only drilldown navigation for task, agent, event/attention focus while disabled intervention keys remain non-mutating.",
+        "Focused mission-control tests, validators, and the full MAP test suite pass."
+      ]
+    },
+    {
+      "task_id": "TASK-167",
+      "title": "Command-center intake wrapper (mechanical single entry point)",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/command_center_intake.py",
+        "MAP_System/tests/test_command_center_intake.py"
+      ],
+      "acceptance_criteria": [
+        "Wrapper accepts operator intent text (CLI arg or stdin) and calls intake_request.py's dispatch_packet(), does not reimplement its classification logic.",
+        "Wrapper appends a canonical event recording the dispatch packet (task_type, risk_class, gap_score placeholder, owner) before printing the runner's next_route.",
+        "Wrapper's own hcom-shaped output (if any) passes validate_protocol.py's checks; a malformed wrapper output is caught by a focused test, not silently accepted.",
+        "Does not alter scripts/intake_request.py's existing classification behavior or hcom itself -- purely composes existing pieces into one entry command."
+      ]
+    },
+    {
+      "task_id": "TASK-168",
+      "title": "Mission-control write-control design (spec only, no implementation)",
+      "task_type": "planning",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/planning/mission-control-write-control-spec.md"
+      ],
+      "acceptance_criteria": [
+        "Spec covers all 7 currently-disabled intervention keys (A/R/K/N/B/O/D) with the sanctioned command each would call.",
+        "Every control specifies dry-run/preview text, explicit confirmation requirement, and which validator(s) re-run after the action.",
+        "Spec states rollback or non-rollback expectation per control, consistent with CHANGE_CONTROL_SYSTEM.md.",
+        "Spec explicitly states this is design-only; no code in scripts/mission_control_tui.py or _mission_control_app.py is changed by this task."
+      ]
+    },
+    {
+      "task_id": "TASK-169",
+      "title": "Decide external CommandCenterUI boundary",
+      "task_type": "planning",
+      "role": "architect",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/artifacts/planning/commandcenterui-boundary-decision.md"
+      ],
+      "acceptance_criteria": [
+        "Decision artifact names the external CommandCenterUI path, current MAP-side TUI scope, and why external edits are out of scope without operator approval.",
+        "Artifact gives concrete options and a recommended default for the next phase.",
+        "Artifact defines what approval/evidence is required before any agent edits /home/home/Projects/CommandCenterUI."
+      ]
+    },
+    {
+      "task_id": "TASK-170",
+      "title": "Propagate trace IDs through MAP lifecycle events",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/scripts/_mission_control_app.py",
+        "MAP_System/scripts/aider_wrapper.py",
+        "MAP_System/scripts/dead_letter_queue.py",
+        "MAP_System/scripts/event_trace.py",
+        "MAP_System/scripts/liveness_reaper.py",
+        "MAP_System/scripts/local_runner.py",
+        "MAP_System/scripts/map_task.py",
+        "MAP_System/scripts/mission_control_tui.py",
+        "MAP_System/scripts/release_task.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_event_trace.py",
+        "MAP_System/tests/test_mission_control_tui.py",
+        "MAP_System/tests/test_validate_events.py"
+      ],
+      "acceptance_criteria": [
+        "New task-scoped event emitters include a stable trace_id convention without rewriting legacy events.",
+        "Event validation continues to allow legacy events but rejects malformed trace fields when present.",
+        "Mission-control event/drilldown rendering shows trace IDs when available and remains compatible with events that lack them.",
+        "Focused tests and full MAP validators pass."
+      ]
+    },
+    {
+      "task_id": "TASK-171",
+      "title": "Audit repo reference folder for MAP runtime patterns",
+      "task_type": "audit",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/artifacts/audits/repo-reference-map-runtime-audit.md"
+      ],
+      "acceptance_criteria": [
+        "Artifact inventories inspected reference projects and explicitly distinguishes useful patterns from non-useful/noise.",
+        "Artifact recommends concrete MAP follow-up tasks or states no action where adoption is not justified.",
+        "Audit avoids copying external code into MAP and treats repo/ as reference-only."
+      ]
+    },
+    {
+      "task_id": "TASK-172",
+      "title": "Design MAP session replay read model",
+      "task_type": "design",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-171"
+      ],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/artifacts/designs/session-replay-read-model-design.md"
+      ],
+      "acceptance_criteria": [
+        "Design identifies canonical input sources, derived indexes, and drift checks without changing source authority.",
+        "Design defines read-only query surfaces for trace/task/agent/session filters useful to mission-control or Command Center.",
+        "Design specifies privacy/scope boundaries and rejects direct adoption of external Agents Observe code or services.",
+        "Design recommends concrete implementation tasks or states why implementation should wait."
+      ]
+    },
+    {
+      "task_id": "TASK-173",
+      "title": "Implement MAP-only session replay builder",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [
+        "TASK-172"
+      ],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/runtime/.gitignore",
+        "MAP_System/runtime/README.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/session_replay.py",
+        "MAP_System/tests/test_session_replay.py"
+      ],
+      "acceptance_criteria": [
+        "CLI can build a disposable local SQLite replay index from MAP events, task JSON, and map.db without writing canonical task/event/workflow sources.",
+        "CLI exposes status, task, agent, and trace read queries with deterministic JSON output suitable for mission-control integration.",
+        "Build/status report drift findings for malformed events, missing task references, mirror validation failure, and source high-water metadata.",
+        "Focused tests and full MAP validators pass; hcom ingestion and transcript indexing remain deferred."
+      ]
+    },
+    {
+      "task_id": "TASK-174",
+      "title": "Build librarian agent + real Library-layer viability measurement",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/AGENT_PERMISSION_LEVELS.md",
+        "MAP_System/ARCHIVE_RETENTION_SYSTEM.md",
+        "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+        "MAP_System/CONTEXT_SYSTEM.md",
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/DECISION_CLASSES.md",
+        "MAP_System/DESTRUCTIVE_ACTION_POLICY.md",
+        "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+        "MAP_System/NEW_PROJECT_WIZARD.md",
+        "MAP_System/ORCHESTRATION_ENTRYPOINT_SYSTEM.md",
+        "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md",
+        "MAP_System/RESEARCH_SYSTEM.md",
+        "MAP_System/RETROSPECTIVE_SYSTEM.md",
+        "MAP_System/RISK_SYSTEM.md",
+        "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md",
+        "MAP_System/SELF_REPAIR_SYSTEM.md",
+        "MAP_System/artifacts/audits/map-library-viability-measurement-results-2026-07-14.md",
+        "MAP_System/requirements.txt",
+        "MAP_System/scripts/librarian.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_librarian.py"
+      ],
+      "acceptance_criteria": [
+        "librarian.py resolves [[wikilinks]] by stem, disambiguates ambiguous stems (e.g. multiple README.md files) via full relative path, and validates a repo scan for broken/ambiguous links.",
+        "wikilink conversion is additive (never removes existing backtick paths) and idempotent (re-running does not duplicate links).",
+        "Real compression-ratio and file-churn measurements are run against actual MAP docs (not simulated), with results and honest limitations recorded in a results artifact.",
+        "All 16 root system/policy docs have wikilinks added to their Related-Files sections with zero broken or ambiguous links per librarian.py validate."
+      ]
+    },
+    {
+      "task_id": "TASK-175",
+      "title": "Exercise command-center runtime surfaces",
+      "task_type": "audit",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/artifacts/reports/command-center-runtime-exercise-2026-07-14.md"
+      ],
+      "acceptance_criteria": [
+        "Artifact records real command outputs for runner, command-center intake dry-run, mission-control JSON, liveness/RnS dry-run, HPOM/pre-dispatch, and session replay status.",
+        "Artifact distinguishes actively working mechanisms from stale or not-yet-integrated mechanisms and names concrete follow-up implementation tasks.",
+        "Artifact checks external CommandCenterUI currency read-only and states whether a separate approved edit task is needed.",
+        "Task avoids editing external CommandCenterUI or overlapping TASK-174 output paths."
+      ]
+    },
+    {
+      "task_id": "TASK-176",
+      "title": "Prune stale RnS incidents for absent sessions",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "limit_watcher prunes open incidents for agents absent from both durable status.json and current hcom snapshot before probe actions are computed.",
+        "limit_watcher filters last_live to durable-or-current hcom agents so stale helper names do not create new presumed-down incidents.",
+        "Focused tests cover pruning without suppressing durable registered agents, and dry-run no longer probes TASK-175's stale historical names.",
+        "Task uses only MAP_System files and does not edit external CommandCenterUI."
+      ]
+    },
+    {
+      "task_id": "TASK-177",
+      "title": "Fix liveness_reaper.py: accept raw hcom list --json shape",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/scripts/liveness_reaper.py",
+        "MAP_System/tests/test_liveness_reaper.py"
+      ],
+      "acceptance_criteria": [
+        "normalize_hcom_status() accepts both the raw hcom list --json shape and an already agent-keyed dict, producing the same normalized shape either way.",
+        "liveness_reaper.py --hcom-json no longer crashes when given real hcom list --json output; reproduces and fixes the exact AttributeError from TASK-175's report.",
+        "Focused regression tests cover both input shapes plus the malformed-input rejection case."
+      ]
+    },
+    {
+      "task_id": "TASK-178",
+      "title": "Refresh mission-control roster from live hcom",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/scripts/mission_control_tui.py",
+        "MAP_System/tests/test_mission_control_tui.py"
+      ],
+      "acceptance_criteria": [
+        "Mission-control roster can be built from raw live hcom list JSON without writing canonical MAP state.",
+        "Dashboard snapshot prefers live hcom-derived liveness when available and falls back to shared/liveness-state.md when unavailable.",
+        "Tests prove the implementation composes liveness_reaper helpers rather than duplicating liveness classification logic.",
+        "Read-only structural guards still pass; no external CommandCenterUI edits."
+      ]
+    },
+    {
+      "task_id": "TASK-179",
+      "title": "Fix librarian.py wikilink path resolution (repo-root-relative and own-dir-relative)",
+      "task_type": "implementation",
+      "role": "engineer",
+      "status": "APPROVED",
+      "dependencies": [],
+      "owner": "command-center",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-library-viability-measurement-results-2026-07-14.md",
+        "MAP_System/artifacts/audits/map-real-parameter-calibration.md",
+        "MAP_System/artifacts/audits/map-sensitivity-robustness-method.md",
+        "MAP_System/artifacts/command-center-ui/mission-control-textual-prototype.md",
+        "MAP_System/artifacts/planning/map-event-trace-schema.md",
+        "MAP_System/artifacts/planning/map-protocol-validator-spec.md",
+        "MAP_System/artifacts/planning/map-semantic-validator-spec.md",
+        "MAP_System/artifacts/planning/map-validator-halt-state-spec.md",
+        "MAP_System/artifacts/planning/mission-control-write-control-spec.md",
+        "MAP_System/artifacts/tests/map-613-simulation-testdrive-probes.md",
+        "MAP_System/artifacts/tests/map-validator-halt-probe.md",
+        "MAP_System/emergence/README.md",
+        "MAP_System/scripts/librarian.py",
+        "MAP_System/tests/test_librarian.py"
+      ],
+      "acceptance_criteria": [
+        "_resolve_related_bullet_path() correctly resolves repo-root-relative (MAP_System/-prefixed) and referencing-file's-own-dir-relative bullet paths, in addition to the existing root-relative case.",
+        "Guidelines/-prefixed references are deliberately left unresolved (documented, not a bug) since that corpus is outside validate/backlinks' default scope.",
+        "Re-running the tool against the 12 batch-2 files converts substantially more bullets than before the fix (was 2 total, now 44), with librarian.py validate reporting 0 broken/ambiguous links.",
+        "Focused regression tests cover both new resolution bases and the Guidelines/ exclusion."
+      ]
+    },
+    {
+      "task_id": "TASK-180",
+      "title": "Compact and wikilink emergence records",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/templates/EXPERIMENT_TEMPLATE.md",
+        "MAP_System/emergence/templates/IDEA_CARD_TEMPLATE.md",
+        "MAP_System/emergence/templates/INSIGHT_TEMPLATE.md",
+        "MAP_System/emergence/templates/PROMOTION_RECORD_TEMPLATE.md",
+        "MAP_System/emergence/templates/SYNTHESIS_NOTE_TEMPLATE.md",
+        "MAP_System/scripts/map_emergence.py",
+        "MAP_System/tests/test_map_emergence.py",
+        "MAP_System/tests/test_map_emergence_stale.py"
+      ],
+      "acceptance_criteria": [
+        "New emergence templates use compact key/value bullets and token-light labels rather than prose prompts.",
+        "map_emergence output/index surfaces turn emergence IDs, task IDs, and MAP markdown path references into resolvable wikilinks where possible.",
+        "Existing emergence validation and stale checks still pass for old and new records.",
+        "Focused tests cover compact template creation and wikilink/reference compaction."
+      ]
+    },
+    {
+      "task_id": "TASK-181",
+      "title": "Use local librarian to compact emergence records",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/artifacts/planning/emergence-local-librarian-batch1.md",
+        "MAP_System/artifacts/planning/emergence-local-librarian-batch2.md",
+        "MAP_System/artifacts/planning/emergence-local-librarian-compaction.md",
+        "MAP_System/artifacts/planning/emergence-local-librarian-report.md",
+        "MAP_System/artifacts/reviews/task180-review-mira.md",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0001-emergence-cli.md",
+        "MAP_System/emergence/ideas/IDEA-0002-text.md",
+        "MAP_System/emergence/ideas/IDEA-0003-text.md",
+        "MAP_System/emergence/ideas/IDEA-0004-require-a-second-security-focused-review-pass-for-any-task-that-.md",
+        "MAP_System/emergence/ideas/IDEA-0005-add-a-release-path-smoke-checklist-for-user-facing-packages.md",
+        "MAP_System/emergence/ideas/IDEA-0006-announce-task-id-before-claiming-and-pin-physical-continuity-facts.md",
+        "MAP_System/emergence/ideas/IDEA-0007-declared-idle-checkin-protocol.md",
+        "MAP_System/emergence/ideas/IDEA-0008-idle-accountability-heartbeat-for-active-agents.md",
+        "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+        "MAP_System/emergence/ideas/IDEA-0010-add-a-proactive-e-i-operator-friction-scouting-loop-for-commandc.md",
+        "MAP_System/emergence/ideas/IDEA-0011-add-a-bounded-process-steward-helper-pattern-for-complex-map-sys.md",
+        "MAP_System/emergence/ideas/IDEA-0012-add-a-process-adherence-watcher-role-a-lightweight-role-that-che.md",
+        "MAP_System/emergence/ideas/IDEA-0013-add-an-idea-scouting-role-a-role-cadence-responsible-for-activel.md",
+        "MAP_System/emergence/ideas/IDEA-0014-after-gap-review-implementation-run-a-backed-up-full-folder-file.md",
+        "MAP_System/emergence/ideas/IDEA-0015-add-an-export-import-json-button-to-projectupdater-to-mitigate-i.md",
+        "MAP_System/emergence/insights/INS-0001-command-center-emergence-cli.md",
+        "MAP_System/emergence/insights/INS-0002-text.md",
+        "MAP_System/emergence/insights/INS-0003-text.md",
+        "MAP_System/emergence/insights/INS-0004-fail-safe-identity-pattern-commandcenterui-s-browser-mode-defaul.md",
+        "MAP_System/emergence/insights/INS-0005-release-reviews-must-inspect-every-user-visible-acquisition-path.md",
+        "MAP_System/emergence/insights/INS-0006-sequential-task-ids-collide-under-concurrent-agents.md",
+        "MAP_System/emergence/insights/INS-0007-emergence-records-need-lifecycle-closeout-not-just-capture.md",
+        "MAP_System/emergence/insights/INS-0008-ei-should-proactively-surface-operator-friction-affordances.md",
+        "MAP_System/emergence/insights/INS-0009-e-i-should-proactively-scout-operator-workflow-friction-instead-.md",
+        "MAP_System/emergence/insights/INS-0010-complex-map-system-buildouts-may-need-an-explicit-process-stewar.md",
+        "MAP_System/emergence/insights/INS-0011-no-headless-browser-was-preinstalled-for-verifying-static-html-a.md",
+        "MAP_System/emergence/insights/INS-0012-feature-completeness-gaps-a-missing-ui-filter-missing-accessibil.md",
+        "MAP_System/emergence/insights/INS-0013-emergence-insight-capture-was-skipped-entirely-for-an-entire-pro.md",
+        "MAP_System/emergence/insights/INS-0014-systems-with-a-mechanical-release-task-gate-get-genuinely-used-r.md",
+        "MAP_System/emergence/insights/INS-0015-a-routine-no-self-review-reviewer-conflict-should-trigger-the-ex.md",
+        "MAP_System/emergence/insights/INS-0016-validator-coverage-must-include-live-command-surfaces-not-only-d.md",
+        "MAP_System/emergence/insights/INS-0017-turn-by-turn-self-audited-card-game-simulation-naming-every-card.md",
+        "MAP_System/emergence/insights/INS-0018-when-a-rules-heavy-generative-task-hits-a-genuinely-ambiguous-so.md",
+        "MAP_System/emergence/insights/INS-0019-a-100-line-domain-validator-written-at-the-start-of-a-generative.md",
+        "MAP_System/emergence/insights/INS-0020-when-a-derived-dataset-looks-ambiguous-one-targeted-check-of-the.md",
+        "MAP_System/emergence/promotions/PROMO-0001-task-052-emergence-cli.md",
+        "MAP_System/emergence/promotions/PROMO-0002-idea.md",
+        "MAP_System/emergence/promotions/PROMO-0003-idea.md",
+        "MAP_System/emergence/promotions/PROMO-0004-security-second-pass-review.md",
+        "MAP_System/emergence/promotions/PROMO-0005-release-path-checklist.md",
+        "MAP_System/emergence/promotions/PROMO-0006-declared-idle-checkin.md",
+        "MAP_System/emergence/promotions/PROMO-0007-idea-0012.md",
+        "MAP_System/emergence/promotions/PROMO-0008-idea-0010.md",
+        "MAP_System/emergence/synthesis/SYN-0001-two-readers-one-truth.md",
+        "MAP_System/events/events.jsonl",
+        "MAP_System/inbox/helpers/task-181-gemma3-4b-2026-07-14T124413Z.md",
+        "MAP_System/inbox/helpers/task-181-llama3-2-1b-2026-07-14T124920Z.md",
+        "MAP_System/scripts/local_runner.py",
+        "MAP_System/tests/test_local_runner.py"
+      ],
+      "acceptance_criteria": [
+        "Local helper use is recorded with model, owner, scope, input paths, output path, and review owner.",
+        "Historical emergence records selected for edit are registered as output_paths before submission.",
+        "Any applied record rewrites preserve IDs, status headers, source/task references, approval fields, and lifecycle meaning.",
+        "map_emergence validate/stale and librarian validate pass after changes.",
+        "The task reports what the local librarian did and what the core agent accepted, revised, or rejected."
+      ]
+    },
+    {
+      "task_id": "TASK-182",
+      "title": "CommandCenterUI currency: MAP runtime health cards",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-mira",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/README.md",
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js",
+        "MAP_System/artifacts/command-center-ui/task-182-map-health-cards.md"
+      ],
+      "acceptance_criteria": [
+        "GET /api/map/health returns JSON with runner route, librarian finding_count, session-replay safe_for_mission_control/drift, and RnS stale-incident summary, each with per-source error isolation so one failed source cannot break the endpoint.",
+        "Endpoint is read-only: no MAP_System file writes, no subprocess with write side effects; MAP scripts invoked are validate/status/route computations only.",
+        "Chat UI renders a MAP health card strip from the endpoint with OK/WARN/ERROR states and degrades gracefully when the endpoint or a source is unavailable.",
+        "Responses are cached with a short TTL so UI polling does not hammer MAP scripts.",
+        "Verified live: server started, endpoint curled, UI screenshot or DOM check confirming cards render; results recorded in the MAP-side artifact.",
+        "Pre-existing uncommitted ProjectUpdater work in the repo is baseline-committed separately before TASK-182 changes so the task diff is reviewable in isolation."
+      ]
+    },
+    {
+      "task_id": "TASK-183",
+      "title": "Deterministic compact active emergence records",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/artifacts/planning/emergence-deterministic-compaction-report.md",
+        "MAP_System/artifacts/reviews/task181-review-mira.md",
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+        "MAP_System/emergence/insights/INS-0008-ei-should-proactively-surface-operator-friction-affordances.md",
+        "MAP_System/emergence/insights/INS-0009-e-i-should-proactively-scout-operator-workflow-friction-instead-.md",
+        "MAP_System/emergence/insights/INS-0017-turn-by-turn-self-audited-card-game-simulation-naming-every-card.md",
+        "MAP_System/emergence/insights/INS-0018-when-a-rules-heavy-generative-task-hits-a-genuinely-ambiguous-so.md",
+        "MAP_System/emergence/insights/INS-0019-a-100-line-domain-validator-written-at-the-start-of-a-generative.md",
+        "MAP_System/emergence/insights/INS-0020-when-a-derived-dataset-looks-ambiguous-one-targeted-check-of-the.md",
+        "MAP_System/emergence/synthesis/SYN-0001-two-readers-one-truth.md",
+        "MAP_System/scripts/map_emergence.py",
+        "MAP_System/tests/test_map_emergence.py"
+      ],
+      "acceptance_criteria": [
+        "A deterministic map_emergence command can dry-run and apply compact body-section conversion for named emergence records.",
+        "Remaining active emergence records are compacted with IDs, headers, statuses, checkbox decisions, evidence, and lifecycle meaning preserved.",
+        "The compaction command is idempotent for already compact records.",
+        "map_emergence validate/stale, librarian validate, validate_events --fail-on-new, validate_task_mirrors, and full MAP tests pass.",
+        "Report documents the command behavior, records changed, and why local-model direct rewrites were not used."
+      ]
     }
   ],
   "approval_gates": [

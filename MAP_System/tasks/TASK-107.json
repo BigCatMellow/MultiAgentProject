@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-107",
+  "title": "Build MAP Context System (formalize context packets, budgets, compression)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md priority #3: promote notes/context-routing-guide.md and shared/memory-map.md into a formal Context System defining context packet format, required/optional context by task type, forbidden context loading, stale-context handling, token-budget rules, local-summarizer role, and context compression rules. Build MAP_System/CONTEXT_SYSTEM.md and templates/CONTEXT_PACKET_TEMPLATE.md. Must cross-link Research System (context includes verified Research Summaries, not raw sourcing), Self-Repair (stale context is a DRIFT-class repair target), Emergence (insights inform what belongs in a context packet), HPOM (local-summarizer tier boundary), and Memory (memory-map.md as the source of what's canonical). Do not duplicate context-routing-guide.md's situational routing table; formalize the rules around it and link to it. Register all output_paths upfront including any cross-linked file edits (lesson from TASK-103/105 review cycles).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/CONTEXT_SYSTEM.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/notes/context-routing-guide.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/templates/CONTEXT_PACKET_TEMPLATE.md",
+    "MAP_System/templates/README.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/CONTEXT_SYSTEM.md exists and defines context packet format, required/optional context by task type, forbidden context loading, stale-context handling, token-budget rules, local-summarizer role, and context compression rules",
+    "templates/CONTEXT_PACKET_TEMPLATE.md exists",
+    "CONTEXT_SYSTEM.md cross-links notes/context-routing-guide.md, shared/memory-map.md, RESEARCH_SYSTEM.md, SELF_REPAIR_SYSTEM.md, and emergence/README.md",
+    "shared/decisions.md gets a new DECISION entry recording Context System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

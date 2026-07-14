@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-160",
+  "title": "MAP 6.13: Build read-only mission-control TUI prototype (from TASK-150 spec)",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-150",
+    "TASK-158"
+  ],
+  "owner": "command-center",
+  "description": "Build the first read-only mission-control prototype from mission-control-tui-spec.md using Python Textual, k9s-style. Read-only only: vitals bar, roster panel (using TASK-158's liveness state), flight board, attention queue, event stream, drill-down views. All data sourced from durable MAP state (map.db, task files, workflow/task_graph.json, events/events.jsonl, agents/status.json) plus hcom list/events -- never a second source of truth. Intervention keybindings are defined but disabled/dry-run only in this first prototype, per the spec's explicit non-goal list. Read mission-control-tui-spec.md, artifacts/command-center-ui/README.md, and MAP_System/shared/liveness-state.md (TASK-158 output) before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/command-center-ui/mission-control-textual-prototype.md",
+    "MAP_System/scripts/_mission_control_app.py",
+    "MAP_System/scripts/mission_control_tui.py",
+    "MAP_System/tests/test_mission_control_tui.py"
+  ],
+  "acceptance_criteria": [
+    "Prototype renders vitals/roster/flight-board/attention-queue/event-stream panels from live durable state, verified against a fixture snapshot of map.db/task files/events.",
+    "No write path exists in this version -- confirmed by a test asserting the module never calls sqlite3 connection write methods, file writes to tracked MAP state, or subprocess calls that mutate map.db/task_graph.json/events.jsonl.",
+    "On source disagreement (e.g. task_graph.json vs map.db mismatch) the UI shows a drift warning per the spec's failure-mode rules, not a silent/blank panel.",
+    "Read-only keybindings (q/r/tab/enter/esc/t/a/e/!/?) work against the fixture; intervention keys are present but visibly disabled."
+  ]
+}

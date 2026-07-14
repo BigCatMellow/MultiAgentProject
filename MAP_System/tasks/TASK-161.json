@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-161",
+  "title": "MAP 6.13: Implement resilience controls and chaos probes",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-155",
+    "TASK-159"
+  ],
+  "owner": "command-center",
+  "description": "Implementation task for approved TASK-155 resilience and chaos specs. Build the first executable resilience controls: idempotency, dead letters, durable checkpoints/resume, scoped breaker/quarantine behavior, and chaos probes. Reuse TASK-159 halt-state storage for global/repair-only halts instead of inventing a parallel halt table.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/dead_letter_queue.py",
+    "MAP_System/scripts/durable_execution.py",
+    "MAP_System/scripts/resilience_controls.py",
+    "MAP_System/tests/test_chaos_resilience.py",
+    "MAP_System/tests/test_durable_execution.py",
+    "MAP_System/tests/test_resilience_controls.py"
+  ],
+  "acceptance_criteria": [
+    "Implements idempotency registry and dead-letter queue helpers matching map-resilience-controls-spec.md, with duplicate/conflict behavior and replay status validation.",
+    "Implements durable execution checkpoint records and resume helpers for claim/handler/submit/event/export boundaries without double-applying partial retries.",
+    "Adds scoped circuit-breaker/quarantine state that feeds runner-visible routing without creating a second halt source of truth.",
+    "Adds chaos tests or executable probes for killed handler, stale mirror, malformed protocol output, hung agent/reaper path, mid-task resume, and committed poisoned-state recovery."
+  ]
+}

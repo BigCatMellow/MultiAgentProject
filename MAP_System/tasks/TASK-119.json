@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-119",
+  "title": "Harden RnS stale-claim owner nudges",
+  "task_type": "repair",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Operator-requested follow-up after TASK-117 stalled: RnS recovered agents but did not get work moving because a stale IN_PROGRESS claim made the runner show no ready work. Add RnS detection/tests that target stale claim owners with a bounded request to resume, submit, release, or intentionally pause.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task-119-rns-stale-claim-owner-nudge.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "RnS detects expired IN_PROGRESS claims as a queue-stall condition even when no READY work exists",
+    "RnS sends a throttled request to the stale claim owner/claimer with resume/submit/release/pause options instead of silently idling",
+    "Focused limit_watcher tests, validate_task_graph.py, validate_events.py, and full run_tests.sh pass"
+  ]
+}

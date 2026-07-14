@@ -1,0 +1,33 @@
+{
+  "task_id": "TASK-129",
+  "title": "MAP System Adherence Audit: verify the 11 new systems are fully-featured, cross-linked, and actually used",
+  "task_type": "maintenance",
+  "role": "Claude, acting as Process Steward per PROMO-0007/IDEA-0012",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Operator concern (hcom #22305): the 11 systems built in TASK-103-126 (Research, Self-Repair, Context, Decision/Authority, Human Interface, Risk, Security/Permissions, Change Control, Project Bootstrapping, Archive/Retention, Retrospective) plus core MAP infrastructure (HPOM, RnS/limit-watcher, Emergence/E-I, LangGraph orchestration) may have been built fast without verifying they are fully-featured against their own stated scope, genuinely cross-linked to each other (not just one-directional mentions), and actually being used in practice rather than just existing as documentation. This audit checks each system for: (1) completeness against its own acceptance criteria/core principle, (2) bidirectional cross-links verified by direct file inspection, (3) real usage evidence (grep for actual invocations/copies of templates, actual DEC entries using DECISION_CLASSES.md's Class field, actual context packets built, etc.) versus just existing. Findings are NOT silently fixed - each becomes a Repair Record (per SELF_REPAIR_SYSTEM.md) or a new task, routed through normal review/release. Promoted from IDEA-0012 (PROMO-0007) per direct operator instruction that this kind of check needs to happen and currently isn't.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+    "MAP_System/CONTEXT_SYSTEM.md",
+    "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/artifacts/audits/",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/ideas/IDEA-0012-add-a-process-adherence-watcher-role-a-lightweight-role-that-che.md",
+    "MAP_System/emergence/insights/INS-0014-systems-with-a-mechanical-release-task-gate-get-genuinely-used-r.md",
+    "MAP_System/emergence/promotions/PROMO-0007-idea-0012.md",
+    "MAP_System/repairs/",
+    "MAP_System/shared/improvement-backlog.md"
+  ],
+  "acceptance_criteria": [
+    "Every one of the 11 systems (Research through Retrospective) is checked against its own stated acceptance criteria/core principle for completeness",
+    "Cross-links between all 11 systems are verified bidirectional by direct file inspection, not assumed from memory",
+    "Real usage evidence is gathered for each system (grep-based, not just 'the doc exists') distinguishing genuinely-used from documented-but-unused",
+    "Findings are filed as Repair Records or new tasks per SELF_REPAIR_SYSTEM.md severity, not silently fixed in place",
+    "A single audit report exists under MAP_System/artifacts/audits/ summarizing all findings"
+  ]
+}

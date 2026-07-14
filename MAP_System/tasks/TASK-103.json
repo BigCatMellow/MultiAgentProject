@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-103",
+  "title": "Build MAP Research System (docs, templates, folder scaffold)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md priority #1: MAP has no formal Research System. Build MAP_System/RESEARCH_SYSTEM.md defining the research flow (Research Question -> Research Brief -> Source Map -> Claim Evidence Matrix -> Assumption Register -> Research Summary -> Decision/HPOM Task), plus MAP_System/research/README.md and templates under MAP_System/templates/research/ (RESEARCH_BRIEF_TEMPLATE.md, SOURCE_MAP_TEMPLATE.md, SOURCE_EVALUATION_TEMPLATE.md, CLAIM_EVIDENCE_MATRIX_TEMPLATE.md, ASSUMPTION_REGISTER_TEMPLATE.md, RESEARCH_SUMMARY_TEMPLATE.md). Must define relationship to Emergence, HPOM, Memory, Context systems per the gap review's recommended flow. Track process via events.jsonl and a STATE_SNAPSHOT/handoff at session end. codex-lab-dino is taking tooling/validator/index work as a separate follow-on task; do not duplicate that scope here.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/research/README.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/templates/README.md",
+    "MAP_System/templates/research/"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/RESEARCH_SYSTEM.md exists and defines research question format, source map, source quality ratings, claim extraction rules, claim evidence matrix, assumption register, contradiction handling, date-sensitivity rules, research summary format, and research-to-decision workflow",
+    "MAP_System/research/README.md exists explaining folder layout and CLI/process usage",
+    "All 6 templates listed in the gap review exist under MAP_System/templates/research/",
+    "shared/decisions.md gets a new DECISION entry recording the Research System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

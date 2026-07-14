@@ -9,48 +9,44 @@ Status: RAW
 
 ## Short description
 
-<What did the agent notice? One or two sentences.>
+- obs: <noticed pattern; terse>
 
 ## Trigger
 
-<What work, file, pattern, contradiction, or combination caused this insight?>
+- src: <work/file/event that exposed it>
 
 ## The synthesis
 
-<What new idea emerges from the existing information? What is the "green" that blue + yellow makes?>
+- synth: <new combo / inference>
 
 ## Why it might matter
 
-<How could this improve the project, system, quality, speed, clarity, or future work?>
+- why: <gain if true>
 
 ## Evidence
 
-<What observed facts support this insight? List files, tasks, or patterns.>
+- ev: <file/task/fact links>
 
 ## Risk
 
-<What could go wrong if this idea is acted on prematurely or incorrectly?>
+- risk: <failure if overused/wrong>
 
 ## Scope
 
-Is this:
-
-- [ ] Inside the current task
-- [ ] Adjacent to the current task
-- [ ] A project-level idea
-- [ ] A MAP-system-level improvement
+- [ ] current-task
+- [ ] adjacent
+- [ ] project
+- [ ] MAP-system
 
 ## Recommended next action
 
-Choose one:
-
-- [ ] Ignore — not worth preserving
-- [ ] Park for later — valid but low priority
-- [ ] Create follow-up task — actionable now
-- [ ] Create idea card — needs more development
-- [ ] Run small experiment — testable now
-- [ ] Escalate to Human Owner / Project DRI — requires decision authority
+- [ ] ignore
+- [ ] park
+- [ ] task
+- [ ] idea
+- [ ] experiment
+- [ ] escalate-human
 
 ## Notes
 
--
+- note:

@@ -55,6 +55,8 @@ CHECKIN_TASK_ID = "TASK-084"  # check-in events attribute here, not to the RnS i
 WORK_NUDGE_SECONDS = 1800  # while actionable work exists, ping an idle agent at most every 30min
 WORK_NUDGE_MIN_IDLE = 120  # don't ping someone who went idle seconds ago (mid-turn gap)
 WORK_TASK_ID = "TASK-095"  # work-dispatch events attribute here (operator #17759)
+STALE_CLAIM_OWNER_NUDGE_SECONDS = 1800
+STALE_CLAIM_TASK_ID = "TASK-119"
 
 NUDGE_PROMPT = (
     "Rise & Shine (RnS limit watcher, TASK-083): your session appears to have "
@@ -153,6 +155,32 @@ def detect_presumed_down(prev_live, snapshot, status_data, incidents):
             continue
         down.append(name)
     return down
+
+
+def prune_absent_session_tracking(state, status_data, snapshot):
+    """Drop RnS tracking for historical sessions no longer known anywhere.
+
+    RnS state persists across lab restarts, but hcom session names can be
+    disposable helper/tab names. If a name is absent from both durable
+    `agents/status.json` and the current hcom snapshot, it is not resumable by
+    RnS anymore. Prune those stale names before incident detection/probing so
+    old helper sessions do not keep producing probe resumes or fresh incidents.
+    """
+    known_agents = set(status_data.get("agents", {})) | set(snapshot)
+    incidents = state.setdefault("incidents", {})
+
+    pruned_incidents = sorted(name for name in incidents if name not in known_agents)
+    for name in pruned_incidents:
+        incidents.pop(name, None)
+
+    previous_last_live = list(state.get("last_live", []))
+    state["last_live"] = sorted(name for name in previous_last_live if name in known_agents)
+    pruned_last_live = sorted(set(previous_last_live) - set(state["last_live"]))
+
+    return {
+        "pruned_incidents": pruned_incidents,
+        "pruned_last_live": pruned_last_live,
+    }
 
 
 _RESET_PATTERNS = [
@@ -291,6 +319,34 @@ def actionable_work():
         return None
 
 
+def stale_claims():
+    """Expired IN_PROGRESS claims that can stall the visible queue.
+
+    This is separate from actionable_work(): recovered/idle agents should not
+    steal another agent's claim, but the claim owner should be asked to resume,
+    submit, release/rework, or explicitly pause.
+    """
+    try:
+        import sqlite3
+        con = sqlite3.connect(f"file:{ROOT / 'map.db'}?mode=ro", uri=True)
+        con.row_factory = sqlite3.Row
+        rows = con.execute(
+            """
+            SELECT task_id, title, owner, claimed_by, lease_expires_at
+            FROM tasks
+            WHERE status='IN_PROGRESS'
+              AND claimed_by IS NOT NULL
+              AND lease_expires_at IS NOT NULL
+              AND lease_expires_at < datetime('now')
+            ORDER BY task_id
+            """
+        ).fetchall()
+        con.close()
+        return [dict(row) for row in rows]
+    except Exception:
+        return None
+
+
 def describe_work(work, agent):
     """Bounded, per-agent work list: reviews exclude the agent's own tasks."""
     parts = []
@@ -340,6 +396,29 @@ def decide_work_nudges(snapshot, status_data, claimed_agents, work, state, now):
             continue
         due.append(name)
     return due
+
+
+def decide_stale_claim_owner_nudges(claims, state, now):
+    """Pure: group expired claims by claimer and throttle per task.
+
+    A stale claim can make the runner show no READY work even though the
+    pipeline is stalled. RnS should not auto-reassign it, but it should ask the
+    current claimer to make the state explicit.
+    """
+    if not claims:
+        return {}
+    last_nudges = state.get("stale_claim_owner_nudges", {})
+    grouped = {}
+    for claim in claims:
+        task_id = claim.get("task_id")
+        agent = claim.get("claimed_by") or claim.get("owner")
+        if not task_id or not agent:
+            continue
+        last = parse_resume_after(last_nudges.get(task_id))
+        if last is not None and (now - last).total_seconds() < STALE_CLAIM_OWNER_NUDGE_SECONDS:
+            continue
+        grouped.setdefault(agent, []).append(claim)
+    return grouped
 
 
 def claimed_agent_ids():
@@ -454,10 +533,25 @@ def poll_once(dry_run=False):
     # v2: presumed-down incidents
     snapshot = hcom_snapshot()
     if snapshot is not None:
+        pruned = prune_absent_session_tracking(state, status_data, snapshot)
+        if pruned["pruned_incidents"] or pruned["pruned_last_live"]:
+            parts = []
+            if pruned["pruned_incidents"]:
+                parts.append("incidents=" + ",".join(pruned["pruned_incidents"][:8]))
+            if pruned["pruned_last_live"]:
+                parts.append("last_live=" + ",".join(pruned["pruned_last_live"][:8]))
+            append_event(
+                "PROGRESS",
+                "RnS pruned stale session tracking absent from durable status and "
+                f"current hcom snapshot ({'; '.join(parts)}).",
+                dry_run=dry_run,
+                task_id="TASK-176",
+            )
+
         live_now = sorted(n for n, e in snapshot.items() if classify_live(e))
 
         # agents that rose again: close incidents
-        for name in [n for n in state["incidents"] if n in live_now]:
+        for name in [n for n in list(state["incidents"]) if n in live_now]:
             inc = state["incidents"].pop(name)
             append_event("PROGRESS",
                 f"RnS: {name} is live again (incident opened {inc.get('detected_at')}, "
@@ -555,6 +649,33 @@ def poll_once(dry_run=False):
                         f"RnS work-dispatch nudge sent to {name}: actionable MAP work "
                         f"exists ({listing[:160]}) and the agent is idle with no claim.",
                         dry_run=dry_run, task_id=WORK_TASK_ID)
+
+            claims = stale_claims()
+            if claims is not None:
+                state.setdefault("stale_claim_owner_nudges", {})
+                for name, agent_claims in decide_stale_claim_owner_nudges(claims, state, now).items():
+                    task_ids = ", ".join(claim["task_id"] for claim in agent_claims[:5])
+                    msg = (
+                        "Issue: RnS sees stale IN_PROGRESS claim(s) with expired leases "
+                        f"owned by you: {task_ids}. This can make recovered agents see "
+                        "no READY work while the queue is actually stalled. "
+                        "Options: resume and submit the task; release/rework the claim "
+                        "so another agent can take it; or state that it is intentionally "
+                        "paused and why. Recommendation: resume or release the claim now. "
+                        "Needed: update the task state or reply with the pause reason."
+                    )
+                    if dry_run:
+                        print(f"[dry-run] would stale-claim-owner nudge {name}: {msg}")
+                    else:
+                        subprocess.run(["hcom", "send", f"@{name}", "--intent", "request",
+                                        "--name", SENDER, "--", msg],
+                                       capture_output=True, text=True, timeout=30)
+                    for claim in agent_claims:
+                        state["stale_claim_owner_nudges"][claim["task_id"]] = now.isoformat(timespec="seconds")
+                    append_event("PROGRESS",
+                        f"RnS stale-claim owner nudge sent to {name}: expired IN_PROGRESS "
+                        f"claim(s) {task_ids} need resume/submit/release/pause action.",
+                        dry_run=dry_run, task_id=STALE_CLAIM_TASK_ID)
 
     save_state(state, dry_run=dry_run)
 

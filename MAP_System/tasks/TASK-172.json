@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-172",
+  "title": "Design MAP session replay read model",
+  "task_type": "design",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-171"
+  ],
+  "owner": "codex-lab-mozu",
+  "description": "Follow-up from TASK-171: design a MAP-native, local-only event/session replay read model for mission-control and Command Center use, derived from canonical task/events/hcom sources without adding new write authority.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/designs/session-replay-read-model-design.md"
+  ],
+  "acceptance_criteria": [
+    "Design identifies canonical input sources, derived indexes, and drift checks without changing source authority.",
+    "Design defines read-only query surfaces for trace/task/agent/session filters useful to mission-control or Command Center.",
+    "Design specifies privacy/scope boundaries and rejects direct adoption of external Agents Observe code or services.",
+    "Design recommends concrete implementation tasks or states why implementation should wait."
+  ]
+}

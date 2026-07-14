@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-155",
+  "title": "MAP 6.13: Design resilience controls and chaos tests",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-148",
+    "TASK-149",
+    "TASK-150",
+    "TASK-151"
+  ],
+  "owner": "command-center",
+  "description": "Wave 7 from MAP 6.13 plan. Design idempotency registry, dead-letter queue, durable/resumable execution, circuit breakers, chaos tests, degradation policy, and dependency DAG support. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/SELF_REPAIR_SYSTEM.md, MAP_System/scripts/agent_loop.py, MAP_System/graph/runner.py, MAP_System/scripts/validate_task_graph.py, and Guidelines/6.13/files5/MAP-Simulation-Results-Round4.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/map-degradation-policy.md",
+    "MAP_System/artifacts/planning/map-dependency-dag-spec.md",
+    "MAP_System/artifacts/planning/map-durable-execution-spec.md",
+    "MAP_System/artifacts/planning/map-resilience-controls-spec.md",
+    "MAP_System/artifacts/tests/map-chaos-test-plan.md"
+  ],
+  "acceptance_criteria": [
+    "Resilience spec defines idempotency registry, dead-letter queue, circuit breaker inputs/actions, and blast-radius containment expectations.",
+    "Durable execution spec defines checkpointed steps, event replay resume, and idempotency-key safety for partial retries.",
+    "Degradation policy defines fail-open/fail-closed behavior for validator, cloud tier, canonical store, local model, and absent operator.",
+    "Chaos test plan covers killed agent-loop handler, stale mirror, malformed protocol output, hung agent/reaper, mid-task resume, and committed poisoned-state recovery.",
+    "Dependency DAG spec defines decomposer-emitted edges and cycle/unresolved-dependency validation."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-150",
+  "title": "MAP 6.13: Specify liveness reaper and mission-control TUI",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-149"
+  ],
+  "owner": "command-center",
+  "description": "Wave 2.5 from MAP 6.13 plan. Specify heartbeat/liveness state, reaper behavior for silent agents, and a mission-control TUI that gives the operator vitals, roster heartbeat dots, task flight board, attention queue, event stream, drill-down, and intervention affordances. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/HUMAN_INTERFACE_SYSTEM.md, MAP_System/agents/status.json, MAP_System/scripts/limit_watcher.py, and Guidelines/6.13/Claude Notes mission-control section before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/command-center-ui/README.md",
+    "MAP_System/artifacts/planning/map-liveness-reaper-spec.md",
+    "MAP_System/artifacts/planning/mission-control-tui-spec.md"
+  ],
+  "acceptance_criteria": [
+    "Liveness spec defines last_seen, active task, lane, state vocabulary, stale timeout, reaper action, dead-letter behavior, and circuit-breaker signal.",
+    "Mission-control TUI spec defines vitals bar, roster panel, flight board, attention queue, event stream, trace drill-down, and intervention keybindings.",
+    "Spec states the TUI reads durable MAP/hcom state and must not become a second source of truth.",
+    "README or planning note names Python Textual/k9s-style prototype path and explicitly defers write interventions until read-only state is correct."
+  ]
+}

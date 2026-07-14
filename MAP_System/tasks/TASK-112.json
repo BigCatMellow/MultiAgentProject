@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-112",
+  "title": "Build MAP Security/Permissions System (agent permission levels, destructive-action policy)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-111"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md secondary gap: AGENTS.md already has a Security Second Pass rule for network-facing/write-capable outputs, but there is no formal agent permission level model, read/write/delete boundaries, shell command permissions, network access policy, secret handling, destructive action policy, external service policy, or trust boundary model. Build MAP_System/SECURITY_PERMISSIONS_SYSTEM.md, MAP_System/AGENT_PERMISSION_LEVELS.md, MAP_System/DESTRUCTIVE_ACTION_POLICY.md. Must cross-link Risk System (SECURITY-class risk), Decision/Authority (least-privilege changes are AUTHORITY-class), Self-Repair (STRUCTURAL repair authority), and the existing AGENTS.md Security Second Pass rule (do not duplicate, reference and extend it). Depends on TASK-111 (shared decisions.md touch point); do not submit until TASK-111 is released. Register all output_paths upfront including cross-link edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENT_PERMISSION_LEVELS.md",
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/DESTRUCTIVE_ACTION_POLICY.md",
+    "MAP_System/RISK_SYSTEM.md",
+    "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md exists and defines agent permission levels, read/write/delete boundaries, shell command permissions, network access policy, secret handling, external service policy, and trust boundary model",
+    "MAP_System/AGENT_PERMISSION_LEVELS.md exists defining concrete permission levels mapped to HPOM authority tiers",
+    "MAP_System/DESTRUCTIVE_ACTION_POLICY.md exists defining what counts as destructive and required confirmation/approval",
+    "SECURITY_PERMISSIONS_SYSTEM.md cross-links AGENTS.md Security Second Pass rule, RISK_SYSTEM.md, DECISION_AUTHORITY_SYSTEM.md, and shared/hpom.md without duplicating them",
+    "shared/decisions.md gets a new DECISION entry recording Security/Permissions System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

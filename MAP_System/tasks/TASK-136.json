@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-136",
+  "title": "Add ProjectUpdater status export for CommandCenterUI integration",
+  "task_type": "implementation",
+  "role": "Claude (ProjectUpdater implementer)",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Companion to TASK-135 (CommandCenterUI integration, codex-lab-dino). ProjectUpdater is pure browser localStorage with no file-system or server access, so the only honest data bridge to CommandCenterUI's backend is a manual export. Add an 'Export status' action to Projects/ProjectUpdater/app/index.html that downloads a JSON snapshot (active/stale/dueSoon counts, project list with name/area/status/idle-days/due-days) to the browser's default download location as project-updater-status.json, matching the canonical path ~/Downloads/project-updater-status.json that dino's CommandCenterUI reader will poll. Keep ProjectUpdater fully static/serverless - the export is a plain browser download, not a file-system write API, so no new permission grants or backend dependency. This also implements the previously-captured IDEA-0015 (export/import JSON risk mitigation from RISK-0001).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/ideas/IDEA-0015-add-an-export-import-json-button-to-projectupdater-to-mitigate-i.md",
+    "Projects/ProjectUpdater/app/index.html",
+    "Projects/ProjectUpdater/artifacts/",
+    "Projects/ProjectUpdater/scripts/validate_project_updater.py",
+    "Projects/ProjectUpdater/shared/requirements.md"
+  ],
+  "acceptance_criteria": [
+    "ProjectUpdater has an Export status action that downloads a JSON file named project-updater-status.json with active/stale/dueSoon counts and a project list",
+    "No server, file-system-write API, or new browser permission grant is introduced - a plain download link/blob, consistent with the app's static non-goals",
+    "Existing add/edit/delete/note/filter/persistence behavior is unaffected, verified via validate_project_updater.py",
+    "IDEA-0015 is marked resolved/implemented in the emergence index once this ships"
+  ]
+}

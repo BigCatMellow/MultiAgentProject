@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-120",
+  "title": "Self-application structural review of MAP_System against its own new systems",
+  "task_type": "maintenance",
+  "role": "Claude (architecture critique, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Per operator instruction (hcom #19897, after gap-review build sequence TASK-103-118 completed): review the entire MAP_System folder/file structure applying all newly-built systems (Research, Self-Repair, Context, Decision/Authority, Human Interface, Risk, Security/Permissions, Change Control, Project Bootstrapping, Archive/Retention, Retrospective) to itself, to check MAP_System is set up in the best possible way for the system to succeed. Backup taken first at Projects/Backups/MAP_System-backup-2026-07-03 (verified identical via diff -qr). Produce a Health Check Report per SELF_REPAIR_SYSTEM.md as the core deliverable. Apply only COSMETIC/DRIFT-level fixes directly (missing scaffold files, broken links, stale metadata). Any STRUCTURAL finding (folder reorganization, moving canonical files) must be proposed as a Repair Record or decision, not applied unilaterally, per DECISION_AUTHORITY_SYSTEM.md and DESTRUCTIVE_ACTION_POLICY.md.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence/insights/INS-0010-complex-map-system-buildouts-may-need-an-explicit-process-stewar.md",
+    "MAP_System/repairs/",
+    "MAP_System/scripts/validate_risk_registers.py",
+    "MAP_System/shared/RISK_REGISTER.md"
+  ],
+  "acceptance_criteria": [
+    "A Health Check Report exists under MAP_System/repairs/ covering all validators/checks listed in SELF_REPAIR_SYSTEM.md",
+    "Structural findings are classified by severity (COSMETIC/DRIFT/BLOCKING/STRUCTURAL) per SELF_REPAIR_SYSTEM.md, with STRUCTURAL findings proposed (not applied) for command-center decision",
+    "MAP_System/shared/RISK_REGISTER.md exists (even if starting empty/near-empty) since RISK_SYSTEM.md and PROJECT_BOOTSTRAPPING_SYSTEM.md both reference it as canonical",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the review"
+  ]
+}

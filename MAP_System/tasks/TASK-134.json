@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-134",
+  "title": "Add ProjectUpdater project editing, goals, folders, and lab launch affordance",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RETIRED",
+  "dependencies": [
+    "TASK-125"
+  ],
+  "owner": "codex-lab-muva",
+  "description": "Retired as duplicate of TASK-133, already claimed by codex-lab-dino for operator hcom #23185 ProjectUpdater management operations.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/ProjectUpdater/app/index.html",
+    "Projects/ProjectUpdater/artifacts/tests/task-133-project-management-ops.md",
+    "Projects/ProjectUpdater/scripts/validate_project_updater.py",
+    "Projects/ProjectUpdater/shared/requirements.md"
+  ],
+  "acceptance_criteria": [
+    "Projects can be edited after creation, including name, area, priority, status, progress, reminder window, due date, folder path, next action, and goal data",
+    "Projects can be deleted with a deliberate confirmation path, and related notes are removed or handled predictably without leaving broken project references",
+    "Projects support multiple goals or goal updates while preserving the existing single goal field for backward-compatible localStorage data",
+    "Each project can store a folder/path reference and expose a Command Center Lab launch/copy affordance scoped to that project without adding a backend/server/network dependency",
+    "Validator covers edit, delete, goals, folder path, lab command affordance, reload persistence, existing filters/accessibility/mobile behavior, and validators pass"
+  ]
+}

@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 from dataclasses import dataclass
 from datetime import date
+import fcntl
 import json
 import re
 import sys
@@ -96,6 +98,67 @@ KINDS: dict[str, ArtifactKind] = {
 PLACEHOLDER_RE = re.compile(r"<[^>\n]+>")
 STALE_TEXT_RE = re.compile(r"(?im)^\s*(text|tbd|none|idea-####)\s*$")
 SECTION_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
+ARTIFACT_ID_RE = re.compile(r"\b(?:INS|SYN|IDEA|EXP|PROMO)-\d{4}\b")
+MAP_MD_PATH_RE = re.compile(r"\b(?:MAP_System/)?[A-Za-z0-9_./-]+\.md\b")
+WIKILINK_RE = re.compile(r"\[\[[^\]]+\]\]")
+
+SECTION_KEYS = {
+    "Short description": "obs",
+    "Trigger": "src",
+    "The synthesis": "synth",
+    "Why it might matter": "why",
+    "Evidence": "ev",
+    "Risk": "risk",
+    "Idea": "idea",
+    "Problem or opportunity": "gap",
+    "Why now": "now",
+    "Expected benefit": "gain",
+    "Cost": "cost",
+    "Smallest safe experiment": "test",
+    "Hypothesis": "hyp",
+    "Test": "test",
+    "Scope": "scope",
+    "Limits": "limits",
+    "Success criteria": "pass",
+    "Failure criteria": "fail",
+    "New combination": "combo",
+    "What this makes possible": "opens",
+    "Why this was not obvious before": "why-hidden",
+    "What is being promoted?": "promote",
+    "Why it should become real work": "why",
+    "Scope": "scope",
+    "Notes": "note",
+    "Pieces being combined": "pieces",
+}
+COMPACT_LABEL_RE = re.compile(
+    r"^(?:-\s*)?(?:obs|src|synth|why|ev|risk|idea|gap|now|gain|cost|test|hyp|scope|limits|pass|fail|combo|opens|why-hidden|promote|note|pieces|use|a|b|c):\s*"
+)
+CHECKBOX_HEADINGS = {
+    "Decision",
+    "Decision needed",
+    "Recommendation",
+    "Recommended next action",
+    "Recommended next step",
+    "Reversibility",
+    "What it becomes",
+}
+PIECE_LABELS = {
+    "Piece A": "a",
+    "Piece B": "b",
+    "Piece C (optional)": "c",
+}
+CLOSED_ARTIFACT_STATUSES = {
+    "ADOPTED",
+    "APPROVED",
+    "ARCHIVED",
+    "DISMISSED",
+    "PARKED",
+    "PROMOTED",
+    "PROMOTED_TO_TASK",
+    "REJECTED",
+    "SUPERSEDED",
+    "WITHDRAWN",
+}
 
 
 class EmergenceError(RuntimeError):
@@ -124,6 +187,275 @@ def artifact_files(root: Path, kind: ArtifactKind) -> list[Path]:
     if not folder.exists():
         return []
     return sorted(path for path in folder.glob("*.md") if path.is_file())
+
+
+def artifact_file_by_id(root: Path, artifact_id: str) -> Path | None:
+    for kind in KINDS.values():
+        for path in artifact_files(root, kind):
+            if path.stem.startswith(f"{artifact_id}-"):
+                return path
+    return None
+
+
+def wikilink_for_path(root: Path, path: Path) -> str | None:
+    try:
+        rel = path.resolve().relative_to(root.resolve())
+    except ValueError:
+        return None
+    if path.suffix != ".md":
+        return None
+    return f"[[{rel.with_suffix('').as_posix()}]]"
+
+
+def compact_references(text: str, root: Path) -> str:
+    """Add MAP-local wikilinks for references we can resolve safely.
+
+    Only markdown targets get wikilinks, so `librarian.py validate` can still
+    resolve them. Task JSON IDs stay plain because they are not markdown docs.
+    Existing wikilinks are left untouched.
+    """
+
+    def convert_segment(segment: str) -> str:
+        protected_links: dict[str, str] = {}
+
+        def protect(link: str) -> str:
+            token = f"__MAP_REF_LINK_{len(protected_links)}__"
+            protected_links[token] = link
+            return token
+
+        def restore_links(value: str) -> str:
+            for token, link in protected_links.items():
+                value = value.replace(token, link)
+            return value
+
+        def replace_artifact(match: re.Match[str]) -> str:
+            artifact_id = match.group(0)
+            path = artifact_file_by_id(root, artifact_id)
+            link = wikilink_for_path(root, path) if path else None
+            return link or artifact_id
+
+        def replace_path(match: re.Match[str]) -> str:
+            raw = match.group(0)
+            candidate = Path(raw)
+            if raw.startswith("MAP_System/"):
+                path = root.parent / candidate
+            else:
+                path = root / candidate
+            if not path.exists():
+                id_match = ARTIFACT_ID_RE.search(raw)
+                if id_match:
+                    artifact_path = artifact_file_by_id(root, id_match.group(0))
+                    if artifact_path and artifact_path.name == raw:
+                        path = artifact_path
+            link = wikilink_for_path(root, path) if path.exists() else None
+            return protect(link) if link else raw
+
+        segment = MAP_MD_PATH_RE.sub(replace_path, segment)
+        segment = ARTIFACT_ID_RE.sub(replace_artifact, segment)
+        return restore_links(segment)
+
+    parts: list[str] = []
+    cursor = 0
+    for match in WIKILINK_RE.finditer(text):
+        parts.append(convert_segment(text[cursor:match.start()]))
+        parts.append(match.group(0))
+        cursor = match.end()
+    parts.append(convert_segment(text[cursor:]))
+    return "".join(parts)
+
+
+def compact_section_value(heading: str, value: str, root: Path) -> str:
+    key = SECTION_KEYS.get(heading, "note")
+    lines = [line.strip() for line in value.strip().splitlines() if line.strip()]
+    if not lines:
+        return f"- {key}: TBD"
+    if len(lines) == 1:
+        return f"- {key}: {compact_references(lines[0], root)}"
+    rendered = [f"- {key}: {compact_references(lines[0], root)}"]
+    rendered.extend(f"- +: {compact_references(line.lstrip('- ').strip(), root)}" for line in lines[1:])
+    return "\n".join(rendered)
+
+
+def compact_plain_lines(lines: list[str], label: str, root: Path) -> list[str]:
+    content = " ".join(line.strip() for line in lines if line.strip())
+    if not content or content == "-":
+        return [f"- {label}:"]
+    if COMPACT_LABEL_RE.match(content) or content.startswith("- ["):
+        return [content]
+    return [f"- {label}: {compact_references(content, root)}"]
+
+
+def compact_piece_section(body: str, root: Path) -> str:
+    """Compact a synthesis 'Pieces being combined' section with ### pieces."""
+    lines = body.splitlines()
+    output: list[str] = []
+    current_heading: str | None = None
+    current_body: list[str] = []
+
+    def flush() -> None:
+        nonlocal current_heading, current_body
+        if current_heading is None:
+            if current_body and any(line.strip() for line in current_body):
+                output.extend(compact_plain_lines(current_body, "pieces", root))
+            current_body = []
+            return
+        output.append("")
+        output.append(f"### {current_heading}")
+        output.append("")
+        output.extend(compact_plain_lines(current_body, PIECE_LABELS.get(current_heading, "pieces"), root))
+        current_body = []
+
+    for line in lines:
+        heading = re.match(r"^###\s+(.+?)\s*$", line)
+        if heading:
+            flush()
+            current_heading = heading.group(1)
+        else:
+            current_body.append(line)
+    flush()
+    return "\n".join(output).strip()
+
+
+def compact_checkbox_section(body: str) -> str:
+    kept = []
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped == "Choose one:" or stripped.startswith("Can this be undone easily?"):
+            continue
+        kept.append(line.rstrip())
+    return "\n".join(kept).strip()
+
+
+def compact_record_section(heading: str, body: str, root: Path) -> str:
+    stripped = body.strip()
+    if heading == "Pieces being combined":
+        return compact_piece_section(body, root)
+    if heading in CHECKBOX_HEADINGS:
+        return compact_checkbox_section(body)
+    label = SECTION_KEYS.get(heading, "note")
+    if stripped != "-" and "\n-" in f"\n{stripped}" and all(
+        not line.strip() or line.lstrip().startswith("-") for line in stripped.splitlines()
+    ):
+        return stripped
+    return "\n".join(compact_plain_lines(body.splitlines(), label, root)).strip()
+
+
+def compact_record_text(text: str, root: Path) -> str:
+    """Convert existing emergence record body sections to compact bullets.
+
+    Header fields and section headings stay exactly as-is. The conversion is
+    intentionally mechanical and conservative: it labels existing text instead
+    of summarizing or inventing shorter meaning.
+    """
+    pattern = re.compile(r"^##\s+(.+?)\s*\n(.*?)(?=^##\s+|\Z)", re.MULTILINE | re.DOTALL)
+    output: list[str] = []
+    cursor = 0
+    for match in pattern.finditer(text):
+        output.append(text[cursor:match.start()].rstrip())
+        heading = match.group(1)
+        compacted = compact_record_section(heading, match.group(2), root)
+        output.append(f"## {heading}\n\n{compacted}".rstrip())
+        cursor = match.end()
+    output.append(text[cursor:].rstrip())
+    return "\n\n".join(part for part in output if part != "") + ("\n" if text.endswith("\n") else "")
+
+
+def is_active_artifact(path: Path) -> bool:
+    text = path.read_text(encoding="utf-8", errors="replace")
+    status = extract_header(text, "Status")
+    return bool(status) and status not in CLOSED_ARTIFACT_STATUSES
+
+
+def resolve_compact_target(root: Path, target: str) -> Path:
+    candidate = Path(target)
+    if candidate.exists():
+        return candidate
+    root_candidate = root / target
+    if root_candidate.exists():
+        return root_candidate
+    id_match = re.fullmatch(r"(?:INS|SYN|IDEA|EXP|PROMO)-\d{4}", target)
+    if id_match:
+        path = artifact_file_by_id(root, target)
+        if path:
+            return path
+    raise EmergenceError(f"compact target not found: {target}")
+
+
+def compact_targets(args: argparse.Namespace) -> int:
+    root = args.root.resolve()
+    targets: list[Path] = []
+    if args.all_active:
+        for kind in KINDS.values():
+            targets.extend(path for path in artifact_files(root, kind) if is_active_artifact(path))
+    for target in args.targets:
+        targets.append(resolve_compact_target(root, target))
+    if not targets:
+        raise EmergenceError("compact requires at least one target or --all-active")
+
+    seen: set[Path] = set()
+    results = []
+    for path in targets:
+        resolved = path.resolve()
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        original = path.read_text(encoding="utf-8")
+        compacted = compact_record_text(original, root)
+        changed = compacted != original
+        if args.apply and changed:
+            path.write_text(compacted, encoding="utf-8")
+        results.append({
+            "file": str(path.relative_to(root.parent) if path.is_relative_to(root.parent) else path),
+            "changed": changed,
+            "applied": bool(args.apply and changed),
+        })
+
+    if args.json:
+        print(json.dumps({"dry_run": not args.apply, "results": results}, indent=2))
+    else:
+        for result in results:
+            state = "applied" if result["applied"] else "would-change" if result["changed"] else "unchanged"
+            print(f"{state} {result['file']}")
+    return 0
+
+
+def table_cell(text: str) -> str:
+    return text.replace("\n", " ").replace("|", "\\|")
+
+
+def strip_compact_label(text: str) -> str:
+    return COMPACT_LABEL_RE.sub("", text.strip())
+
+
+def compact_index_summary(text: str, max_words: int = 18) -> str:
+    words = text.split()
+    if len(words) <= max_words:
+        return text
+    return " ".join(words[:max_words]) + " ..."
+
+
+@contextlib.contextmanager
+def id_allocation_lock(root: Path, kind: ArtifactKind):
+    """Serialize ID allocation + existence-check + write for one artifact kind.
+
+    next_id() only scans existing filenames; without this lock, two
+    concurrent `create` calls for the same kind can both read the same
+    highest ID and both pass the pre-write `path.exists()` check before
+    either has written, producing a silent ID collision (the same failure
+    class as the REPAIR-0001 collision in repairs/, which still has no
+    lock of its own today).
+    """
+    lock_dir = root / ".locks"
+    lock_dir.mkdir(parents=True, exist_ok=True)
+    lock_path = lock_dir / f"emergence-{kind.prefix.lower()}.lock"
+    with open(lock_path, "w") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def next_id(root: Path, kind: ArtifactKind) -> str:
@@ -232,7 +564,7 @@ def fill_template(root: Path, kind: ArtifactKind, args: argparse.Namespace, arti
     }
     for heading, value in section_values.items():
         if value:
-            text = replace_section(text, heading, value)
+            text = replace_section(text, heading, compact_section_value(heading, value, root))
 
     return PLACEHOLDER_RE.sub("TBD", text)
 
@@ -240,17 +572,18 @@ def fill_template(root: Path, kind: ArtifactKind, args: argparse.Namespace, arti
 def create_artifact(args: argparse.Namespace) -> int:
     root = args.root.resolve()
     kind = KINDS[args.kind]
-    artifact_id = args.artifact_id or next_id(root, kind)
-    if not re.fullmatch(rf"{re.escape(kind.prefix)}-\d{{4}}", artifact_id):
-        raise EmergenceError(f"invalid {kind.name} id: {artifact_id}")
-    folder = artifact_dir(root, kind)
-    folder.mkdir(parents=True, exist_ok=True)
-    slug = args.slug or slugify(args.summary)
-    path = folder / f"{artifact_id}-{slug}.md"
-    if path.exists():
-        raise EmergenceError(f"artifact already exists: {path}")
-    text = fill_template(root, kind, args, artifact_id)
-    path.write_text(text, encoding="utf-8")
+    with id_allocation_lock(root, kind):
+        artifact_id = args.artifact_id or next_id(root, kind)
+        if not re.fullmatch(rf"{re.escape(kind.prefix)}-\d{{4}}", artifact_id):
+            raise EmergenceError(f"invalid {kind.name} id: {artifact_id}")
+        folder = artifact_dir(root, kind)
+        folder.mkdir(parents=True, exist_ok=True)
+        slug = args.slug or slugify(args.summary)
+        path = folder / f"{artifact_id}-{slug}.md"
+        if path.exists():
+            raise EmergenceError(f"artifact already exists: {path}")
+        text = fill_template(root, kind, args, artifact_id)
+        path.write_text(text, encoding="utf-8")
     rebuild_index_for_root(root)
     print(path.relative_to(root.parent))
     return 0
@@ -390,11 +723,12 @@ def stale_findings(root: Path, task_graph: Path) -> list[str]:
             status = extract_header(text, "Status")
             related_task = extract_header(text, "Related task")
             summary = extract_section(text, kind.summary_section)
+            semantic_summary = strip_compact_label(summary)
 
             if status in closed_artifact_statuses:
                 continue
-            if summary and STALE_TEXT_RE.fullmatch(summary):
-                findings.append(f"{rel}: placeholder summary content {summary!r}")
+            if semantic_summary and STALE_TEXT_RE.fullmatch(semantic_summary):
+                findings.append(f"{rel}: placeholder summary content {semantic_summary!r}")
             if re.search(r"\bIDEA-####\b", text):
                 findings.append(f"{rel}: dangling IDEA-#### placeholder")
             if kind.name == "promotion":
@@ -437,10 +771,10 @@ def index_row(root: Path, kind: ArtifactKind, path: Path) -> tuple[str, str, str
     owner = extract_header(text, kind.owner_label) or "UNKNOWN"
     status = extract_header(text, "Status") or "UNKNOWN"
     day = extract_header(text, "Date") or "UNKNOWN"
-    summary = extract_section(text, kind.summary_section) or path.stem
+    summary = compact_index_summary(compact_references(extract_section(text, kind.summary_section) or path.stem, root))
     rel = path.relative_to(emergence_dir(root))
     link = f"[{artifact_id}]({rel.as_posix()})"
-    return link, project, summary, status, owner, day
+    return link, table_cell(project), table_cell(summary), table_cell(status), table_cell(owner), table_cell(day)
 
 
 def section_lines(root: Path, kind: ArtifactKind) -> list[str]:
@@ -465,7 +799,9 @@ def rebuild_index_for_root(root: Path) -> Path:
     lines = [
         "# Emergence System Index",
         "",
-        "Running registry of active emergence artifacts. Generated by `MAP_System/scripts/map_emergence.py rebuild-index`.",
+        "- src: generated by `MAP_System/scripts/map_emergence.py rebuild-index`",
+        "- mode: compact registry; load full artifact only when needed",
+        "- refs: artifact IDs and MAP markdown paths wikilink where resolvable",
         "",
     ]
     for kind_name in ["insight", "synthesis", "idea", "experiment"]:
@@ -604,6 +940,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     stale_cmd.add_argument("--json", action="store_true")
     stale_cmd.add_argument("--strict", action="store_true", help="Exit non-zero when findings exist")
     stale_cmd.set_defaults(func=stale)
+
+    compact_cmd = sub.add_parser("compact", help="Compact existing emergence record body sections")
+    compact_cmd.add_argument("targets", nargs="*", help="Record path or artifact ID")
+    compact_cmd.add_argument("--all-active", action="store_true", help="Compact every non-closed emergence record")
+    compact_cmd.add_argument("--apply", action="store_true", help="Write changes (default: dry-run)")
+    compact_cmd.add_argument("--json", action="store_true")
+    compact_cmd.set_defaults(func=compact_targets)
 
     for kind in ["insight", "idea", "experiment", "synthesis"]:
         short = sub.add_parser(kind)

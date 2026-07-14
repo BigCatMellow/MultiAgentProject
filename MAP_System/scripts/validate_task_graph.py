@@ -14,6 +14,7 @@ GRAPH_PATH = ROOT / "workflow" / "task_graph.json"
 SHARED_OUTPUT_PATHS = {
     "MAP_System/events/events.jsonl",
     "MAP_System/emergence/INDEX.md",
+    "MAP_System/scripts/run_tests.sh",
     "MAP_System/workflow/task_graph.json",
 }
 

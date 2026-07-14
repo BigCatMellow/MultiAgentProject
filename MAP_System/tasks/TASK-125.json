@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-125",
+  "title": "Add ProjectUpdater app regression validation tooling",
+  "task_type": "tooling",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-124"
+  ],
+  "owner": "codex-lab-muva",
+  "description": "Follow-up validator/tooling slice delegated by claude-lab-valo after TASK-123 and TASK-124 release. Add reusable regression checks for the standalone ProjectUpdater app so future edits can verify persistence, filters, stale/due logic, and mobile/accessibility states without relying only on ad hoc browser review.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/ProjectUpdater/artifacts/tests/task-125-project-updater-validator.md",
+    "Projects/ProjectUpdater/scripts/validate_project_updater.py"
+  ],
+  "acceptance_criteria": [
+    "Validator loads Projects/ProjectUpdater/app/index.html directly from file:// and exercises Dashboard, Projects, Quick Note, and Add Project flows",
+    "Validator checks localStorage persistence across reload for add-project and note/status updates",
+    "Validator checks stale, due-soon, finished, archived, and mobile-navigation/accessibility state regressions covered by TASK-123 and TASK-124",
+    "No server, build step, network dependency, or app storage-model change is introduced",
+    "Focused ProjectUpdater validator and root MAP task graph validation pass"
+  ]
+}

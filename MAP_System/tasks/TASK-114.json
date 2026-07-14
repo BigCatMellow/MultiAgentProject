@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-114",
+  "title": "Build MAP Change Control System (change requests, release records, rollback)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-112"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md secondary gap: normal Git, map-git wrapper, git operation lock, canonical repo decisions, and the release-path smoke checklist already exist, but change request format, release records, rollback notes, changelog policy, diff review requirement, migration notes, version tags, and artifact retirement rules are not formalized. Build MAP_System/CHANGE_CONTROL_SYSTEM.md. Must reference the existing release_task.py/release checklist flow (this system's build process is itself the worked example: TASK-101 through TASK-112's release checklists in artifacts/releases/), Self-Repair (rollback is sometimes the correct repair), Decision/Authority (a change control policy update is itself a decision), and Risk (an unreviewed change is a PROCESS-class risk). Depends on TASK-112 (shared decisions.md touch point); do not submit until TASK-112 is released. Register all output_paths upfront including cross-link edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+    "MAP_System/RISK_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md exists and defines change request format, release record requirements, rollback notes, changelog policy, diff review requirement, migration notes, version tags, and artifact retirement rules",
+    "CHANGE_CONTROL_SYSTEM.md references the existing release_task.py/release-checklist flow as the working implementation of release records",
+    "CHANGE_CONTROL_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, DECISION_AUTHORITY_SYSTEM.md, and RISK_SYSTEM.md",
+    "shared/decisions.md gets a new DECISION entry recording Change Control System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

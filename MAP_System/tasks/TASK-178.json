@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-178",
+  "title": "Refresh mission-control roster from live hcom",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Follow-up to TASK-175 and TASK-177: mission_control_tui.py still reads shared/liveness-state.md, which can be stale unless liveness_reaper.py is run separately. Compose TASK-177's raw hcom normalization and liveness snapshot builder into a read-only live roster path, with fallback to the existing markdown snapshot when hcom is unavailable.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/mission_control_tui.py",
+    "MAP_System/tests/test_mission_control_tui.py"
+  ],
+  "acceptance_criteria": [
+    "Mission-control roster can be built from raw live hcom list JSON without writing canonical MAP state.",
+    "Dashboard snapshot prefers live hcom-derived liveness when available and falls back to shared/liveness-state.md when unavailable.",
+    "Tests prove the implementation composes liveness_reaper helpers rather than duplicating liveness classification logic.",
+    "Read-only structural guards still pass; no external CommandCenterUI edits."
+  ]
+}

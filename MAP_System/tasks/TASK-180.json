@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-180",
+  "title": "Compact and wikilink emergence records",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Operator reported that MAP_System/emergence artifacts still read as prose and lack wikilinked reference structure, which conflicts with the command-center shorthand/caveman/token-saving direction. Implement a bounded first pass that makes new emergence artifacts compact by default, adds deterministic wikilink/reference compaction for emergence index/listing surfaces, and validates the behavior without lossy semantic rewrites of historical records.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/templates/EXPERIMENT_TEMPLATE.md",
+    "MAP_System/emergence/templates/IDEA_CARD_TEMPLATE.md",
+    "MAP_System/emergence/templates/INSIGHT_TEMPLATE.md",
+    "MAP_System/emergence/templates/PROMOTION_RECORD_TEMPLATE.md",
+    "MAP_System/emergence/templates/SYNTHESIS_NOTE_TEMPLATE.md",
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/tests/test_map_emergence.py",
+    "MAP_System/tests/test_map_emergence_stale.py"
+  ],
+  "acceptance_criteria": [
+    "New emergence templates use compact key/value bullets and token-light labels rather than prose prompts.",
+    "map_emergence output/index surfaces turn emergence IDs, task IDs, and MAP markdown path references into resolvable wikilinks where possible.",
+    "Existing emergence validation and stale checks still pass for old and new records.",
+    "Focused tests cover compact template creation and wikilink/reference compaction."
+  ]
+}

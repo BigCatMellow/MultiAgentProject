@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-159",
+  "title": "MAP 6.13: Implement cost governance and kill-switch halt enforcement",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-151"
+  ],
+  "owner": "command-center",
+  "description": "Implementation task for approved TASK-151 specs. Build the cost-governance helpers and kill-switch halt store/enforcement path described by MAP_System/artifacts/planning/map-cost-governance-spec.md and map-kill-switch-spec.md. Coordinate with TASK-152 validator halt wiring so validator_blocking_anomaly uses this halt store as the single source of truth.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/cost_governance.py",
+    "MAP_System/scripts/halt_state.py",
+    "MAP_System/tests/test_cost_governance.py",
+    "MAP_System/tests/test_halt_state.py"
+  ],
+  "acceptance_criteria": [
+    "Implements a durable, human-inspectable halt store matching map-kill-switch-spec.md with scoped states, clear evidence, and authority checks.",
+    "Implements cost telemetry/budget counter helpers from map-cost-governance-spec.md without treating unknown paid cost as zero.",
+    "Runner and agent-loop can read halt state before dispatch/claim and suppress blocked lanes while allowing permitted repair/review/local work.",
+    "Tests cover halt set/clear authority, paid-dispatch halt, global halt, cost missing/unknown handling, and runner/agent-loop blocked-dispatch behavior."
+  ]
+}

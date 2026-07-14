@@ -142,6 +142,47 @@ def test_overnight_incident_shape():
     assert detect_presumed_down(["rose"], {"rose": dead}, st, incidents={"rose": {}}) == []
 
 
+def test_prune_absent_session_tracking_removes_historical_helpers():
+    """TASK-176: RnS must not keep probe-resuming stale helper sessions that
+    survived only in limit-watcher-state.json across lab restarts."""
+    from limit_watcher import prune_absent_session_tracking
+
+    state = {
+        "last_live": ["codex-lab-mozu", "map613-old-helper"],
+        "incidents": {
+            "claude-lab-fimo": {"probes_sent": 0},
+            "durable-agent": {"probes_sent": 1},
+        },
+    }
+    st = {"agents": {"durable-agent": {"status": "available"}}}
+    snapshot = {"codex-lab-mozu": {"status": "active", "status_age_seconds": 1}}
+
+    pruned = prune_absent_session_tracking(state, st, snapshot)
+
+    assert pruned == {
+        "pruned_incidents": ["claude-lab-fimo"],
+        "pruned_last_live": ["map613-old-helper"],
+    }
+    assert state["last_live"] == ["codex-lab-mozu"]
+    assert list(state["incidents"]) == ["durable-agent"]
+
+
+def test_prune_preserves_registered_agent_for_presumed_down_detection():
+    """A durable registered agent missing from hcom is still a real
+    presumed-down candidate; pruning must only remove names absent from both
+    sources."""
+    from limit_watcher import detect_presumed_down, prune_absent_session_tracking
+
+    state = {"last_live": ["rose"], "incidents": {}}
+    st = status(rose={"status": "available"})
+    snapshot = {}
+
+    pruned = prune_absent_session_tracking(state, st, snapshot)
+
+    assert pruned == {"pruned_incidents": [], "pruned_last_live": []}
+    assert detect_presumed_down(state["last_live"], snapshot, st, incidents={}) == ["rose"]
+
+
 def test_probe_backoff_schedule():
     from limit_watcher import probe_action, PROBE_SCHEDULE_MINUTES
 
@@ -300,6 +341,34 @@ def test_work_dispatch_logic():
     # describe_work: reviews exclude own tasks, rework only own
     assert "TASK-095" not in describe_work(work, "rose")
     assert "TASK-095" in describe_work(work, "limo")
+
+
+def test_stale_claim_owner_nudge_logic():
+    """TASK-119: stale IN_PROGRESS claims can hide work from recovered agents.
+    RnS should target the stale claim owner, even when there is no READY work
+    to dispatch, and throttle per task."""
+    from limit_watcher import decide_stale_claim_owner_nudges
+
+    claims = [
+        {
+            "task_id": "TASK-117",
+            "title": "Archive/Retention System",
+            "owner": "claude-lab-valo",
+            "claimed_by": "claude-lab-valo",
+            "lease_expires_at": (NOW - timedelta(minutes=5)).isoformat(),
+        }
+    ]
+
+    due = decide_stale_claim_owner_nudges(claims, {"stale_claim_owner_nudges": {}}, NOW)
+
+    assert list(due) == ["claude-lab-valo"]
+    assert due["claude-lab-valo"][0]["task_id"] == "TASK-117"
+
+    recent = {"stale_claim_owner_nudges": {"TASK-117": (NOW - timedelta(minutes=10)).isoformat()}}
+    assert decide_stale_claim_owner_nudges(claims, recent, NOW) == {}
+
+    old = {"stale_claim_owner_nudges": {"TASK-117": (NOW - timedelta(minutes=40)).isoformat()}}
+    assert list(decide_stale_claim_owner_nudges(claims, old, NOW)) == ["claude-lab-valo"]
 
 
 def main():

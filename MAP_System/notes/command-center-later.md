@@ -108,13 +108,17 @@ Not blocking; cosmetic. Fix whenever reviewing the artifacts directory.
 
 ---
 
-## Current Baseline (2026-06-29)
+## Historical Baseline (2026-06-29)
+
+This section is retained as a historical checkpoint. For current operating
+state, prefer `MAP_System/shared/current-state.md`.
 
 - `python3 MAP_System/scripts/validate_task_graph.py` passes.
 - `bash MAP_System/scripts/run_tests.sh` passes (12/12).
 - `python3 MAP_System/scripts/validate_shared_state.py` passes (0 stale files).
 - `python3 MAP_System/scripts/validate_decisions.py` passes (11/11 decisions OK).
-- Normal root Git is active at `/home/home/Downloads/MultiAgentProject`.
+- Normal root Git was active in the then-current workspace. The canonical repo
+  is now `/home/home/Projects/MultiAgentProject` per DEC-014.
 - GitHub remote `origin`: `https://github.com/BigCatMellow/MultiAgentProject.git`.
 - **Working tree has ~200 uncommitted changes (entire HPOM sprint). Not yet pushed.**
 - TASK-050 and TASK-051 are READY for Codex (minor fixes, no blocking issues).

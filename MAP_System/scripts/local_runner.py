@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
 sys.path.insert(0, str(REPO))
 
+from MAP_System.scripts.event_trace import add_trace_fields
 from MAP_System.scripts.local_assistant_health import REQUIRED_MODELS, build_report
 
 EVENT_LOG = ROOT / "events" / "events.jsonl"
@@ -119,12 +120,13 @@ def append_event(event_log: Path, *, task_id: str, model: str, note_path: Path, 
     event_log.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "created_at": utc_stamp(),
-        "type": "HELPER_INVOKED",
+        "type": "PROGRESS",
         "task_id": task_id,
         "sender": "local_runner",
         "summary": f"Local model helper invoked: {model}",
         "artifact_paths": [str(note_path), str(output_path)],
     }
+    add_trace_fields(payload, actor="local_runner", action="helper_invoked", target=task_id)
     with event_log.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(payload, separators=(",", ":")) + "\n")
 

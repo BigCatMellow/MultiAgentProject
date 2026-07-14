@@ -8,14 +8,21 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import sqlite3
+import sys
 from typing import Any, Literal, TypedDict
 
 import yaml
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT.parent) not in sys.path:
+    sys.path.insert(0, str(ROOT.parent))
+
+from MAP_System.scripts.halt_state import dispatch_block_reason_for_task, load_halt_state
+from MAP_System.scripts.pre_dispatch_policy import evaluate_pre_dispatch
+
+
 TASK_GRAPH_PATH = ROOT / "workflow" / "task_graph.json"
 RUNTIME_POLICY_PATH = ROOT / "workflow" / "runtime_policy.yaml"
 MAP_DB_PATH = ROOT / "map.db"
@@ -25,8 +32,11 @@ Route = Literal[
     "wait_for_agent",
     "propose_helper",
     "claim_or_assign",
+    "policy_gate",
     "wait_or_reconcile",
 ]
+
+DEPENDENCY_SATISFIED_STATUSES = {"DONE", "APPROVED", "RELEASED"}
 
 
 class MapState(TypedDict, total=False):
@@ -51,8 +61,14 @@ class MapState(TypedDict, total=False):
     blocked_tasks: list[str]
     ready_tasks_waiting_for_agent: list[str]
     helper_candidate_tasks: list[str]
+    policy_gated_tasks: list[str]
+    policy_rejected_tasks: list[str]
+    policy_results: list[dict[str, Any]]
     helper_notes: list[dict[str, Any]]
     active_helper_notes: list[str]
+    halt_path: str
+    halt_state: dict[str, Any]
+    dispatch_blocked_tasks: list[str]
     max_active_helpers: int
     recommended_action: str
     command_hint: str
@@ -202,6 +218,24 @@ def load_agent_status(state: MapState) -> MapState:
     }
 
 
+def load_dispatch_halt(state: MapState) -> MapState:
+    halt = load_halt_state(state.get("halt_path"))
+    events = [*state.get("events", [])]
+    if halt.get("state") != "clear":
+        events.append(
+            f"loaded dispatch halt state={halt.get('state')} "
+            f"scope={halt.get('scope')} reason={halt.get('reason')}"
+        )
+    else:
+        events.append("loaded clear dispatch halt state")
+    return {
+        **state,
+        "halt_path": state.get("halt_path") or str((ROOT / "shared" / "halt-state.json")),
+        "halt_state": halt,
+        "events": events,
+    }
+
+
 def is_assignable_agent(agent_id: str, details: dict[str, Any]) -> bool:
     if details.get("agent_type") == "system":
         return False
@@ -267,7 +301,7 @@ def evaluate_tasks(state: MapState) -> MapState:
     done_task_ids = {
         task["task_id"]
         for task in tasks
-        if task.get("status") in {"DONE", "APPROVED"}
+        if task.get("status") in DEPENDENCY_SATISFIED_STATUSES
     }
 
     in_progress_tasks: list[str] = []
@@ -276,6 +310,11 @@ def evaluate_tasks(state: MapState) -> MapState:
     submitted_tasks: list[str] = []
     ready_tasks_waiting_for_agent: list[str] = []
     helper_candidate_tasks: list[str] = []
+    dispatch_blocked_tasks: list[str] = []
+    policy_gated_tasks: list[str] = []
+    policy_rejected_tasks: list[str] = []
+    policy_results: list[dict[str, Any]] = []
+    halt = state.get("halt_state")
 
     for task in tasks:
         task_id = task["task_id"]
@@ -295,12 +334,30 @@ def evaluate_tasks(state: MapState) -> MapState:
         )
 
         if status == "READY" and dependencies_satisfied:
+            dispatch_block = dispatch_block_reason_for_task(task, halt) if halt else None
+            if dispatch_block:
+                blocked_tasks.append(task_id)
+                dispatch_blocked_tasks.append(task_id)
+                continue
+            policy = evaluate_pre_dispatch(task, "core-dispatch", worker_tier=1)
+            if policy["decision"] != "allow":
+                blocked_tasks.append(task_id)
+                policy_results.append(policy)
+                if policy["decision"] == "require_approval":
+                    policy_gated_tasks.append(task_id)
+                else:
+                    policy_rejected_tasks.append(task_id)
+                continue
             if task_requires_unavailable_agent(task, state):
                 ready_tasks_waiting_for_agent.append(task_id)
                 continue
             ready_tasks.append(task_id)
             if task_would_benefit_from_helper(task):
-                helper_candidate_tasks.append(task_id)
+                helper_policy = evaluate_pre_dispatch(task, "visible-helper", worker_tier=2, assignment_mode="helper_draft")
+                if helper_policy["decision"] != "allow":
+                    policy_results.append(helper_policy)
+                else:
+                    helper_candidate_tasks.append(task_id)
         elif status == "BLOCKED":
             blocked_tasks.append(task_id)
         elif status == "READY":
@@ -315,9 +372,14 @@ def evaluate_tasks(state: MapState) -> MapState:
         "submitted_tasks": submitted_tasks,
         "ready_tasks_waiting_for_agent": ready_tasks_waiting_for_agent,
         "helper_candidate_tasks": helper_candidate_tasks,
+        "policy_gated_tasks": policy_gated_tasks,
+        "policy_rejected_tasks": policy_rejected_tasks,
+        "policy_results": policy_results,
+        "dispatch_blocked_tasks": dispatch_blocked_tasks,
         "events": [
             *state.get("events", []),
-            f"evaluated {len(tasks)} tasks",
+            f"evaluated {len(tasks)} tasks"
+            + (f"; dispatch halt blocked {len(dispatch_blocked_tasks)}" if dispatch_blocked_tasks else ""),
         ],
     }
 
@@ -364,6 +426,8 @@ def should_propose_helper(state: MapState) -> bool:
 def choose_route(state: MapState) -> Route:
     if state.get("submitted_tasks"):
         return "review"
+    if state.get("policy_gated_tasks") and not state.get("ready_tasks"):
+        return "policy_gate"
     if state.get("ready_tasks_waiting_for_agent") and not state.get("ready_tasks"):
         return "wait_for_agent"
     if should_propose_helper(state):
@@ -439,7 +503,42 @@ def route_claim_or_assign(state: MapState) -> MapState:
     }
 
 
+def route_policy_gate(state: MapState) -> MapState:
+    task_id = state.get("policy_gated_tasks", ["ready-task"])[0]
+    result = next(
+        (result for result in state.get("policy_results", []) if result.get("task_id") == task_id),
+        {},
+    )
+    authority = result.get("approval_authority") or "command-center"
+    reasons = ", ".join(result.get("reasons", [])) or "policy gate"
+    return {
+        **state,
+        "next_route": "policy_gate",
+        "recommended_action": (
+            f"{task_id} requires pre-dispatch approval from {authority}: {reasons}."
+        ),
+        "command_hint": (
+            "Use hcom --intent request with Issue/Options/Recommendation/Needed "
+            f"and cite required evidence for {task_id}."
+        ),
+        "events": [*state.get("events", []), f"routed {task_id} to pre-dispatch policy gate"],
+    }
+
+
 def route_wait_or_reconcile(state: MapState) -> MapState:
+    if state.get("dispatch_blocked_tasks"):
+        halt = state.get("halt_state", {})
+        return {
+            **state,
+            "next_route": "wait_or_reconcile",
+            "recommended_action": (
+                f"Dispatch is halted by {halt.get('state')} "
+                f"({halt.get('reason')}); blocked ready tasks: "
+                f"{', '.join(state.get('dispatch_blocked_tasks', []))}."
+            ),
+            "command_hint": "Inspect MAP_System/shared/halt-state.json and route repair/review/operator work only.",
+            "events": [*state.get("events", []), "routed halted workflow to wait_or_reconcile"],
+        }
     return {
         **state,
         "next_route": "wait_or_reconcile",
@@ -548,6 +647,7 @@ def build_graph(*, checkpointer=None):
     graph.add_node("load_task_graph", load_task_graph)
     graph.add_node("load_runtime_policy", load_runtime_policy)
     graph.add_node("load_agent_status", load_agent_status)
+    graph.add_node("load_dispatch_halt", load_dispatch_halt)
     graph.add_node("scan_helper_notes", scan_helper_notes)
     graph.add_node("evaluate_tasks", evaluate_tasks)
     graph.add_node("check_approval_gates", check_approval_gates)
@@ -555,12 +655,14 @@ def build_graph(*, checkpointer=None):
     graph.add_node("wait_for_agent", route_wait_for_agent)
     graph.add_node("propose_helper", route_propose_helper)
     graph.add_node("claim_or_assign", route_claim_or_assign)
+    graph.add_node("policy_gate", route_policy_gate)
     graph.add_node("wait_or_reconcile", route_wait_or_reconcile)
 
     graph.add_edge(START, "load_task_graph")
     graph.add_edge("load_task_graph", "load_runtime_policy")
     graph.add_edge("load_runtime_policy", "load_agent_status")
-    graph.add_edge("load_agent_status", "scan_helper_notes")
+    graph.add_edge("load_agent_status", "load_dispatch_halt")
+    graph.add_edge("load_dispatch_halt", "scan_helper_notes")
     graph.add_edge("scan_helper_notes", "evaluate_tasks")
     graph.add_edge("evaluate_tasks", "check_approval_gates")
     graph.add_conditional_edges(
@@ -571,6 +673,7 @@ def build_graph(*, checkpointer=None):
             "wait_for_agent": "wait_for_agent",
             "propose_helper": "propose_helper",
             "claim_or_assign": "claim_or_assign",
+            "policy_gate": "policy_gate",
             "wait_or_reconcile": "wait_or_reconcile",
         },
     )
@@ -578,6 +681,7 @@ def build_graph(*, checkpointer=None):
     graph.add_edge("wait_for_agent", END)
     graph.add_edge("propose_helper", END)
     graph.add_edge("claim_or_assign", END)
+    graph.add_edge("policy_gate", END)
     graph.add_edge("wait_or_reconcile", END)
     return graph.compile(checkpointer=checkpointer)
 
@@ -645,6 +749,11 @@ def summarize(state: MapState) -> dict[str, Any]:
         "ready_tasks": state.get("ready_tasks", []),
         "ready_tasks_waiting_for_agent": state.get("ready_tasks_waiting_for_agent", []),
         "blocked_tasks": state.get("blocked_tasks", []),
+        "dispatch_blocked_tasks": state.get("dispatch_blocked_tasks", []),
+        "policy_gated_tasks": state.get("policy_gated_tasks", []),
+        "policy_rejected_tasks": state.get("policy_rejected_tasks", []),
+        "policy_results": state.get("policy_results", []),
+        "halt_state": state.get("halt_state", {}),
         "submitted_tasks": state.get("submitted_tasks", []),
         "in_progress_tasks": state.get("in_progress_tasks", []),
         "available_agents": state.get("available_agents", []),
@@ -734,6 +843,7 @@ def main() -> int:
             "graph_path": args.graph_path,
             "runtime_policy_path": args.runtime_policy_path,
             "db_path": args.db,
+            "halt_path": str(ROOT / "shared" / "halt-state.json"),
             "events": [],
         },
         cfg,

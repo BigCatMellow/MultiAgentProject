@@ -1,0 +1,32 @@
+{
+  "task_id": "TASK-170",
+  "title": "Propagate trace IDs through MAP lifecycle events",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Gap-plan increment 3: add a minimal trace_id convention for new task lifecycle events and mission-control rendering so operators can start reconstructing causal chains from one view while preserving legacy-event compatibility.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/_mission_control_app.py",
+    "MAP_System/scripts/aider_wrapper.py",
+    "MAP_System/scripts/dead_letter_queue.py",
+    "MAP_System/scripts/event_trace.py",
+    "MAP_System/scripts/liveness_reaper.py",
+    "MAP_System/scripts/local_runner.py",
+    "MAP_System/scripts/map_task.py",
+    "MAP_System/scripts/mission_control_tui.py",
+    "MAP_System/scripts/release_task.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_event_trace.py",
+    "MAP_System/tests/test_mission_control_tui.py",
+    "MAP_System/tests/test_validate_events.py"
+  ],
+  "acceptance_criteria": [
+    "New task-scoped event emitters include a stable trace_id convention without rewriting legacy events.",
+    "Event validation continues to allow legacy events but rejects malformed trace fields when present.",
+    "Mission-control event/drilldown rendering shows trace IDs when available and remains compatible with events that lack them.",
+    "Focused tests and full MAP validators pass."
+  ]
+}

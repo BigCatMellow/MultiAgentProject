@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
 MAP_TASK = ROOT / "scripts" / "map_task.py"
 SCHEMA = ROOT / "migration" / "schema.sql"
+EXPORTER = ROOT / "migration" / "export_to_files.py"
 
 GOOD_REVIEW = """\
 # Review Record: TASK-T
@@ -96,6 +97,17 @@ def run_approve(db: Path, out: Path, review_record: Path | None) -> subprocess.C
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
+def export_mirrors(db: Path, out: Path) -> None:
+    result = subprocess.run(
+        [sys.executable, str(EXPORTER), "--db", str(db), "--output-dir", str(out)],
+        cwd=REPO,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    assert result.returncode == 0, result.stderr
+
+
 def test_approve_without_review_record_fails() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
@@ -147,6 +159,7 @@ def test_approve_with_valid_review_record_succeeds() -> None:
 
         good_review = base / "good-review.md"
         good_review.write_text(GOOD_REVIEW, encoding="utf-8")
+        export_mirrors(db, out)
 
         result = run_approve(db, out, review_record=good_review)
         assert result.returncode == 0, (

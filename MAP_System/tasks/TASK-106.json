@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-106",
+  "title": "Add Self-Repair System validation tooling",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-105"
+  ],
+  "owner": "codex-lab-dino",
+  "description": "Follow-on to TASK-105 from Guidelines/MAP_repo_systems_gap_review.md: after the Self-Repair System docs/templates exist, add focused validation tooling and tests that check required repair templates and repair/health-report artifact structure without owning the prose system specification.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task-106-repair-validator.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_repair_artifacts.py",
+    "MAP_System/tests/test_validate_repair_artifacts.py"
+  ],
+  "acceptance_criteria": [
+    "Self-Repair validator checks the required template/artifact structure defined by TASK-105 without owning the prose system specification",
+    "Focused tests cover passing and failing repair record and health-check report cases",
+    "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+  ]
+}

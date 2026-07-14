@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-128",
+  "title": "Audit and integrate MAP systems under LangGraph coordination",
+  "task_type": "architecture",
+  "role": "coordinator / project manager",
+  "status": "RETIRED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Operator concern hcom #22305: the newly built MAP systems may have been rushed as separate blocks rather than fully used, integrated, and managed as one base. Run a MAP-managed systems integration audit using LangGraph as the planning/routing standard and HPOM as the execution gate. One accountable coordinator must inspect the newly built systems (Research, Self-Repair, Context, Decision/Authority, Human Interface, Risk, Security/Permissions, Change Control, Project Bootstrapping, Archive/Retention, Retrospective, Emergence enforcement, RnS/limit watcher, release/review gates) for completeness, cross-links, actual use in task flow, manager/delegation behavior, and validator/mechanical enforcement. Use E/I for insights, RnS/agent status for liveness, and hcom coordination for peer input. Produce a durable audit report and create or propose follow-up HPOM tasks for concrete gaps instead of silently patching structural issues.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/map-systems-integration-coordination-plan-2026-07-03.md",
+    "MAP_System/artifacts/reports/map-systems-integration-audit-2026-07-03.md"
+  ],
+  "acceptance_criteria": [
+    "LangGraph runner state is used to plan/route the work and the report documents the route, coordinator role, delegated checks, and queue impact",
+    "Audit covers each newly built MAP system for feature completeness, MAP-standard metadata, cross-links to adjacent systems, actual operational use, and mechanical enforcement where appropriate",
+    "HPOM, RnS, and E/I are used during the task itself, with captured insight/idea records for any systemic findings worth preserving",
+    "Report identifies integrated-base gaps versus healthy no-op areas, and creates/proposes follow-up HPOM tasks for concrete fixes rather than bundling unreviewed structural changes",
+    "validate_task_graph.py, validate_events.py, map_emergence.py validate, and full run_tests.sh pass before submission"
+  ]
+}

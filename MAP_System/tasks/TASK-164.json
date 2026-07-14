@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-164",
+  "title": "Harden read-only mission-control attention surfaces",
+  "task_type": "implementation",
+  "role": "core",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Improve the read-only mission-control command-center surface so policy-gated work, policy rejections, drift warnings, and durable dead-letter pressure appear in the flight board and human-attention queue without adding write-capable controls.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/_mission_control_app.py",
+    "MAP_System/scripts/mission_control_tui.py",
+    "MAP_System/tests/test_mission_control_tui.py"
+  ],
+  "acceptance_criteria": [
+    "Policy-gated and policy-rejected tasks from runner snapshots are visible in flight-board data and attention items.",
+    "Source drift and dead-letter queue pressure produce explicit attention items while preserving the read-only/no-write contract.",
+    "Focused mission-control tests and MAP validators pass."
+  ]
+}

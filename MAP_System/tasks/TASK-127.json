@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-127",
+  "title": "Audit MAP systems integration and governance adoption",
+  "task_type": "audit",
+  "role": "coordinator",
+  "status": "RETIRED",
+  "dependencies": [],
+  "owner": "codex-lab-muva",
+  "description": "Retired as duplicate of TASK-128, which is the READY coordinator task for operator hcom #22305 MAP systems integration audit.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/map-systems-integration-audit-2026-07-03.md",
+    "MAP_System/handoffs/HANDOFF-TASK-127-map-systems-integration.md"
+  ],
+  "acceptance_criteria": [
+    "Audit all newly adopted MAP systems from DEC-015 through DEC-026 for completeness, MAP standards alignment, cross-links, and non-duplication",
+    "Evaluate whether LangGraph, HPOM, RnS, and Emergence/Insights are actually used in task planning, delegation, review, release, and operator-facing workflow",
+    "Identify concrete gaps between written systems and runnable/enforced behavior, separating documentation gaps from validator/gate/runner gaps",
+    "Produce a prioritized follow-up task sequence with one accountable coordinator/manager role and review/delegation boundaries",
+    "Run root MAP graph/event validators and avoid direct broad rewrites outside the audit output paths"
+  ]
+}

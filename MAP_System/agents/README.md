@@ -41,6 +41,9 @@ The file mixes three kinds of identity. Read it with these rules:
 
 - Reconcile against live reality:
   `hcom list --json > /tmp/live.json && python3 MAP_System/scripts/reconcile_agents.py --hcom-json /tmp/live.json`
+- Running `reconcile_agents.py` without `--hcom-json` checks only durable
+  status and reports live hcom agents as `not checked`. Do not treat that mode
+  as proof that no sessions are live.
 - `status.json` is a filtered operational export of the SQLite `agents` table,
   not a full table dump. The exporter keeps agents already present in the
   mirror and agents tied to active tasks, and omits inactive historical session

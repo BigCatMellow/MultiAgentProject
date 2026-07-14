@@ -10,9 +10,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
+sys.path.insert(0, str(REPO))
+
+from MAP_System.scripts.event_trace import add_trace_fields
+
 TASKS_DIR = ROOT / "tasks"
 HELPERS_DIR = ROOT / "inbox" / "helpers"
 EVENT_LOG = ROOT / "events" / "events.jsonl"
@@ -132,6 +135,7 @@ def append_event(event_log: Path, *, task_id: str, note_path: Path, targets: lis
         "summary": "Interactive Aider helper session prepared",
         "artifact_paths": [str(note_path), *[str(target) for target in targets]],
     }
+    add_trace_fields(payload, actor="aider_wrapper", action="helper_invoked", target=task_id)
     with event_log.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(payload, separators=(",", ":")) + "\n")
 

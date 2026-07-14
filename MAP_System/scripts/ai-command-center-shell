@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_DIR="/home/home/Downloads/MultiAgentProject"
+PROJECT_DIR="/home/home/Projects/MultiAgentProject"
 export PROJECT_DIR
 cd "$PROJECT_DIR" || exit 1
 

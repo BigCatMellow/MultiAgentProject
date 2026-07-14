@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-PROJECT_DIR="${PROJECT_DIR:-/home/home/Downloads/MultiAgentProject}"
+PROJECT_DIR="${PROJECT_DIR:-/home/home/Projects/MultiAgentProject}"
 HCOM="/home/home/.local/bin/hcom"
 LANGGRAPH="/home/home/.local/bin/langgraph-run"
 ANTIGRAVITY_BIN="/home/home/Downloads/Antigravity-x64/antigravity"
@@ -237,14 +237,14 @@ helper_start() {
 
   event "PROGRESS" "Started $provider helper $tag." "[\"MAP_System/inbox/helpers/$tag.md\"]"
 
-  prompt="You are temporary helper $tag in /home/home/Downloads/MultiAgentProject. Read AGENTS.md and MAP_System/AGENTS.md first. Your durable note is MAP_System/inbox/helpers/$tag.md. Scope: $scope. Keep notes current, report findings to the core agents through hcom, and stop when the scoped work is complete. You are managed by the AI Command Center, so the operator can inspect and interact through the terminal surface or ai screen/send/approve/stop commands. For routine in-scope reads, edits, tests, and hcom coordination, prefer the tool's session-level approval option when it is offered. Do not bypass human approval requirements for destructive actions, external network calls, publication, final release, or changes outside this scope."
+  prompt="You are temporary helper $tag in /home/home/Projects/MultiAgentProject. Read AGENTS.md and MAP_System/AGENTS.md first. Your durable note is MAP_System/inbox/helpers/$tag.md. Scope: $scope. Keep notes current, report findings to the core agents through hcom, and stop when the scoped work is complete. You are managed by the AI Command Center, so the operator can inspect and interact through the terminal surface or ai screen/send/approve/stop commands. For routine in-scope reads, edits, tests, and hcom coordination, prefer the tool's session-level approval option when it is offered. Do not bypass human approval requirements for destructive actions, external network calls, publication, final release, or changes outside this scope."
 
   exec "$HCOM" "$provider" --tag "$tag" --terminal "$DEFAULT_TERMINAL" --dir "$PROJECT_DIR" --hcom-prompt "$prompt"
 }
 
 start_core_agents() {
   require_reachable_surface
-  core_prompt="You are a core command-center agent in /home/home/Downloads/MultiAgentProject. Read AGENTS.md and MAP_System/AGENTS.md first. You are managed by the AI Command Center, so the operator can inspect and interact through the terminal surface or ai screen/send/approve/stop commands. For routine in-scope reads, edits, tests, and hcom coordination, prefer the tool's session-level approval option when it is offered. Do not bypass human approval requirements for destructive actions, external network calls, publication, final release, or changes outside your assigned task. IMPORTANT: When spawning any sub-agent or helper with hcom, use a command-center-managed terminal mode. Headless hcom is allowed only when the ai command can inspect, message, approve, and stop the session."
+  core_prompt="You are a core command-center agent in /home/home/Projects/MultiAgentProject. Read AGENTS.md and MAP_System/AGENTS.md first. You are managed by the AI Command Center, so the operator can inspect and interact through the terminal surface or ai screen/send/approve/stop commands. For routine in-scope reads, edits, tests, and hcom coordination, prefer the tool's session-level approval option when it is offered. Do not bypass human approval requirements for destructive actions, external network calls, publication, final release, or changes outside your assigned task. IMPORTANT: When spawning any sub-agent or helper with hcom, use a command-center-managed terminal mode. Headless hcom is allowed only when the ai command can inspect, message, approve, and stop the session."
   start_core_agent codex "$core_prompt"
   start_core_agent claude "$core_prompt"
   printf 'Antigravity is a GUI suite. Use the Antigravity command-center tab or run: ai antigravity start\n'

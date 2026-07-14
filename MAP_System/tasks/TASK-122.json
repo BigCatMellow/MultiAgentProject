@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-122",
+  "title": "Report on MAP process failures during self-update",
+  "task_type": "analysis",
+  "role": "reporter",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Operator requested a full report on MAP processes and how they were used during the recent MAP self-update/gap-fill sequence, with emphasis on what went wrong, what is missing, and process weaknesses more than what worked.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/map-process-failure-report-2026-07-03.md"
+  ],
+  "acceptance_criteria": [
+    "Report focuses on failures, gaps, missing process support, and concrete examples from TASK-103 through TASK-121",
+    "Report distinguishes fixed issues from remaining risks/gaps",
+    "Report incorporates or explicitly accounts for active agent input where available",
+    "Report is durable, reviewable, and validated with task graph/events checks"
+  ]
+}

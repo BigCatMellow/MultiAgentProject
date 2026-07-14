@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-116",
+  "title": "Fix runner dependency satisfaction for RELEASED tasks",
+  "task_type": "repair",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Self-Repair follow-up for REPAIR-0001: graph/runner.py treats DONE/APPROVED as dependency-satisfying but omits RELEASED, while validate_task_graph.py treats RELEASED as terminal. Align runner classification with validator terminal statuses and add a regression test.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task-116-runner-released-dependencies.md",
+    "MAP_System/graph/runner.py",
+    "MAP_System/repairs/REPAIR-0001-runner-released-dependency-drift.md",
+    "MAP_System/tests/test_runner_task_classification.py"
+  ],
+  "acceptance_criteria": [
+    "graph/runner.py treats RELEASED dependencies as satisfied consistently with validate_task_graph.py terminal status semantics",
+    "runner task-classification tests cover READY tasks whose dependencies are RELEASED",
+    "Focused runner classification test, validate_task_graph.py, validate_repair_artifacts.py, and full run_tests.sh pass"
+  ]
+}

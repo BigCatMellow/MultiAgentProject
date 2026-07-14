@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-132",
+  "title": "Back up MAP and optimize folder structure",
+  "task_type": "maintenance",
+  "role": "Codex folder-structure cleanup steward",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Operator requested the next assignment after gap-fill work: create a fresh backup of MAP, then clean up and optimize the MAP folder structure without erasing history or moving shared files silently. Start with a durable inventory/plan, preserve rollback path, and route any ambiguous or high-risk structural moves through review.",
+  "input_paths": [],
+  "output_paths": [
+    "Guidelines/MAP_repo_systems_gap_review.md",
+    "Guidelines/README.md",
+    "MAP_System/artifacts/audits/",
+    "MAP_System/artifacts/reports/",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/tasks/",
+    "Projects/Backups/"
+  ],
+  "acceptance_criteria": [
+    "Fresh post-TASK-129 MAP backup exists under Projects/Backups with timestamped path and verification metadata",
+    "Folder-structure inventory identifies active, historical, duplicate, misplaced, and candidate-move paths using existing MAP routing rules",
+    "Any cleanup/optimization changes are scoped, reversible, and documented in a report before review",
+    "Task graph/events validators pass after backup and any structure changes"
+  ]
+}

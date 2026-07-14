@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-156",
+  "title": "MAP 6.13: Build governance pre-dispatch and threat-model plan",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-147",
+    "TASK-148",
+    "TASK-151"
+  ],
+  "owner": "command-center",
+  "description": "Wave 8 from MAP 6.13 plan. Design pre-dispatch policy checking, destructive-action gates, capability whitelist tests, and threat model. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/AGENT_PERMISSION_LEVELS.md, MAP_System/DESTRUCTIVE_ACTION_POLICY.md, MAP_System/DECISION_CLASSES.md, MAP_System/SECURITY_PERMISSIONS_SYSTEM.md, MAP_System/RISK_SYSTEM.md, and MAP_System/DECISION_AUTHORITY_SYSTEM.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-threat-model.md",
+    "MAP_System/artifacts/planning/map-capability-whitelist-test-plan.md",
+    "MAP_System/artifacts/planning/map-pre-dispatch-policy-checker-spec.md",
+    "MAP_System/shared/RISK_REGISTER.md"
+  ],
+  "acceptance_criteria": [
+    "Policy-checker spec emits allow, require approval, or reject based on permission level, destructive-action policy, decision class, and risk class.",
+    "Destructive-action gate behavior is defined before work assignment, not only during review.",
+    "Capability test plan verifies helpers cannot be assigned final review, final decision, broad architecture, broad rewrites, or destructive operations.",
+    "Threat model covers repo, shell, filesystem, local helpers, compression/memory proxies, MCP/connectors, hcom, and CommandCenterUI control surfaces."
+  ]
+}

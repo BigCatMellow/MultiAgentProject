@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-110",
+  "title": "Build MAP Human Interface System (operator dashboard definition)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-108"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md priority #5: a CommandCenterUI prototype exists (MAP_System/artifacts/command-center-ui/) but live hcom/MAP state wiring is still open, and there is no formal definition of what the operator should see without reading the whole repo. Build MAP_System/HUMAN_INTERFACE_SYSTEM.md defining what surfaces on an operator dashboard: current status, pending decisions, blocked tasks, review queue, open repairs, open research questions, recent insights, agent availability, next recommended actions. Must cross-link Decision/Authority System (pending decisions surfaced), Self-Repair System (open repairs/health), Research System (open questions), Emergence (recent insights), and HPOM (agent availability, next recommended actions via graph/runner.py). Depends on TASK-108 (Decision/Authority System) since decisions.md is a shared touch point; do not submit until TASK-108 is released to avoid output-path collision. Register all output_paths upfront.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/HUMAN_INTERFACE_SYSTEM.md exists and defines the dashboard surface: current status, pending decisions, blocked tasks, review queue, open repairs, open research questions, recent insights, agent availability, and next recommended actions",
+    "HUMAN_INTERFACE_SYSTEM.md cross-links DECISION_AUTHORITY_SYSTEM.md, SELF_REPAIR_SYSTEM.md, RESEARCH_SYSTEM.md, emergence/README.md, and shared/hpom.md",
+    "HUMAN_INTERFACE_SYSTEM.md references the existing CommandCenterUI prototype and states its relationship rather than duplicating it",
+    "shared/decisions.md gets a new DECISION entry recording Human Interface System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

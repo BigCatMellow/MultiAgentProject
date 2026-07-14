@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-168",
+  "title": "Mission-control write-control design (spec only, no implementation)",
+  "task_type": "planning",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Gap-plan increment 4 (mission-control-command-center-gap-plan.md). Design (do not implement) how the mission-control TUI's disabled intervention keybindings (approve/reject/nudge/kill/budget-bump/halt-clear/dead-letter-replay) would eventually call sanctioned commands safely: map_task.py approve/reject, dead_letter_queue.py replay, hcom send for nudge, halt_state.py clear, cost-governance for budget. Every control must specify dry-run/preview behavior, required confirmation text, post-action validator re-checks, and rollback/non-rollback expectations. This is explicitly a design artifact per the gap plan's non-goal: do not add write-capable TUI actions before this design is reviewed and approved. Read mission-control-command-center-gap-plan.md, mission-control-tui-spec.md, map-kill-switch-spec.md, and map-validator-halt-state-spec.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/mission-control-write-control-spec.md"
+  ],
+  "acceptance_criteria": [
+    "Spec covers all 7 currently-disabled intervention keys (A/R/K/N/B/O/D) with the sanctioned command each would call.",
+    "Every control specifies dry-run/preview text, explicit confirmation requirement, and which validator(s) re-run after the action.",
+    "Spec states rollback or non-rollback expectation per control, consistent with CHANGE_CONTROL_SYSTEM.md.",
+    "Spec explicitly states this is design-only; no code in scripts/mission_control_tui.py or _mission_control_app.py is changed by this task."
+  ]
+}

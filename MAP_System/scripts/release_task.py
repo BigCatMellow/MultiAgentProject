@@ -12,17 +12,24 @@ import subprocess
 import sys
 from pathlib import Path
 
+try:
+    from MAP_System.scripts.event_trace import add_trace_fields
+except ModuleNotFoundError:  # direct script execution
+    from event_trace import add_trace_fields
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DB = ROOT / "map.db"
 EXPORTER = ROOT / "migration" / "export_to_files.py"
 EVENT_LOG = ROOT / "events" / "events.jsonl"
+VALIDATE_TASK_MIRRORS = ROOT / "scripts" / "validate_task_mirrors.py"
 
 REQUIRED_CHECKS = {
     "shared-file updates": re.compile(r"^\s*-\s*\[[xX]\]\s*Shared-file updates complete\s*$", re.MULTILINE),
     "decisions recorded": re.compile(r"^\s*-\s*\[[xX]\]\s*Decisions recorded\s*$", re.MULTILINE),
     "follow-up tasks created": re.compile(r"^\s*-\s*\[[xX]\]\s*Follow-up tasks created\s*$", re.MULTILINE),
     "event log entry": re.compile(r"^\s*-\s*\[[xX]\]\s*Event log entry prepared\s*$", re.MULTILINE),
+    "emergence capture considered": re.compile(r"^\s*-\s*\[[xX]\]\s*Emergence capture considered\s*$", re.MULTILINE),
 }
 
 TASK_ID_RE = re.compile(r"task_id\s*:\s*(TASK-\w+)", re.IGNORECASE)
@@ -97,6 +104,7 @@ def append_event(
         "summary": summary,
         "artifact_paths": paths,
     }
+    add_trace_fields(payload, actor=released_by, action="release", target=task_id)
     event_log.parent.mkdir(parents=True, exist_ok=True)
     with event_log.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(payload, separators=(",", ":")) + "\n")
@@ -120,6 +128,15 @@ def sync_files(db_path: Path, output_dir: Path | None) -> None:
     subprocess.run(cmd, cwd=ROOT.parent, check=True)
 
 
+def validate_task_mirrors(db_path: Path, output_dir: Path | None) -> None:
+    root = output_dir if output_dir else ROOT
+    subprocess.run(
+        [sys.executable, str(VALIDATE_TASK_MIRRORS), "--db", str(db_path), "--root", str(root)],
+        cwd=ROOT.parent,
+        check=True,
+    )
+
+
 def release_task(
     task_id: str,
     released_by: str,
@@ -131,6 +148,7 @@ def release_task(
     summary: str = "",
 ) -> None:
     validate_checklist(checklist, task_id)
+    validate_task_mirrors(db_path, output_dir)
     with connect(db_path) as conn:
         ensure_schema(conn)
         task = conn.execute("SELECT status FROM tasks WHERE task_id = ?", (task_id,)).fetchone()

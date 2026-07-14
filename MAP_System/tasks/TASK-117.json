@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-117",
+  "title": "Build MAP Archive/Retention System (retention rules, staleness marking)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-115"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md secondary gap: notes/brain-compaction-guide.md already defines when to compact, what to preserve, what to archive, but archive/retention was not formalized as a standalone system with statuses, retention rules, and compaction cadence. Build MAP_System/ARCHIVE_RETENTION_SYSTEM.md. Must extend (not duplicate) notes/brain-compaction-guide.md, cross-link Self-Repair (stale artifacts are a repair signal), Change Control (artifact retirement rules already defined there -- this system defines archive vs retirement distinction), and Context System (forbidden/stale context rules already touch this). Depends on TASK-115 (shared decisions.md touch point); do not submit until TASK-115 is released. Register all output_paths upfront including cross-link edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/ARCHIVE_RETENTION_SYSTEM.md",
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+    "MAP_System/CONTEXT_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/notes/brain-compaction-guide.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/ARCHIVE_RETENTION_SYSTEM.md exists and defines archive statuses, retention rules, compaction cadence, how to mark stale artifacts, and how to distinguish history from current truth",
+    "ARCHIVE_RETENTION_SYSTEM.md extends notes/brain-compaction-guide.md rather than duplicating its compaction logic, and distinguishes archiving from CHANGE_CONTROL_SYSTEM.md's artifact retirement",
+    "ARCHIVE_RETENTION_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, CHANGE_CONTROL_SYSTEM.md, and CONTEXT_SYSTEM.md",
+    "shared/decisions.md gets a new DECISION entry recording Archive/Retention System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

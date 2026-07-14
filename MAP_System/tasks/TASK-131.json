@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-131",
+  "title": "Verify bidirectional cross-links among MAP system docs for TASK-129",
+  "task_type": "audit",
+  "role": "tooling / cross-link checker",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-129"
+  ],
+  "owner": "codex-lab-dino",
+  "description": "Dependent findings-only slice for TASK-129. Write a reusable checker that inspects the 11 top-level MAP system docs built in TASK-103-126 and reports bidirectional Related files cross-link coverage. For each pair where one system references another in its Related files section, confirm the reverse reference exists too. Produce a report under MAP_System/artifacts/audits/. Do not edit any *_SYSTEM.md files; findings only, for the TASK-129 Process Steward to route through repair records or follow-up tasks.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/system-crosslink-bidirectionality-2026-07-03.md",
+    "MAP_System/scripts/check_system_crosslinks.py"
+  ],
+  "acceptance_criteria": [
+    "Checker script enumerates the 11 system docs explicitly and parses their Related files sections rather than relying on broad whole-file mentions",
+    "Report lists every directed system-to-system Related files link, whether the reverse link exists, and every one-directional gap found",
+    "Task does not edit any *_SYSTEM.md file or silently fix link gaps",
+    "Report includes the exact command used to regenerate it and enough detail for TASK-129 to route fixes",
+    "validate_task_graph.py, validate_events.py, checker script, and relevant syntax checks pass before submission"
+  ]
+}

@@ -8,10 +8,13 @@ memory, but they are not automatically current truth.
 - `planning/` - designs and implementation plans.
 - `reviews/` - review records and approval notes.
 - `tests/` - test notes and verification records.
+- `releases/` - release checklists and release-gate evidence.
+- `reports/` - audit reports, health reports, state reports, and structural reviews.
 - `research/` - research outputs.
 - `drafts/` - unfinished or exploratory work.
 - `final/` - finished deliverables.
 - `code/` - code artifacts that are not part of the live runtime.
+- `command-center-ui/` - historical Command Center UI repair/review evidence.
 
 ## How Agents Should Use This Directory
 

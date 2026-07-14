@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-152",
+  "title": "MAP 6.13: Specify protocol and semantic validators with halt authority",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-147",
+    "TASK-149"
+  ],
+  "owner": "command-center",
+  "description": "Wave 4 from MAP 6.13 plan. Split hcom/MATOCP protocol compliance from semantic output-correctness validation, specify Layer 1 deterministic checks vs Layer 2 fuzzy judge, define telemetry and halt state. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/scripts/validate_events.py, Guidelines/llm-communication-rules.md, Guidelines/6.13/files7/MAP-Validator-Specification.md, and MAP_System/SELF_REPAIR_SYSTEM.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/map-protocol-validator-spec.md",
+    "MAP_System/artifacts/planning/map-semantic-validator-spec.md",
+    "MAP_System/artifacts/planning/map-validator-halt-state-spec.md",
+    "MAP_System/artifacts/tests/map-validator-halt-probe.md"
+  ],
+  "acceptance_criteria": [
+    "Protocol validator spec covers hcom intent, MATOCP token form where applicable, request-format requirements, and false-positive adjudication.",
+    "Semantic validator spec states Layer 1 coverage improves catch rate but does not reduce Layer 2 false positives toward 1%; judge accuracy and calibration are separate requirements.",
+    "Halt-state spec defines blocking storage, runner/agent-loop response, root-cause/repair requirement, and clear authority.",
+    "Probe artifact defines how to demonstrate that a validator can halt dispatch, not only log."
+  ],
+  "claimed_by": "claude-lab-zera"
+}

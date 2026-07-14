@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-108",
+  "title": "Build MAP Decision/Authority System (decision classes, authority hierarchy)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-107"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md priority #4: shared/decisions.md records decisions well but does not formally define who can decide what, what requires human approval, what a core agent can decide, what a helper can only recommend, what a local model can never decide, how decisions are superseded, and how proposals get promoted to binding decisions. Build MAP_System/DECISION_AUTHORITY_SYSTEM.md and MAP_System/DECISION_CLASSES.md. Must cross-link shared/hpom.md (authority tiers this formalizes for the decision-making task shape specifically), SELF_REPAIR_SYSTEM.md (STRUCTURAL repairs already require this authority path), RESEARCH_SYSTEM.md (research summaries feeding decisions), and shared/decisions.md itself (the log this governs). Register all output_paths upfront including any cross-linked file edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/DECISION_CLASSES.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md exists and defines who can decide what, human-approval requirements, core-agent decision rights, helper recommend-only limits, local-model never-decide limits, supersession rules, and proposal-to-decision promotion",
+    "MAP_System/DECISION_CLASSES.md exists and defines a small set of decision classes (e.g. architecture, ownership, authority, policy, scope) with the approval level each requires",
+    "DECISION_AUTHORITY_SYSTEM.md cross-links shared/hpom.md, SELF_REPAIR_SYSTEM.md, RESEARCH_SYSTEM.md, and shared/decisions.md",
+    "shared/decisions.md gets a new DECISION entry recording Decision/Authority System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

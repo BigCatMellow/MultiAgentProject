@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-165",
+  "title": "Map remaining command-center implementation gaps",
+  "task_type": "planning",
+  "role": "core",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Create a durable planning artifact that compares current MAP command-center capability against the 6.13 command-center restructuring notes, marks implemented/partial/missing surfaces, and proposes bounded next implementation increments without editing the TASK-164 code under review.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/mission-control-command-center-gap-plan.md"
+  ],
+  "acceptance_criteria": [
+    "Artifact explicitly compares current command-center state to 6.13 single-entry/operator-control requirements.",
+    "Artifact separates implemented, partial, missing, and approval-blocked work.",
+    "Artifact proposes concrete next MAP tasks or implementation increments that do not require touching external CommandCenterUI without approval."
+  ]
+}

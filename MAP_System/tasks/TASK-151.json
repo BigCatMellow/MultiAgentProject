@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-151",
+  "title": "MAP 6.13: Add cost-governance and kill-switch design",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-147",
+    "TASK-149"
+  ],
+  "owner": "command-center",
+  "description": "Wave 3 from MAP 6.13 plan. Design cost fields, per-task/day budgets, spend-rate circuit breaker, and operator kill-switch before broader runtime autonomy. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/events/README.md, MAP_System/shared/hpom.md, and MAP_System/DECISION_AUTHORITY_SYSTEM.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/map-cost-governance-spec.md",
+    "MAP_System/artifacts/planning/map-kill-switch-spec.md"
+  ],
+  "acceptance_criteria": [
+    "Cost spec defines tokens_in, tokens_out, model_tier, estimated_cost, per-task budget, per-day budget, and spend-rate breaker semantics.",
+    "Kill-switch spec defines halt flag/storage, who may set/clear it, required events, and how runner/agent-loop should respond.",
+    "Design distinguishes cost circuit breaker from failure circuit breaker and records operator-approval paths for budget overrides.",
+    "Risk register or risk note captures runaway-spend risk and mitigation."
+  ]
+}

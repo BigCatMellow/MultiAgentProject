@@ -16,6 +16,19 @@ intentional follow-up.
 
 ## High Priority
 
+### Add task-state mirror reconciliation gate
+
+Status: **DONE** — completed TASK-143 (2026-07-04)
+
+TASK-140 and TASK-141 independently reproduced SQLite/file mirror drift:
+canonical SQLite task state could change while `tasks/TASK-*.json` and
+`workflow/task_graph.json` stayed stale until a manual export ran.
+
+TASK-143 added `scripts/validate_task_mirrors.py`, wired it into
+`map_task.py approve`, `release_task.py`, and `scripts/run_tests.sh`, and
+added regression tests for matching mirrors plus deliberate status and
+output-path mismatches.
+
 ### Add operator-request worker-fit intake and ownership protocol
 
 Status: first pass complete — TASK-065 added `scripts/intake_request.py` and
@@ -137,10 +150,14 @@ and records tied to closed tasks but still left open.
 
 ### Add event log validation/reporting
 
-Status: first pass complete — TASK-065 added `scripts/validate_events.py`.
+Status: baseline gate active — TASK-065 added `scripts/validate_events.py`;
+TASK-142 added `events/warning_baseline.json` and `--fail-on-new` wiring.
 
 The validator parses JSONL, reports legacy `timestamp`/`agent` fields, aliases
-legacy event types, and can run in strict mode for new logs.
+legacy event types, and distinguishes accepted historical warnings from new
+warning-worthy event lines. `scripts/run_tests.sh` runs `--fail-on-new`, so new
+event-shape warnings should fail the suite instead of hiding inside the legacy
+33-warning baseline.
 
 ### Add agent availability reconciliation
 
@@ -200,19 +217,31 @@ Recommended next action:
 
 ### Fix --no-auto-commits in aider_wrapper.py FORBIDDEN_AIDER_FLAGS
 
-Status: open — tracked as TASK-050
+Status: **DONE** — completed TASK-050
 
-`FORBIDDEN_AIDER_FLAGS` incorrectly blocks `--no-auto-commits`, which is a
-safety flag. Only `--auto-commits` should be blocked. See TASK-049 review
-finding at `artifacts/reviews/task049-aider-wrapper-review.md`.
+`FORBIDDEN_AIDER_FLAGS` now blocks `--auto-commits` while allowing the safety
+flag `--no-auto-commits`; `tests/test_aider_wrapper.py` covers both cases.
 
 ### Clean up OPTIONAL findings from local_runner.py (TASK-048 review)
 
-Status: open — tracked as TASK-051
+Status: **DONE** — completed TASK-051
 
-Two cosmetic items: unreachable `if output_path is None` guard (line 137,
-`--output` is `required=True` in argparse) and try/except ModuleNotFoundError
-import pattern. See `artifacts/reviews/task048-local-runner-review.md`.
+The optional `local_runner.py` cleanup from the TASK-048 review is complete.
+
+### Add optional `delete_thread()` coverage to `MapSqliteSaver`
+
+Status: open — found by TASK-145 Research Summary, recorded during TASK-144
+
+The current LangGraph checkpointer usage aligns with official 1.x practice,
+but `db/checkpointer.py` does not implement a `delete_thread()` override. MAP
+does not call this method today, so this is a latent completeness gap rather
+than a live bug.
+
+Recommended next action:
+
+- Add a small task if MAP begins managing LangGraph thread lifecycle directly,
+  or if a future checkpointer validator expects the full saver method surface.
+  Keep it low priority until then.
 
 ## Maintenance Priority
 
@@ -248,3 +277,71 @@ Recommended next action:
 
 - Include current-state updates in any task that changes runner, task claiming,
   approval gates, helper policy, or validation behavior.
+
+### Make output_paths registration explicit for cross-linked files
+
+Status: applied — fix identified in RETRO-0001 (TASK-118) and applied the
+same task to `notes/task-authoring-guide.md`
+
+Across the TASK-103 through TASK-117 gap-review build sequence, the
+requirement that *any* file touched by an edit — including a one-line
+cross-link backlink added in another system's doc — must be registered in
+a task's `output_paths` before submission was not obvious from
+`notes/task-authoring-guide.md` alone. It recurred as a near-miss across
+TASK-111, TASK-112, TASK-115, and TASK-117, each time caught by a
+reviewer's proactive heads-up before submission rather than by the
+authoring guide itself.
+
+Impact:
+
+- Extra back-and-forth between task owner and reviewer on every
+  cross-linking task.
+- Risk that a smaller/rushed task skips this check entirely and reaches
+  review with an undeclared output path.
+
+Recommended next action:
+
+- Add an explicit line to `notes/task-authoring-guide.md`'s Output Paths
+  section stating that any file touched by an Edit/Write call — including
+  a one-line cross-link backlink in another system's file — counts as an
+  output path, not just the task's named primary deliverables.
+
+### Add atomic ID allocation for Self-Repair records
+
+Status: partially fixed — `map_emergence.py`'s half fixed in REPAIR-0005
+(TASK-141); `repairs/`'s own half still open, found in REPAIR-0004
+(TASK-129)
+
+`repairs/` has no ID-allocation mechanism equivalent to
+`map_task.py create --task-id auto`. Two agents independently filed
+unrelated repairs both numbered `REPAIR-0001` (dino's TASK-116
+runner-dependency repair, valo's TASK-120 risk-validator repair) before
+this was caught during the TASK-129 MAP System Adherence Audit.
+
+TASK-129's own audit assumed `map_emergence.py`'s ID assignment was
+already atomic like `map_task.py`'s. It was not — `next_id()` was (and
+still is) a plain filename scan with no lock around it. TASK-141 verified
+this by reproducing a real ID collision under 8-way concurrent
+`map_emergence.py insight` calls (3 collisions out of 8), then closed it
+with a per-kind `fcntl.flock` around ID allocation + existence-check +
+write (see REPAIR-0005). `repairs/` itself has no equivalent fix yet —
+it would need its own lock (or a small `map_repair.py` wrapper), since
+repair records are appended manually rather than through a shared CLI the
+way emergence artifacts are.
+
+Impact:
+
+- A bare `REPAIR-NNNN` cross-reference is ambiguous until the collision is
+  manually found and one record renumbered.
+- The same collision could recur for any repair filed without checking
+  every existing filename first — this remains true for `repairs/`
+  specifically; it is no longer true for `emergence/`.
+
+Recommended next action:
+
+- Add a small `map_repair.py` helper (or extend an existing script) with
+  atomic `--repair-id auto` allocation. Given REPAIR-0005 already proved
+  out the pattern (a per-kind `fcntl.flock` wrapping allocate+check+write,
+  no SQLite needed), the fastest version of this fix is likely a thin
+  CLI over the same file-lock technique rather than a new SQLite-backed
+  design.

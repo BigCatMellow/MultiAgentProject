@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-149",
+  "title": "MAP 6.13: Add trace schema, calibration, and robustness grading plan",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-147"
+  ],
+  "owner": "command-center",
+  "description": "Wave 2 from MAP 6.13 plan. Define traceable visibility, event append/reconstruction behavior, real-parameter measurement, sensitivity/robustness grading, and two simulation-test-drive acceptance probes. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/events/README.md, MAP_System/scripts/validate_events.py, MAP_System/notes/communication-architecture.md, and Guidelines/6.13/files8/MAP-Simulation-Results-Round6.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-real-parameter-calibration.md",
+    "MAP_System/artifacts/audits/map-sensitivity-robustness-method.md",
+    "MAP_System/artifacts/planning/map-event-trace-schema.md",
+    "MAP_System/artifacts/tests/map-613-simulation-testdrive-probes.md",
+    "MAP_System/scripts/validate_events.py",
+    "MAP_System/tests/test_validate_events.py"
+  ],
+  "acceptance_criteria": [
+    "Trace schema defines trace_id, parent_event_id, actor, action, target, task_id, and thread while preserving legacy event compatibility.",
+    "Calibration plan measures shipped-defect vs false-halt cost, local-vs-cloud defect rate, file churn, compression ratio, latency, hcom volume, and operator approval load.",
+    "Robustness method classifies conclusions as robust, conditional, or unsupported across plausible parameter ranges.",
+    "Probe artifact defines acceptance tests for shared-state coordination and validator halt authority."
+  ],
+  "claimed_by": "claude-lab-zera"
+}

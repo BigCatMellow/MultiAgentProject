@@ -44,13 +44,24 @@ def test_shared_generated_outputs_do_not_collide() -> None:
     assert not [e for e in errors if "Output path collision" in e]
 
 
+def test_shared_test_registry_does_not_collide() -> None:
+    errors = validate_task_graph.validate(
+        graph_with_outputs("MAP_System/scripts/run_tests.sh", "MAP_System/scripts/run_tests.sh")
+    )
+    assert not [e for e in errors if "Output path collision" in e]
+
+
 def test_normal_outputs_still_collide() -> None:
     errors = validate_task_graph.validate(graph_with_outputs("same.md", "same.md"))
     assert any("Output path collision: same.md" in e for e in errors)
 
 
 def main() -> int:
-    for test in [test_shared_generated_outputs_do_not_collide, test_normal_outputs_still_collide]:
+    for test in [
+        test_shared_generated_outputs_do_not_collide,
+        test_shared_test_registry_does_not_collide,
+        test_normal_outputs_still_collide,
+    ]:
         test()
         print(f"PASS {test.__name__}")
     return 0

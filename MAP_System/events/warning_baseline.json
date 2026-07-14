@@ -1,0 +1,6 @@
+{
+  "baseline_line_count": 680,
+  "recorded_at": "2026-07-04T00:00:00Z",
+  "recorded_by": "TASK-142",
+  "note": "All validate_events.py warnings at or before this line are pre-existing legacy noise (accepted per TASK-140 gap #6). Warnings on lines after this count are new and should be treated as real signal, not folded into the accepted baseline."
+}

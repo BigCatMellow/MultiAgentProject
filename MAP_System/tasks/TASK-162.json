@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-162",
+  "title": "MAP 6.13: Implement protocol/semantic validator L1 wiring and halt-store integration",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-152",
+    "TASK-159"
+  ],
+  "owner": "command-center",
+  "description": "Implementation task for approved TASK-152 specs. Wire the Layer-1 deterministic validator cascade (aggregating existing validate_task_mirrors.py/validate_events.py/validate_task_graph.py/validate_shared_state.py/validate_decisions.py/validate_review.py per map-semantic-validator-spec.md) into one callable check, and wire protocol-validator checks (hcom intent presence, MATOCP token-form shape per AGENTS.md's 6-token subset -- NOT the fuller llm-communication-rules.md spec, per map-protocol-validator-spec.md's explicit scope decision) per map-protocol-validator-spec.md. On a BLOCKING/STRUCTURAL finding, write into TASK-159's halt store (scripts/halt_state.py) with reason=validator_blocking_anomaly and scope=task/global, per map-validator-halt-state-spec.md's reconciled design -- do NOT create a second halt table. Ship with severity capped at DRIFT (non-blocking, telemetry-only) until judge-accuracy data exists, per the spec's explicit day-one constraint. Read map-protocol-validator-spec.md, map-semantic-validator-spec.md, map-validator-halt-state-spec.md, map-validator-halt-probe.md, and TASK-159's scripts/halt_state.py before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/validate_layer1.py",
+    "MAP_System/scripts/validate_protocol.py",
+    "MAP_System/tests/test_validate_layer1.py",
+    "MAP_System/tests/test_validate_protocol.py"
+  ],
+  "acceptance_criteria": [
+    "validate_layer1.py aggregates all named L1 validators into one pass/fail call with per-validator breakdown, adding no new validation logic of its own (it composes, does not reimplement).",
+    "validate_protocol.py checks hcom message shape against AGENTS.md's 6-token MATOCP subset only, with a documented false-positive adjudication field (true_positive/false_positive/waived).",
+    "A BLOCKING/STRUCTURAL finding from either validator writes into TASK-159's halt store via its API, not a new table; a focused test proves no second halt table is created.",
+    "Default severity ships capped at DRIFT (telemetry-only, no halt-store write) until explicitly reconfigured; a test proves a real defect at default config surfaces as telemetry, not a blocking halt.",
+    "map-validator-halt-probe.md's 'Protocol halt test' and 'Semantic halt test' probes pass against this implementation."
+  ],
+  "claimed_by": "claude-lab-zera"
+}

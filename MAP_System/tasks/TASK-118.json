@@ -1,0 +1,32 @@
+{
+  "task_id": "TASK-118",
+  "title": "Build MAP Retrospective/Learning System (end-of-cycle review loop)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-117"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md secondary gap (weakest/implied): the improvement backlog and emergence capture exist but no formal end-of-cycle retrospective loop exists asking what worked, what failed, what caused rework, what agents misunderstood, what rules were unclear, what should become a validator/template/decision. Build MAP_System/RETROSPECTIVE_SYSTEM.md and MAP_System/templates/RETROSPECTIVE_TEMPLATE.md. This is the last system in the gap review's list -- it should also reflect on the just-completed gap-review build sequence itself (TASK-103 through TASK-117) as its first worked example: repeated review findings (output_paths omissions occurred 3 times before the pattern was internalized) are exactly the kind of repeated-failure-becomes-permanent-fix pattern this system should capture. Must cross-link Self-Repair (follow-up prevention is retrospective at incident scale, this system is retrospective at cycle scale), Emergence (recurring insights feed retrospectives), improvement-backlog.md (where retrospective findings that need follow-up land), and Change Control (a retrospective finding that becomes a validator is itself a change). Depends on TASK-117 (shared decisions.md touch point); do not submit until TASK-117 is released. Register all output_paths upfront including cross-link edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+    "MAP_System/RETROSPECTIVE_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/notes/task-authoring-guide.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/shared/improvement-backlog.md",
+    "MAP_System/templates/RETROSPECTIVE_TEMPLATE.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/RETROSPECTIVE_SYSTEM.md exists and defines the end-of-cycle retrospective loop: what worked, what failed, what caused rework, what agents misunderstood, what rules were unclear, what should become a validator/template/decision",
+    "MAP_System/templates/RETROSPECTIVE_TEMPLATE.md exists",
+    "RETROSPECTIVE_SYSTEM.md includes a worked retrospective of the TASK-103 through TASK-117 gap-review build sequence itself, naming the repeated output_paths-omission pattern as an example finding",
+    "RETROSPECTIVE_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, emergence/README.md, shared/improvement-backlog.md, and CHANGE_CONTROL_SYSTEM.md",
+    "shared/decisions.md gets a new DECISION entry recording Retrospective System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

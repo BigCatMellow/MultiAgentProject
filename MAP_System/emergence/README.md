@@ -167,9 +167,23 @@ Do not act on it unless the task scope allows it or it has been promoted.
 
 ## Related files
 
-- `SYNTHESIS_METHODS.md` — how to do synthesis
-- `IDEA_PROMOTION_RULES.md` — promotion criteria
-- `CREATIVE_REVIEW.md` — quality and safety rules
-- `INDEX.md` — active artifact registry
-- `MAP_System/shared/hpom.md` — the execution system this feeds into
-- `MAP_System/shared/decisions.md` — where promoted ideas land as decisions
+- `SYNTHESIS_METHODS.md` [[SYNTHESIS_METHODS]] — how to do synthesis
+- `IDEA_PROMOTION_RULES.md` [[IDEA_PROMOTION_RULES]] — promotion criteria
+- `CREATIVE_REVIEW.md` [[CREATIVE_REVIEW]] — quality and safety rules
+- `INDEX.md` [[INDEX]] — active artifact registry
+- `MAP_System/shared/hpom.md` [[hpom]] — the execution system this feeds into
+- `MAP_System/shared/decisions.md` [[decisions]] — where promoted ideas land as decisions
+- `MAP_System/RESEARCH_SYSTEM.md` [[RESEARCH_SYSTEM]] — a passing hunch becomes an insight here;
+  a specific, answerable question becomes a Research Brief there
+- `MAP_System/SELF_REPAIR_SYSTEM.md` [[SELF_REPAIR_SYSTEM]] — a recurring repair should be captured
+  here as an insight so it can be promoted into a permanent fix
+- `MAP_System/HUMAN_INTERFACE_SYSTEM.md` [[HUMAN_INTERFACE_SYSTEM]] — where recent insights are
+  surfaced to the operator
+- `MAP_System/RETROSPECTIVE_SYSTEM.md` [[RETROSPECTIVE_SYSTEM]] — where a recurring insight across
+  a whole cycle becomes a retrospective finding
+- `MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md` [[PROJECT_BOOTSTRAPPING_SYSTEM]] — requires every project to
+  set up `insights/`/`ideas/`/`experiments/`/`synthesis/` folders at
+  bootstrap (DEC-026)
+- `MAP_System/CHANGE_CONTROL_SYSTEM.md` [[CHANGE_CONTROL_SYSTEM]] — mechanically requires an
+  "Emergence capture considered" line before any task can be released
+  (DEC-026), so this system cannot be silently skipped on a real project

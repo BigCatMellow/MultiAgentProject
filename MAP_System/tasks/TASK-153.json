@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-153",
+  "title": "MAP 6.13: Add gap scoring, task tiers, and local-helper lanes",
+  "task_type": "architecture",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-147",
+    "TASK-149"
+  ],
+  "owner": "command-center",
+  "description": "Wave 5 from MAP 6.13 plan. Define gap scoring, task_tier, local_lane, escalation_reason, emergence preflight suggestions, local-helper lane wrappers, and bounded learning guard. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/CONTEXT_SYSTEM.md, MAP_System/emergence/README.md, MAP_System/notes/local-model-helper-guide.md, MAP_System/scripts/local_runner.py, and Guidelines/6.13/files6/MAP-Simulation-Results-Round5.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/map-emergence-learning-guard-spec.md",
+    "MAP_System/artifacts/planning/map-emergence-preflight-spec.md",
+    "MAP_System/artifacts/planning/map-local-helper-lanes-spec.md",
+    "MAP_System/artifacts/planning/map-task-tiering-spec.md"
+  ],
+  "acceptance_criteria": [
+    "Task-tiering spec defines gap_score, task_tier, local_lane, escalation_reason, and promotion/dispatch expectations.",
+    "Emergence preflight spec defines capability pass, coverage pass, suggestion confidence, and when suggestions must not be silently added.",
+    "Local-helper lanes are draft-only and include repo scan, JSON/schema check, event digest, validator-log summary, markdown cleanup, and acceptance-criteria draft.",
+    "Learning-guard spec prunes heuristics that fire without preventing real defects and explains how outcome feedback can override validator-only learning."
+  ]
+}

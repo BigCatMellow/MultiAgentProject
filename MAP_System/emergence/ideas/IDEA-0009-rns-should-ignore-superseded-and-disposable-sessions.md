@@ -9,32 +9,25 @@ Status: CANDIDATE
 
 ## Idea
 
-
-RnS should ignore superseded and disposable sessions
+- idea: RnS ignore superseded/disposable sessions.
 
 ## Problem or opportunity
 
-
-RnS cannot distinguish dead-on-purpose sessions from limit-stopped sessions unless every disposable/superseded session is manually written into durable agent state.
+- gap: RnS sees dead-on-purpose sessions like limit-stopped sessions unless durable state marks every disposable/superseded identity.
 
 ## Why now
 
-
-The restarted watcher surfaced the gap by probing scratch-peso and attempting to recover old lab identities after the lab-open workflow changed.
+- now: restarted watcher probed `scratch-peso` and old lab identities after lab-open workflow changed.
 
 ## Expected benefit
 
-
-Fewer false wake-ups, less monitor noise, and lower risk of resurrecting obsolete context.
+- gain: fewer false wake-ups; less Monitor noise; lower obsolete-context resurrection risk.
 
 ## Cost
 
-
-Requires a small RnS v2.2 design pass around session lifecycle tags, disposable helper metadata, and incident suppression rules.
+- cost: small RnS v2.2 design pass for lifecycle tags, helper metadata, incident suppression.
 
 ## Reversibility
-
-Can this be undone easily?
 
 - [ ] Yes
 - [ ] No
@@ -43,13 +36,12 @@ Can this be undone easily?
 
 ## Smallest safe experiment
 
-
-Add a dry-run-only suppression check that treats inactive/session_superseded and inactive/disposable_session_ended as terminal, then replay the current watcher state and hcom snapshot.
+- test: dry-run suppression check treats `inactive/session_superseded` and `inactive/disposable_session_ended` as terminal.
+- replay: current watcher state + hcom snapshot.
 
 ## Decision needed
 
 Who must approve this before it can be promoted?
-
 - [ ] Task DRI — within current task scope
 - [ ] Review DRI — requires review gate
 - [x] State Steward — changes shared state
@@ -62,3 +54,12 @@ Who must approve this before it can be promoted?
 - [ ] Reject — not worth pursuing
 - [x] Test — run the smallest safe experiment
 - [ ] Promote to task — evidence is sufficient, ready for HPOM
+
+## Corroborating evidence (2026-07-04, TASK-146 triage, claude-lab-magi)
+
+- status: left CANDIDATE; still recommend Test, not direct promotion.
+- scope: dry-run suppression experiment is RnS/watcher implementation work, outside TASK-146 triage.
+- ev: 2026-07-04 before `agents/status.json` reconciliation, limit watcher logged `BLOCKED` / "presumed down without a status record" / "giving up after 6 probes".
+- ev-agents: `claude-lab-sara`, `claude-lab-valo`, `codex-lab-dino`, `codex-lab-lema`, `codex-lab-muva`; all later available.
+- ref: `MAP_System/events/events.jsonl` around `2026-07-04T00:02:44-04:00`.
+- meaning: same false-wake-up / Monitor-noise failure as TASK-090; experiment ready, not speculative.

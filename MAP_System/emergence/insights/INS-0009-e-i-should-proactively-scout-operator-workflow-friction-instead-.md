@@ -9,42 +9,33 @@ Status: LINKED
 
 ## Short description
 
-
-E/I should proactively scout operator workflow friction instead of waiting for the operator to name obvious CommandCenterUI affordances
+- obs: E/I should proactively scout operator workflow friction instead of waiting for the operator to name obvious CommandCenterUI affordances
 
 ## Trigger
 
-
-Operator said quote/reply, attention inbox, approvals, and auto-mode are exactly the kind of things the Emergence/Insight layer should think about without being prompted.
+- src: Operator said quote/reply, attention inbox, approvals, and auto-mode are exactly the kind of things the Emergence/Insight layer should think about without being prompted.
 
 ## The synthesis
 
-
-E/I should proactively scout operator workflow friction instead of waiting for the operator to name obvious CommandCenterUI affordances
+- synth: E/I should proactively scout operator workflow friction instead of waiting for the operator to name obvious CommandCenterUI affordances
 
 ## Why it might matter
 
-
-The system's purpose is to reduce operator orchestration burden. If agents only convert explicit operator requests into tasks, the discovery layer is not doing its job.
+- why: The system's purpose is to reduce operator orchestration burden. If agents only convert explicit operator requests into tasks, the discovery layer is not doing its job.
 
 ## Evidence
 
-
-The operator had to ask for chat replies, needs-attention inbox, approval controls, and auto-mode explanation after several CommandCenterUI tasks had already exposed the need for conversation ergonomics and approval routing.
+- ev: The operator had to ask for chat replies, needs-attention inbox, approval controls, and auto-mode explanation after several CommandCenterUI tasks had already exposed the need for conversation ergonomics and approval routing.
 
 ## Risk
 
-
-Unbounded proactive work could create scope creep or unsafe automation; findings must remain candidates until shaped into HPOM tasks or explicit operator decisions.
+- risk: Unbounded proactive work could create scope creep or unsafe automation; findings must remain candidates until shaped into HPOM tasks or explicit operator decisions.
 
 ## Scope
 
-
-Capture recurring operator-friction patterns and propose bounded UI/process improvements.
+- scope: Capture recurring operator-friction patterns and propose bounded UI/process improvements.
 
 ## Recommended next action
-
-Choose one:
 
 - [ ] Ignore — not worth preserving
 - [ ] Park for later — valid but low priority

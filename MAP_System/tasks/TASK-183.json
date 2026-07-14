@@ -1,0 +1,33 @@
+{
+  "task_id": "TASK-183",
+  "title": "Deterministic compact active emergence records",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Follow-up from TASK-181 under claude-lab-mira lead: implement a deterministic MAP-side compaction command for active emergence records, then use it/core review to compact the remaining active records without local-model semantic drift. Scope excludes CommandCenterUI and external launcher work.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/emergence-deterministic-compaction-report.md",
+    "MAP_System/artifacts/reviews/task181-review-mira.md",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+    "MAP_System/emergence/insights/INS-0008-ei-should-proactively-surface-operator-friction-affordances.md",
+    "MAP_System/emergence/insights/INS-0009-e-i-should-proactively-scout-operator-workflow-friction-instead-.md",
+    "MAP_System/emergence/insights/INS-0017-turn-by-turn-self-audited-card-game-simulation-naming-every-card.md",
+    "MAP_System/emergence/insights/INS-0018-when-a-rules-heavy-generative-task-hits-a-genuinely-ambiguous-so.md",
+    "MAP_System/emergence/insights/INS-0019-a-100-line-domain-validator-written-at-the-start-of-a-generative.md",
+    "MAP_System/emergence/insights/INS-0020-when-a-derived-dataset-looks-ambiguous-one-targeted-check-of-the.md",
+    "MAP_System/emergence/synthesis/SYN-0001-two-readers-one-truth.md",
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/tests/test_map_emergence.py"
+  ],
+  "acceptance_criteria": [
+    "A deterministic map_emergence command can dry-run and apply compact body-section conversion for named emergence records.",
+    "Remaining active emergence records are compacted with IDs, headers, statuses, checkbox decisions, evidence, and lifecycle meaning preserved.",
+    "The compaction command is idempotent for already compact records.",
+    "map_emergence validate/stale, librarian validate, validate_events --fail-on-new, validate_task_mirrors, and full MAP tests pass.",
+    "Report documents the command behavior, records changed, and why local-model direct rewrites were not used."
+  ]
+}

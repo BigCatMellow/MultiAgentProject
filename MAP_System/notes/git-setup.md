@@ -9,7 +9,11 @@
 
 ## Commands
 
-Use normal Git from the workspace root:
+Use normal Git from the canonical workspace root:
+
+```bash
+cd /home/home/Projects/MultiAgentProject
+```
 
 ```bash
 git status
@@ -42,7 +46,8 @@ single-file helper edit.
 
 The project previously used `.map-git` because root `.git` was blocked. That
 fallback Git database has been promoted to normal `.git` so Aider and standard
-Git tooling can operate from `/home/home/Downloads/MultiAgentProject`.
+Git tooling can operate from the canonical Projects repo. DEC-014 superseded
+the older Downloads-path guidance; see `shared/canonical-repo.md`.
 
 Preserved local backups:
 

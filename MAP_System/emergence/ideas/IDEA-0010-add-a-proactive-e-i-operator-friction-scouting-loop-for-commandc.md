@@ -5,7 +5,7 @@ Project: MAP
 Source insight or synthesis: INS-0009
 Owner: codex-lab-lema
 Date: 2026-07-02
-Status: CANDIDATE
+Status: PROMOTED_TO_TASK
 
 ## Idea
 
@@ -70,5 +70,24 @@ Who must approve this before it can be promoted?
 
 - [ ] Park — valid but not the right time
 - [ ] Reject — not worth pursuing
-- [x] Test — run the smallest safe experiment
-- [ ] Promote to task — evidence is sufficient, ready for HPOM
+- [ ] Test — run the smallest safe experiment
+- [x] Promote to task — evidence is sufficient, ready for HPOM
+
+## Resolution (2026-07-04, TASK-146 triage, claude-lab-magi)
+
+Promoted, scoped down from a "scouting loop" to exactly the card's own
+smallest-safe-experiment: a closeout habit, not a new role or mandatory gate
+(see `IDEA-0011`/`IDEA-0013` resolutions for why a standing role was parked
+instead). This card named Human Owner approval as required since it touches
+MAP-level habit; treating the operator's 2026-07-04 full-MAP-renewal request
+(hcom #25059), which explicitly named "keep an eye on E/I and see what we
+can come up with to improve things" and "don't be afraid to add new rules
+and procedures... I trust you," as that approval for a small, reversible,
+non-mandatory habit addition. Implemented as a new "Operator-Facing Friction
+Closeout Habit" section in `notes/task-authoring-guide.md`. Not wired into
+`release_task.py` as a hard gate (unlike DEC-026's emergence-capture line):
+unlike Emergence capture, which applies to every task, this only applies to
+operator-facing-surface tasks, which cannot be mechanically detected from a
+task record alone — forcing the checkbox onto irrelevant tasks would be the
+same box-ticking-ceremony risk DEC-026 already named. Revisit as a mechanical
+gate only if the habit proves not to stick on its own.

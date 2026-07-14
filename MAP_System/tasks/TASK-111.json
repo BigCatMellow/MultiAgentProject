@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-111",
+  "title": "Build MAP Risk System (risk register, classes, escalation)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-110"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md secondary gap: Risk (review severity, security second-pass, current-state health issues, improvement backlog, constraints) is present but scattered. Build MAP_System/RISK_SYSTEM.md defining risk classes, risk severity, risk register format, risk owners, risk review cadence, risk escalation, and risk acceptance. Build MAP_System/templates/RISK_REGISTER_TEMPLATE.md. Must cross-link Self-Repair (BLOCKING/STRUCTURAL repairs are risk-bearing), Decision/Authority (risk acceptance is itself a decision needing the right authority tier), and Human Interface (risks surfaced on dashboard). Depends on TASK-110 (shared decisions.md/current-state.md touch point); do not submit until TASK-110 is released. Register all output_paths upfront.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+    "MAP_System/RISK_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/templates/RISK_REGISTER_TEMPLATE.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/RISK_SYSTEM.md exists and defines risk classes, severity, register format, owners, review cadence, escalation, and acceptance",
+    "MAP_System/templates/RISK_REGISTER_TEMPLATE.md exists",
+    "RISK_SYSTEM.md cross-links SELF_REPAIR_SYSTEM.md, DECISION_AUTHORITY_SYSTEM.md, and HUMAN_INTERFACE_SYSTEM.md",
+    "shared/decisions.md gets a new DECISION entry recording Risk System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

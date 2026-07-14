@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-177",
+  "title": "Fix liveness_reaper.py: accept raw hcom list --json shape",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Fixes a real bug TASK-175's runtime-exercise audit found and reported: liveness_reaper.py's build_snapshot() crashed with AttributeError when fed the actual output shape of 'hcom list --json' (a list of session records keyed by 'name', not an agent-keyed dict). Adds normalize_hcom_status() which accepts either shape and wires it into main()'s --hcom-json loading path. Read the TASK-175 report (artifacts/reports/command-center-runtime-exercise-2026-07-14.md) and its finding #2 before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/liveness_reaper.py",
+    "MAP_System/tests/test_liveness_reaper.py"
+  ],
+  "acceptance_criteria": [
+    "normalize_hcom_status() accepts both the raw hcom list --json shape and an already agent-keyed dict, producing the same normalized shape either way.",
+    "liveness_reaper.py --hcom-json no longer crashes when given real hcom list --json output; reproduces and fixes the exact AttributeError from TASK-175's report.",
+    "Focused regression tests cover both input shapes plus the malformed-input rejection case."
+  ]
+}

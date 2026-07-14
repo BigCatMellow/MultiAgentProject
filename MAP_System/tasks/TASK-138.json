@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-138",
+  "title": "Document auto-helper routing for reviewer conflicts",
+  "task_type": "documentation",
+  "role": "MAP process implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-neko",
+  "description": "Operator identified that routine no-self-review reviewer conflicts should not be escalated back to the operator when existing MAP helper policy can solve them. Document the default path: if a submitted task needs review, a live reviewer has a self-review conflict, and no clean core reviewer is immediately available, the owning agent should create a helper note, spawn a visible review helper with --terminal wezterm-tab, send a bounded review packet, and continue without an operator decision unless helper spawning itself is blocked or risky.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENTS.md",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/insights/INS-0015-a-routine-no-self-review-reviewer-conflict-should-trigger-the-ex.md",
+    "MAP_System/notes/helper-agent-guide.md"
+  ],
+  "acceptance_criteria": [
+    "MAP instructions explicitly say routine no-self-review reviewer conflicts should auto-route to a visible helper when no clean core reviewer is available",
+    "Helper-agent guide includes the concrete steps for this review-conflict path",
+    "Validators pass after the documentation update"
+  ]
+}

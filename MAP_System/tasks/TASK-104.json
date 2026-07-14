@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-104",
+  "title": "Add Research System validation tooling",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-103"
+  ],
+  "owner": "codex-lab-dino",
+  "description": "Follow-on to TASK-103 from Guidelines/MAP_repo_systems_gap_review.md: once the Research System docs/templates exist, add a focused validator and tests that check required research templates/metadata enough to prevent empty or malformed research artifacts from becoming project truth. Keep scope to tooling; do not edit TASK-103's RESEARCH_SYSTEM.md or template prose except through review feedback.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task-104-research-validator.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_research_artifacts.py",
+    "MAP_System/tests/test_validate_research_artifacts.py"
+  ],
+  "acceptance_criteria": [
+    "Research validator checks the required Research System template/artifact structure defined by TASK-103 without owning the prose system specification",
+    "Focused tests cover passing and failing research artifact/template cases",
+    "MAP_System/scripts/run_tests.sh includes the focused validator/test and the relevant validation commands pass"
+  ]
+}

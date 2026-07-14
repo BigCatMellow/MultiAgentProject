@@ -4,6 +4,9 @@ MAP's active brain should stay lean. Completed work should remain traceable, but
 old narrative should not accumulate forever in `shared/current-state.md`,
 `shared/decisions.md`, or other high-priority files.
 
+See `MAP_System/ARCHIVE_RETENTION_SYSTEM.md` for the archive statuses and
+retention rules built on top of this guide's compaction mechanics.
+
 ## Goal
 
 Turn detailed historical activity into compact structural memory.

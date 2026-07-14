@@ -1,6 +1,8 @@
 # Context Routing Guide
 
-Use this guide to decide which MAP files to read together.
+Use this guide to decide which MAP files to read together. See
+`MAP_System/CONTEXT_SYSTEM.md` for the formal packet format, token-budget
+rules, and staleness handling this guide's routing table feeds into.
 
 MAP files are not independent thoughts. They work best as small linked memory
 cells. Read the smallest useful set for the job, then follow references only

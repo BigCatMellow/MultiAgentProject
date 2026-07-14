@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-115",
+  "title": "Build MAP Project Bootstrapping System (new-project wizard, starter pack)",
+  "task_type": "architecture",
+  "role": "Claude (prose/architecture, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-114"
+  ],
+  "owner": "claude-lab-valo",
+  "description": "Per Guidelines/MAP_repo_systems_gap_review.md secondary gap: notes/brain-organization-guide.md already provides a strong new-project brain layout, but there is no formal bootstrap workflow or starter template folder. Build MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md and MAP_System/NEW_PROJECT_WIZARD.md. Must reference notes/brain-organization-guide.md (extend, don't duplicate), and require that a new project start with intent/assumptions/research needs/quality standards/risks/decision paths, not just tasks -- meaning it should point new projects at RESEARCH_SYSTEM.md, RISK_SYSTEM.md, and DECISION_AUTHORITY_SYSTEM.md from day one. Depends on TASK-114 (shared decisions.md touch point); do not submit until TASK-114 is released. Register all output_paths upfront including cross-link edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/NEW_PROJECT_WIZARD.md",
+    "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/RISK_SYSTEM.md",
+    "MAP_System/notes/brain-organization-guide.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md"
+  ],
+  "acceptance_criteria": [
+    "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md exists and defines the bootstrap workflow: what a new project must have beyond tasks (intent, assumptions, research needs, quality standards, risks, decision paths)",
+    "MAP_System/NEW_PROJECT_WIZARD.md exists as a step-by-step checklist an agent follows to bootstrap a new project brain",
+    "PROJECT_BOOTSTRAPPING_SYSTEM.md references notes/brain-organization-guide.md and extends it rather than duplicating its folder layout",
+    "PROJECT_BOOTSTRAPPING_SYSTEM.md cross-links RESEARCH_SYSTEM.md, RISK_SYSTEM.md, and DECISION_AUTHORITY_SYSTEM.md as day-one requirements for a new project",
+    "shared/decisions.md gets a new DECISION entry recording Project Bootstrapping System adoption",
+    "events/events.jsonl has PROGRESS/SUBMISSION entries tracing the build"
+  ]
+}

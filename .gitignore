@@ -36,3 +36,9 @@ MAP_System/.git-unused-*/
 Thumbs.db
 *.swp
 *~
+
+# Downloaded third-party research material and runtime logs (TASK-182/183 release-point commit)
+repo/
+logs/
+MAP_System/db/MAP_System.db
+MAP_System/workflow/map.db

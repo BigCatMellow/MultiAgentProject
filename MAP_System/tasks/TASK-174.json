@@ -1,0 +1,41 @@
+{
+  "task_id": "TASK-174",
+  "title": "Build librarian agent + real Library-layer viability measurement",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Operator directive (2026-07-14): stop designing, start implementing/exercising the MAP 6.13 corpus -- specifically called out missing wikilinks in MAP docs and no librarian agent. Builds the first real librarian agent (scripts/librarian.py): wikilink resolution/validation with ambiguous-stem disambiguation, backlink index, and a real (not simulated) compression/churn measurement runner satisfying map-library-viability-measurement.md's previously-never-run prerequisite. Applies wikilinks to the 16 root *_SYSTEM.md/permission/policy docs as a bounded, additive, reversible proof (backtick paths preserved, wikilinks added alongside). Read map-library-viability-measurement.md, SUMMARY-0002-map-library-tool-candidates.md, and the 16 target docs' existing Related-Files sections before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENT_PERMISSION_LEVELS.md",
+    "MAP_System/ARCHIVE_RETENTION_SYSTEM.md",
+    "MAP_System/CHANGE_CONTROL_SYSTEM.md",
+    "MAP_System/CONTEXT_SYSTEM.md",
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/DECISION_CLASSES.md",
+    "MAP_System/DESTRUCTIVE_ACTION_POLICY.md",
+    "MAP_System/HUMAN_INTERFACE_SYSTEM.md",
+    "MAP_System/NEW_PROJECT_WIZARD.md",
+    "MAP_System/ORCHESTRATION_ENTRYPOINT_SYSTEM.md",
+    "MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md",
+    "MAP_System/RESEARCH_SYSTEM.md",
+    "MAP_System/RETROSPECTIVE_SYSTEM.md",
+    "MAP_System/RISK_SYSTEM.md",
+    "MAP_System/SECURITY_PERMISSIONS_SYSTEM.md",
+    "MAP_System/SELF_REPAIR_SYSTEM.md",
+    "MAP_System/artifacts/audits/map-library-viability-measurement-results-2026-07-14.md",
+    "MAP_System/requirements.txt",
+    "MAP_System/scripts/librarian.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_librarian.py"
+  ],
+  "acceptance_criteria": [
+    "librarian.py resolves [[wikilinks]] by stem, disambiguates ambiguous stems (e.g. multiple README.md files) via full relative path, and validates a repo scan for broken/ambiguous links.",
+    "wikilink conversion is additive (never removes existing backtick paths) and idempotent (re-running does not duplicate links).",
+    "Real compression-ratio and file-churn measurements are run against actual MAP docs (not simulated), with results and honest limitations recorded in a results artifact.",
+    "All 16 root system/policy docs have wikilinks added to their Related-Files sections with zero broken or ambiguous links per librarian.py validate."
+  ],
+  "claimed_by": "claude-lab-zera"
+}

@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-169",
+  "title": "Decide external CommandCenterUI boundary",
+  "task_type": "planning",
+  "role": "architect",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Gap-plan increment 5: create a durable decision artifact clarifying whether the next command-center UI work stays in MAP_System's mission-control TUI or requires explicit operator approval to edit the external /home/home/Projects/CommandCenterUI project.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/commandcenterui-boundary-decision.md"
+  ],
+  "acceptance_criteria": [
+    "Decision artifact names the external CommandCenterUI path, current MAP-side TUI scope, and why external edits are out of scope without operator approval.",
+    "Artifact gives concrete options and a recommended default for the next phase.",
+    "Artifact defines what approval/evidence is required before any agent edits /home/home/Projects/CommandCenterUI."
+  ]
+}

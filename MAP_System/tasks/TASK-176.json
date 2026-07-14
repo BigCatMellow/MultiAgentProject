@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-176",
+  "title": "Prune stale RnS incidents for absent sessions",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Follow-up to TASK-175: limit_watcher.py dry-run still attempts probe resumes for stale historical incidents and opens new incidents from stale last_live entries even when those agents are no longer registered in durable status or present in live hcom. Add a bounded stale-state pruning path so RnS stops probing absent historical sessions while preserving real active incidents.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "limit_watcher prunes open incidents for agents absent from both durable status.json and current hcom snapshot before probe actions are computed.",
+    "limit_watcher filters last_live to durable-or-current hcom agents so stale helper names do not create new presumed-down incidents.",
+    "Focused tests cover pruning without suppressing durable registered agents, and dry-run no longer probes TASK-175's stale historical names.",
+    "Task uses only MAP_System files and does not edit external CommandCenterUI."
+  ]
+}

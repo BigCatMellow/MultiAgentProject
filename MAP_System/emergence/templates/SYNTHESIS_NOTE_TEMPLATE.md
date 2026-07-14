@@ -14,41 +14,39 @@ Status: CLARIFIED
 
 ### Piece A
 
-<First idea, fact, pattern, or artifact being combined.>
+- a: <fact/pattern/artifact>
 
 ### Piece B
 
-<Second idea, fact, pattern, or artifact being combined.>
+- b: <fact/pattern/artifact>
 
 ### Piece C (optional)
 
-<Additional material if needed.>
+- c: <optional>
 
 ## New combination
 
-<What appears when these pieces are combined? Name the new thing.>
+- combo: <new pattern/name>
 
 ## What this makes possible
 
-<What can now be created, tested, simplified, or understood because of this combination?>
+- opens: <new action/understanding>
 
 ## Why this was not obvious before
 
-<What changed, or what had to be observed, before this combination became visible?>
+- why-hidden: <missing observation/context>
 
 ## Possible uses
 
--
+- use:
 
 ## Risks or limits
 
--
+- risk:
 
 ## Recommended next step
 
-Choose one:
-
-- [ ] Park — valid but not the right time
-- [ ] Create idea card — ready to develop further
-- [ ] Run experiment — testable immediately
-- [ ] Escalate — needs decision authority
+- [ ] park
+- [ ] idea
+- [ ] experiment
+- [ ] escalate

@@ -78,7 +78,7 @@ def test_output_note_and_event_written() -> None:
         assert "scope: summarize fixture" in note
         assert f"output_path: {output}" in note
         event = json.loads(events.read_text(encoding="utf-8").strip())
-        assert event["type"] == "HELPER_INVOKED"
+        assert event["type"] == "PROGRESS"
         assert event["task_id"] == "TASK-X"
         assert str(output) in event["artifact_paths"]
 

@@ -24,6 +24,7 @@ release_date: YYYY-MM-DD
 - [ ] Decisions recorded
 - [ ] Follow-up tasks created
 - [ ] Event log entry prepared
+- [ ] Emergence capture considered
 
 ## Summary
 

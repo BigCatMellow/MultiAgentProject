@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-167",
+  "title": "Command-center intake wrapper (mechanical single entry point)",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Gap-plan increment 1 (mission-control-command-center-gap-plan.md). Build a MAP CLI wrapper that accepts operator intent text, runs it through scripts/intake_request.py to produce a dispatch packet, writes the resulting packet/event, validates the wrapper's own hcom-output shape against scripts/validate_protocol.py's 6-token MATOCP subset, and prints the next graph/runner.py route. This does not replace hcom or alter live agent messaging -- it gives operator intent one place to become a structured packet before an agent treats it as task authority, per ORCHESTRATION_ENTRYPOINT_SYSTEM.md's Direct Message Policy. Read mission-control-command-center-gap-plan.md, ORCHESTRATION_ENTRYPOINT_SYSTEM.md, scripts/intake_request.py, scripts/validate_protocol.py, and map-decomposer-spec.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/scripts/command_center_intake.py",
+    "MAP_System/tests/test_command_center_intake.py"
+  ],
+  "acceptance_criteria": [
+    "Wrapper accepts operator intent text (CLI arg or stdin) and calls intake_request.py's dispatch_packet(), does not reimplement its classification logic.",
+    "Wrapper appends a canonical event recording the dispatch packet (task_type, risk_class, gap_score placeholder, owner) before printing the runner's next_route.",
+    "Wrapper's own hcom-shaped output (if any) passes validate_protocol.py's checks; a malformed wrapper output is caught by a focused test, not silently accepted.",
+    "Does not alter scripts/intake_request.py's existing classification behavior or hcom itself -- purely composes existing pieces into one entry command."
+  ]
+}

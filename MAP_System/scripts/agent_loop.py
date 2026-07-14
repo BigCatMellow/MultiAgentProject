@@ -30,7 +30,7 @@ from langgraph.types import Command, interrupt  # noqa: E402
 sys.path.insert(0, str(ROOT))
 
 from db.checkpointer import MapSqliteSaver  # noqa: E402
-from db.claims import DEFAULT_DB, claim_task, heartbeat, release_task, submit_task  # noqa: E402
+from db.claims import DEFAULT_DB, claim_task_with_reason, heartbeat, release_task, submit_task  # noqa: E402
 from db.claims import expire_leases  # noqa: E402
 
 
@@ -309,11 +309,17 @@ def claim_node(state: LoopState, config: Config) -> LoopState:
             "current_task_id": None,
             "attempt_count": int(state.get("attempt_count", 0)) + 1,
         }
-    if not claim_task(task_id, config.agent_id, lease_seconds=config.lease_seconds, db_path=config.db_path):
-        print(f"claim_failed task_id={task_id}")
+    claimed, reason = claim_task_with_reason(
+        task_id,
+        config.agent_id,
+        lease_seconds=config.lease_seconds,
+        db_path=config.db_path,
+    )
+    if not claimed:
+        print(f"claim_failed task_id={task_id} reason={reason or 'not_claimable'}")
         return {
             **state,
-            "last_result": "claim_failed",
+            "last_result": f"claim_blocked_by_{reason or 'not_claimable'}",
             "current_task": None,
             "current_task_id": None,
             "attempt_count": int(state.get("attempt_count", 0)) + 1,

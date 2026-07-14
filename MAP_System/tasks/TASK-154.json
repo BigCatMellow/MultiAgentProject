@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-154",
+  "title": "MAP 6.13: Design outcome feedback and Library-layer research path",
+  "task_type": "research",
+  "role": "researcher",
+  "status": "APPROVED",
+  "dependencies": [
+    "TASK-149",
+    "TASK-152"
+  ],
+  "owner": "command-center",
+  "description": "Wave 6 from MAP 6.13 plan. Define outcome events, validator blind-spot metrics, Library layer viability measurement, and Research System pass over external repo candidates before any Library/tool adoption. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/RESEARCH_SYSTEM.md, MAP_System/research/README.md, MAP_System/events/README.md, MAP_System/CONTEXT_SYSTEM.md, Guidelines/6.13/MAP-Repo-Review-List.md, and Guidelines/6.13/files3/MAP-Tool-Evaluation-Appendix.md before editing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-library-viability-measurement.md",
+    "MAP_System/artifacts/planning/map-outcome-feedback-spec.md",
+    "MAP_System/artifacts/research/BRIEF-0002-map-library-tool-candidates.md",
+    "MAP_System/artifacts/research/SOURCE-MAP-0002-map-library-tool-candidates.md",
+    "MAP_System/artifacts/research/SUMMARY-0002-map-library-tool-candidates.md"
+  ],
+  "acceptance_criteria": [
+    "Outcome feedback spec distinguishes validation pass from real-world outcome and defines validator blind-spot rate.",
+    "Research artifacts evaluate claude-bedrock, agentcairn, knowledge-graph-driver-rag hop-limit/token-budget pattern, agent-collab-skills acceptance gate, and codexia worktree/locking relevance.",
+    "Library viability measurement covers compression ratio, detail-needed rate, file churn, and staleness invalidation requirements.",
+    "Task makes no adoption decision without a Research Summary and measurement plan."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-146",
+  "title": "E/I backlog triage: promote/park CANDIDATE ideas 0009-0014, add operator-friction closeout habit (IDEA-0010)",
+  "task_type": "process-improvement",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-magi",
+  "description": "Operator asked to keep an eye on E/I as part of the full MAP renewal cycle (hcom #25059). 5 CANDIDATE ideas (IDEA-0009, 0010, 0011, 0013, 0014) had sat untriaged since 2026-07-02/03. Triaged all 5 with recorded reasoning: IDEA-0014 closed as PROMOTED_TO_TASK linking to TASK-144 (already in flight, no duplicate task needed); IDEA-0010 promoted -- adds a lightweight operator-friction closeout habit for CommandCenterUI/lab-workflow tasks, mirroring DEC-026's enforcement pattern; IDEA-0011 and IDEA-0013 parked as duplicative of the now-proven organic audit cadence (TASK-129/130/140/141/142/143/145) that IDEA-0012 already promoted a bounded version of; IDEA-0009 left CANDIDATE with a corroborating-evidence note (today's RnS presumed-down incident) since acting on it is an RnS/watcher implementation task, not an E/I triage decision, and is out of this task's scope.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+    "MAP_System/emergence/ideas/IDEA-0010-add-a-proactive-e-i-operator-friction-scouting-loop-for-commandc.md",
+    "MAP_System/emergence/ideas/IDEA-0011-add-a-bounded-process-steward-helper-pattern-for-complex-map-sys.md",
+    "MAP_System/emergence/ideas/IDEA-0013-add-an-idea-scouting-role-a-role-cadence-responsible-for-activel.md",
+    "MAP_System/emergence/ideas/IDEA-0014-after-gap-review-implementation-run-a-backed-up-full-folder-file.md",
+    "MAP_System/emergence/promotions/PROMO-0008-idea-0010.md",
+    "MAP_System/notes/task-authoring-guide.md"
+  ],
+  "acceptance_criteria": [
+    "All 5 CANDIDATE ideas have an explicit status update with recorded reasoning (promote/park/left-candidate-with-note)",
+    "IDEA-0010's promotion includes a concrete, bounded guidance addition (closeout-habit text), not just a status flip",
+    "emergence/INDEX.md rebuilt and validate_events/map_emergence validate pass"
+  ]
+}

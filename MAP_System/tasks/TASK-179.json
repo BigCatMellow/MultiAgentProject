@@ -1,0 +1,33 @@
+{
+  "task_id": "TASK-179",
+  "title": "Fix librarian.py wikilink path resolution (repo-root-relative and own-dir-relative)",
+  "task_type": "implementation",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Follow-on to TASK-174: fixes a real resolution bug the librarian-batch2 helper agent diagnosed while applying wikilinks to a second batch of docs. add_wikilinks_to_related_section() only resolved bullet paths relative to MAP_System/ root, so subdirectory docs using (a) repo-root-relative paths with an explicit MAP_System/ prefix, or (b) bare filenames relative to the referencing file's own directory, were all silently skipped as unresolved (10 of 12 batch-2 files got 0 conversions before this fix, 2 after). Added _resolve_related_bullet_path() trying multiple bases in the correct order; Guidelines/-prefixed refs are deliberately left unresolved since that corpus is outside this tool's validate/backlinks scope. Re-ran the fixed tool against all 12 batch-2 files: 44 wikilinks now convert cleanly, 0 broken/ambiguous. Read map-library-viability-measurement-results-2026-07-14.md and the librarian-batch2 helper's hcom diagnosis before editing further.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-library-viability-measurement-results-2026-07-14.md",
+    "MAP_System/artifacts/audits/map-real-parameter-calibration.md",
+    "MAP_System/artifacts/audits/map-sensitivity-robustness-method.md",
+    "MAP_System/artifacts/command-center-ui/mission-control-textual-prototype.md",
+    "MAP_System/artifacts/planning/map-event-trace-schema.md",
+    "MAP_System/artifacts/planning/map-protocol-validator-spec.md",
+    "MAP_System/artifacts/planning/map-semantic-validator-spec.md",
+    "MAP_System/artifacts/planning/map-validator-halt-state-spec.md",
+    "MAP_System/artifacts/planning/mission-control-write-control-spec.md",
+    "MAP_System/artifacts/tests/map-613-simulation-testdrive-probes.md",
+    "MAP_System/artifacts/tests/map-validator-halt-probe.md",
+    "MAP_System/emergence/README.md",
+    "MAP_System/scripts/librarian.py",
+    "MAP_System/tests/test_librarian.py"
+  ],
+  "acceptance_criteria": [
+    "_resolve_related_bullet_path() correctly resolves repo-root-relative (MAP_System/-prefixed) and referencing-file's-own-dir-relative bullet paths, in addition to the existing root-relative case.",
+    "Guidelines/-prefixed references are deliberately left unresolved (documented, not a bug) since that corpus is outside validate/backlinks' default scope.",
+    "Re-running the tool against the 12 batch-2 files converts substantially more bullets than before the fix (was 2 total, now 44), with librarian.py validate reporting 0 broken/ambiguous links.",
+    "Focused regression tests cover both new resolution bases and the Guidelines/ exclusion."
+  ]
+}

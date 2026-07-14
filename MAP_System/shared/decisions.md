@@ -247,3 +247,398 @@ Effect:
   owned paths are staged, validators pass, and MAP review/release gates are
   followed.
 - Repository-global operations still require the git operation lock.
+
+## DEC-015: Adopt the MAP Research System
+
+Status: approved
+Owner: command-center (directed via hcom #19306; built by claude-lab-valo, TASK-103)
+Date: 2026-07-03
+Applies-To: knowledge acquisition, research artifacts, decisions fed by research
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified the Research System as
+the highest-priority missing MAP system: MAP could move work safely and
+capture ideas safely, but had no formal process for establishing that a
+claim is true, current, and sourced before it became project truth.
+
+Effect:
+
+- `MAP_System/RESEARCH_SYSTEM.md` defines the research flow: Research
+  Question → Research Brief → Source Map → Source Evaluation → Claim
+  Evidence Matrix → Assumption Register → Research Summary → Decision or
+  HPOM Task.
+- `MAP_System/research/README.md` is the working quick-start.
+- `MAP_System/templates/research/` holds the six research templates.
+- Research conclusions that change project truth are still recorded as
+  normal `DEC-NNN` entries here; the Research System does not bypass the
+  decision log or HPOM review/release gates.
+- Unsourced claims used in tasks or decisions must be logged in an
+  Assumption Register, not silently absorbed into architecture.
+
+## DEC-016: Adopt the MAP Self-Repair System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-105)
+Date: 2026-07-03
+Applies-To: repair behavior across MAP validators, reconciliation, and health checks
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Self-Repair as gap
+#2: MAP already had repair behavior (validators, `reconcile_agents.py`,
+`map_emergence.py stale`, `map_metrics.py`, `local_assistant_health.py`,
+`test_exporter_invariants.py`) but no formal module tying it together.
+
+Effect:
+
+- `MAP_System/SELF_REPAIR_SYSTEM.md` defines repair severity levels
+  (COSMETIC/DRIFT/BLOCKING/STRUCTURAL), automatic-repair permissions by
+  HPOM tier, escalation rules, verification plans, and follow-up
+  prevention.
+- `MAP_System/repairs/README.md` is the working quick-start.
+- `MAP_System/templates/repairs/` holds the Repair Record and Health Check
+  Report templates.
+- STRUCTURAL repairs still require command-center approval or a normal
+  decision entry — Self-Repair does not grant agents new unilateral
+  authority.
+- Cross-linked to the Research System (DEC-015): stale/contradictory facts
+  identified by research are DRIFT/BLOCKING repair targets here. Cross-
+  linked to Emergence: recurring repairs should be captured as insights
+  and promoted into permanent validator/template/decision fixes.
+
+## DEC-017: Adopt the MAP Context System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-107)
+Date: 2026-07-03
+Applies-To: context assembly for tasks, reviews, research, and repairs
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified the Context System
+as gap #3: `notes/context-routing-guide.md` and `shared/memory-map.md`
+already define what to read and in what order, but context itself was not
+formalized as a bounded packet with required/optional/forbidden content,
+staleness handling, token-budget rules, and a local-summarizer boundary.
+
+Effect:
+
+- `MAP_System/CONTEXT_SYSTEM.md` defines the context packet format,
+  required context by task type, forbidden context loading, stale-context
+  handling (as a Self-Repair DRIFT target), token-budget rules, the
+  local-summarizer role (Tier 3 per `shared/hpom.md`), and compression
+  rules.
+- `MAP_System/templates/CONTEXT_PACKET_TEMPLATE.md` is the packet template.
+- Does not replace `notes/context-routing-guide.md`'s situational routing
+  table — governs the packet that guide produces.
+- Cross-linked to the Research System (DEC-015, packets carry Research
+  Summaries not raw sourcing), Self-Repair System (DEC-016, stale context
+  is a repair target), and Emergence (recurring context gaps become
+  insights).
+
+## DEC-018: Adopt the MAP Decision / Authority System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-108)
+Date: 2026-07-03
+Applies-To: who may decide what; Class: AUTHORITY
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified the Decision /
+Authority System as gap #4: `shared/decisions.md` records decisions well
+but does not formally define who is entitled to make them, what requires
+command-center approval, or how proposals get promoted to binding
+decisions.
+
+Effect:
+
+- `MAP_System/DECISION_AUTHORITY_SYSTEM.md` applies `shared/hpom.md`'s
+  authority tiers specifically to decision rights, defines human-approval
+  requirements, supersession rules, and proposal-to-decision promotion.
+- `MAP_System/DECISION_CLASSES.md` defines five decision classes
+  (ARCHITECTURE, OWNERSHIP, SCOPE, AUTHORITY, POLICY) with the minimum
+  approval level each requires.
+- Cross-linked to Self-Repair (STRUCTURAL repairs are proposals routed
+  through this system) and Research (unresolved contradictions are
+  proposals routed through this system).
+- This decision is itself class AUTHORITY and required command-center
+  direction to adopt, consistent with the rule it establishes.
+
+## DEC-019: Adopt the MAP Human Interface System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-110)
+Date: 2026-07-03
+Applies-To: operator dashboard content contract; Class: ARCHITECTURE
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified the Human Interface
+System as gap #5: a CommandCenterUI prototype exists but there was no
+formal definition of what an operator dashboard should surface without
+requiring a full-repository read.
+
+Effect:
+
+- `MAP_System/HUMAN_INTERFACE_SYSTEM.md` defines the dashboard content
+  contract: current status, pending decisions, blocked tasks, review
+  queue, open repairs, open research questions, recent insights, agent
+  availability, and next recommended actions, plus what counts as noise
+  to exclude.
+- Does not replace or require rebuilding the existing CommandCenterUI
+  prototype (`artifacts/command-center-ui/`) — specifies what "done" looks
+  like for its live hcom/MAP wiring.
+- Cross-linked to Decision/Authority (DEC-018, pending decisions),
+  Self-Repair (DEC-016, open repairs), Research (DEC-015, open questions),
+  and Emergence (recent insights).
+
+## DEC-020: Adopt the MAP Risk System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-111)
+Date: 2026-07-03
+Applies-To: risk classes, register, escalation, acceptance; Class: ARCHITECTURE
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Risk as a secondary
+gap: risk signals already exist (review severity, security second-pass,
+current-state health issues, improvement backlog, constraints) but were
+scattered without a register or escalation discipline.
+
+Effect:
+
+- `MAP_System/RISK_SYSTEM.md` defines risk classes (SECURITY, DATA,
+  PROCESS, AVAILABILITY, KNOWLEDGE), reuses Self-Repair's four-level
+  severity vocabulary, and defines register format, owners, review
+  cadence, escalation, and acceptance.
+- `MAP_System/templates/RISK_REGISTER_TEMPLATE.md` is the entry template.
+- Risk acceptance is itself a decision routed through
+  `DECISION_AUTHORITY_SYSTEM.md`, not a separate authority path.
+- Cross-linked to Self-Repair (risk-bearing drift), Decision/Authority
+  (acceptance routing), Human Interface (dashboard surfacing), and
+  Research (unresolved contradictions as KNOWLEDGE-class risk).
+
+## DEC-021: Adopt the MAP Security / Permissions System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-112)
+Date: 2026-07-03
+Applies-To: agent permission levels, destructive actions, trust boundaries; Class: AUTHORITY
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Security/Permissions
+as a secondary gap: `AGENTS.md`'s Security Second Pass rule exists but
+there was no formal permission-level model, destructive-action policy, or
+trust boundary model underneath it.
+
+Effect:
+
+- `MAP_System/SECURITY_PERMISSIONS_SYSTEM.md` defines the trust boundary
+  model (repo/machine/network), secret handling, and external-service
+  policy; extends rather than replaces `AGENTS.md`'s Security Second Pass
+  rule.
+- `MAP_System/AGENT_PERMISSION_LEVELS.md` maps `shared/hpom.md` tiers to
+  concrete read/write/shell/network permissions.
+- `MAP_System/DESTRUCTIVE_ACTION_POLICY.md` defines what counts as
+  destructive and the required confirmation/approval before a core agent
+  acts.
+- Cross-linked to Risk (SECURITY-class exposure), Decision/Authority
+  (permission/scope changes require approval), and Self-Repair
+  (STRUCTURAL security drift).
+- This decision is itself class AUTHORITY and required command-center
+  direction to adopt.
+
+## DEC-022: Adopt the MAP Change Control System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-114)
+Date: 2026-07-03
+Applies-To: change requests, release records, rollback, changelog, retirement; Class: ARCHITECTURE
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Change Control as a
+secondary gap: Git tooling, the git operation lock, and the release-path
+smoke checklist already exist, but change request format, release-record
+requirements, rollback notes, changelog policy, migration notes, version
+tags, and artifact retirement were not formalized.
+
+Effect:
+
+- `MAP_System/CHANGE_CONTROL_SYSTEM.md` formalizes the task file itself as
+  the change request, names the existing Review Gate as the diff-review
+  requirement, requires the `artifacts/releases/` checklist convention
+  (already used by TASK-101 through TASK-112) for any task touching
+  shared/template/canonical files, and defines rollback-notes,
+  changelog, migration-notes, version-tag, and retirement rules.
+- Declines to add a new version-tag scheme (TASK-NNN/DEC-NNN already serve
+  that role) and a new MAP-system-level changelog file (decisions.md +
+  events.jsonl already serve that role) — avoids duplicating existing
+  identifiers per the documentation style guide's pushback rule.
+- Cross-linked to Self-Repair (rollback-as-repair), Decision/Authority
+  (AUTHORITY/POLICY-class changes), Risk (irreversible-change risk), and
+  Human Interface (review-queue surfacing).
+
+## DEC-023: Adopt the MAP Project Bootstrapping System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-115)
+Date: 2026-07-03
+Applies-To: new-project bootstrap workflow; Class: ARCHITECTURE
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Project
+Bootstrapping as a secondary gap: `notes/brain-organization-guide.md`
+already defines a strong folder layout, but there was no formal workflow
+requiring a new project to establish intent, assumptions, research needs,
+quality standards, risks, and decision paths before its first task.
+
+Effect:
+
+- `MAP_System/PROJECT_BOOTSTRAPPING_SYSTEM.md` defines the six
+  pre-first-task requirements and points to `RESEARCH_SYSTEM.md`,
+  `RISK_SYSTEM.md`, and `DECISION_AUTHORITY_SYSTEM.md` as the source for
+  three of them.
+- `MAP_System/NEW_PROJECT_WIZARD.md` is the step-by-step checklist.
+- Extends `notes/brain-organization-guide.md` rather than duplicating its
+  folder layout; that guide now links back to this system.
+- Skip conditions apply for trivial/throwaway projects per `shared/hpom.md`
+  routing questions.
+
+## DEC-024: Adopt the MAP Archive/Retention System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-117)
+Date: 2026-07-03
+Applies-To: archive statuses, retention rules, compaction cadence; Class: ARCHITECTURE
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Archive/Retention
+as a secondary gap: `notes/brain-compaction-guide.md` already defines
+compaction mechanics, but archive statuses and the distinction between
+archiving and artifact retirement were not formalized.
+
+Effect:
+
+- `MAP_System/ARCHIVE_RETENTION_SYSTEM.md` defines archive statuses
+  (ACTIVE, COMPACTED, HISTORICAL), retention rules, and draws the line
+  between retirement (`CHANGE_CONTROL_SYSTEM.md`, marking an artifact
+  invalid in place) and archiving (moving genuinely inactive content out
+  of the active-memory budget).
+- Extends `notes/brain-compaction-guide.md` rather than duplicating its
+  compaction trigger/cadence logic.
+- Cross-linked to Self-Repair (stale-but-active content is a repair
+  target, not an archiving target), Change Control (retirement vs.
+  archiving distinction), and Context System (archive/historical content
+  excluded from default context).
+
+## DEC-025: Adopt the MAP Retrospective / Learning System
+
+Status: approved
+Owner: command-center (directed via hcom #19306/#19718; built by claude-lab-valo, TASK-118)
+Date: 2026-07-03
+Applies-To: end-of-cycle retrospective loop; Class: ARCHITECTURE
+
+`MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` identified Retrospective/Learning
+as the last and weakest secondary gap: the improvement backlog and
+Emergence capture individual findings, but no formal end-of-cycle loop
+asked what worked, what failed, what caused rework, and what should become
+permanent.
+
+Effect:
+
+- `MAP_System/RETROSPECTIVE_SYSTEM.md` defines the retrospective loop and
+  its relationship to Self-Repair's incident-scale prevention (this system
+  runs at cycle scale instead).
+- `MAP_System/templates/RETROSPECTIVE_TEMPLATE.md` is the record template.
+- Includes RETRO-0001, a worked retrospective of the TASK-103 through
+  TASK-117 gap-review build sequence itself, which found a recurring
+  output_paths-registration gap for cross-linked files and applied the fix
+  directly to `notes/task-authoring-guide.md` (logged in
+  `shared/improvement-backlog.md` as applied).
+- Cross-linked to Self-Repair, Emergence, the improvement backlog, and
+  Change Control.
+- This completes the full build sequence identified in
+  `MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md`: all systems named as
+  priority or secondary gaps (Research, Self-Repair, Context,
+  Decision/Authority, Human Interface, Risk, Security/Permissions, Change
+  Control, Project Bootstrapping, Archive/Retention, Retrospective) are
+  now built.
+
+## DEC-026: Make Emergence Capture Mandatory Per-Project, Enforced Through MAP
+
+Status: approved
+Owner: command-center (direct operator instruction; built by claude-lab-valo, TASK-126)
+Date: 2026-07-03
+Applies-To: every project's bootstrap and every task's release; Class: POLICY
+
+The operator identified that the Emergence/Insight (E/I) system was
+never used during the entire ProjectUpdater build (TASK-123 through
+TASK-125) despite `emergence/README.md` already existing and defining
+project-level insight/idea/experiment/synthesis folders, and real
+insights surfacing during that build (a Playwright install workaround, a
+risk-mitigation idea, a completeness-gap pattern) that went uncaptured
+until asked about directly. Operator directive: backfill proper records
+for ProjectUpdater now, and make Emergence capture mandatory for every
+project going forward, enforced through MAP rather than left as a
+documentation-only suggestion.
+
+Effect:
+
+- Backfilled `INS-0011`, `INS-0012`, `INS-0013`, and `IDEA-0015` for
+  ProjectUpdater (tagged `Project: ProjectUpdater`), triaged (not left
+  `RAW`), and rebuilt the emergence index.
+- Created `Projects/ProjectUpdater/{insights,ideas,experiments,synthesis}/`
+  retroactively, matching the new bootstrap requirement below.
+- `PROJECT_BOOTSTRAPPING_SYSTEM.md` (amended): added a 7th
+  pre-first-task requirement ("Emergence capacity") and a new "Ongoing
+  Emergence capture" section clarifying this is not a one-time bootstrap
+  checkbox like the other six.
+- `NEW_PROJECT_WIZARD.md` (amended): added step 7 (create empty Emergence
+  folders at bootstrap) and step 9 (consider Emergence capture at every
+  task's submission).
+- `CHANGE_CONTROL_SYSTEM.md` (amended) and `scripts/release_task.py`
+  (amended): `REQUIRED_CHECKS` now includes a literal
+  `- [x] Emergence capture considered` line, mechanically blocking
+  `release_task.py` from marking any task `RELEASED` without it — same
+  enforcement mechanism as the three existing required checklist items.
+  A checklist may honestly say "considered, nothing worth capturing";
+  the gate blocks only a missing line, not a "no" answer.
+- `templates/release-checklist.md` and `tests/test_release_gate.py`
+  updated to match; new focused test
+  `test_missing_emergence_line_blocks_release` added and passing.
+- This decision is itself class POLICY and was approved directly by
+  command-center instruction, per `DECISION_AUTHORITY_SYSTEM.md`.
+
+## DEC-027: Research System Stays Specification-Only Until A Real Research Question Exists
+
+Status: approved
+Owner: claude-lab-magi (TASK-142, follow-up to TASK-129/130/140/141)
+Date: 2026-07-04
+Applies-To: Research System use across all projects; Class: SCOPE (core
+agent, propose-and-record; not AUTHORITY or POLICY because it does not
+change who may decide or a cross-MAP rule, only what is currently in bounds
+for Research System use)
+
+TASK-129/130 found the Research System (`RESEARCH_SYSTEM.md`, six templates
+in `templates/research/`, `validate_research_artifacts.py`) is fully built
+and validator-backed but has zero real Research Brief / Source Map / Claim
+Evidence Matrix / Assumption Register / Research Summary artifacts in
+`artifacts/research/` beyond the README. ProjectUpdater's bootstrap
+explicitly recorded that no external-dependency research brief was needed.
+The operator asked directly (TASK-142 broadcast) whether E/I and Research
+need improvement and whether all built systems are actually being used.
+
+Answer for Research, recorded as a decision rather than left implicit:
+
+- E/I (Emergence) does not need more building — it is genuinely used and
+  mechanically enforced (DEC-026, `release_task.py`'s required
+  `Emergence capture considered` line). No action needed there.
+- Research is different in kind: it isn't under-enforced, it's
+  under-*needed*. Every task so far has had its unknowns resolved by reading
+  code, existing docs, or asking the operator directly — none has hit the
+  shape Research is for (an external claim, a third-party library choice, a
+  contested technical fact) that benefits from a structured brief/source
+  map/evidence trail. Building fake research artifacts to make the system
+  look used would be the box-ticking-ceremony failure mode DEC-026 already
+  named as a risk for Emergence, applied to a different system.
+
+Effect:
+
+- Research System stays exactly as built (validator, templates, README) with
+  no forced sample artifact.
+- The next task that has a genuine external/contested-fact research need
+  must use `templates/research/` for it — this decision does not lower the
+  bar, it only declines to invent a need that does not exist yet.
+- `artifacts/research/README.md` should link this decision so a future
+  reader does not mistake the empty folder for an unbuilt or abandoned
+  system.
+- Revisit this decision (supersede or amend) the first time a task's
+  unresolved-questions or review reveals a real unverified external claim
+  that should have gone through a Research Brief but didn't.

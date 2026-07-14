@@ -9,47 +9,47 @@ Status: PROPOSED
 
 ## Hypothesis
 
-<What do we think will happen if we run this experiment?>
+- hyp: <expected result>
 
 ## Test
 
-<What small, specific action will test the idea?>
+- test: <small action>
 
 ## Scope
 
-<What files, artifacts, tasks, or systems may be changed during this experiment?>
+- scope: <files/systems allowed>
 
 ## Limits
 
-<What must not be changed? What is explicitly out of scope?>
+- limits: <explicit no-go>
 
 ## Success criteria
 
-<How do we know the experiment worked? Be specific and measurable.>
+- pass: <measurable pass>
 
 ## Failure criteria
 
-<How do we know it did not work? What result means we should stop or revise?>
+- fail: <stop/revise signal>
 
 ## Evidence to collect
 
--
+- ev:
 
 ## Review path
 
-<Who reviews the result? What is the review format?>
+- review:
 
 ## Result
 
-Pending.
+- result: pending
 
 ## Decision
 
-- [ ] Adopt — promote the idea to a task or decision record
-- [ ] Revise — adjust the idea and run again
-- [ ] Reject — the experiment did not support the idea
-- [ ] Park — inconclusive; revisit later
+- [ ] adopt
+- [ ] revise
+- [ ] reject
+- [ ] park
 
 ## Notes
 
--
+- note:

@@ -12,8 +12,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+try:
+    from MAP_System.scripts.event_trace import add_trace_fields
+except ModuleNotFoundError:  # direct script execution
+    from event_trace import add_trace_fields
+
 VALIDATE_REVIEW = Path(__file__).resolve().parent / "validate_review.py"
 RELEASE_TASK = Path(__file__).resolve().parent / "release_task.py"
+VALIDATE_TASK_MIRRORS = Path(__file__).resolve().parent / "validate_task_mirrors.py"
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -106,6 +112,7 @@ def append_event(
         "summary": summary,
         "artifact_paths": paths,
     }
+    add_trace_fields(payload, actor=sender, action=event_type.lower(), target=task_id)
     event_log.parent.mkdir(parents=True, exist_ok=True)
     with event_log.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(payload, separators=(",", ":")) + "\n")
@@ -126,6 +133,15 @@ def sync_files(db_path: Path, output_dir: Path | None) -> None:
     if output_dir:
         cmd.extend(["--output-dir", str(output_dir)])
     subprocess.run(cmd, cwd=ROOT.parent, check=True)
+
+
+def validate_task_mirrors(db_path: Path, output_dir: Path | None) -> None:
+    root = output_dir if output_dir else ROOT
+    subprocess.run(
+        [sys.executable, str(VALIDATE_TASK_MIRRORS), "--db", str(db_path), "--root", str(root)],
+        cwd=ROOT.parent,
+        check=True,
+    )
 
 
 def is_review_shape(task_type: str, role: str) -> bool:
@@ -230,6 +246,8 @@ def set_review_state(args: argparse.Namespace, *, approved: bool) -> int:
             print(result.stderr, file=sys.stderr, end="")
             raise UsageError(f"review record validation failed for {args.task_id}")
 
+    validate_task_mirrors(args.db, args.output_dir)
+
     with connect(args.db) as conn:
         task = conn.execute("SELECT status, title FROM tasks WHERE task_id=?", (args.task_id,)).fetchone()
         if task is None:
@@ -296,6 +314,50 @@ def rework_task(args: argparse.Namespace) -> int:
     )
     sync_files(args.db, args.output_dir)
     print(json.dumps({"task_id": args.task_id, "status": "READY"}, separators=(",", ":")))
+    return 0
+
+
+def add_output_path(args: argparse.Namespace) -> int:
+    """Register an additional output path on an existing task.
+
+    Fills a real gap: before this, the only sanctioned way to change
+    output_paths after `create` was to hand-edit the file mirrors, which a
+    later `sync_files()` call (triggered by any other map_task.py command,
+    e.g. another task's approve) silently overwrites back to the DB's
+    stale value — found live during TASK-141/REPAIR-0005.
+    """
+    editable_states = {"NEEDS_SHAPING", "READY", "IN_PROGRESS", "CHANGES_REQUESTED"}
+    with connect(args.db) as conn:
+        row = conn.execute("SELECT status FROM tasks WHERE task_id=?", (args.task_id,)).fetchone()
+        if row is None:
+            raise UsageError(f"unknown task: {args.task_id}")
+        status = row["status"]
+        if status not in editable_states:
+            raise UsageError(
+                f"{args.task_id} is {status}, not editable "
+                f"(add-output-path only allows {sorted(editable_states)})"
+            )
+        exists = conn.execute(
+            "SELECT 1 FROM task_output_paths WHERE task_id=? AND path=?",
+            (args.task_id, args.path),
+        ).fetchone()
+        if not exists:
+            conn.execute(
+                "INSERT INTO task_output_paths (task_id, path) VALUES (?, ?)",
+                (args.task_id, args.path),
+            )
+        ensure_agent(conn, args.actor)
+    append_event(
+        args.db,
+        args.event_log,
+        "PROGRESS",
+        args.task_id,
+        args.actor,
+        f"{args.task_id} output_paths: registered {args.path}",
+        [f"MAP_System/tasks/{args.task_id}.json", "MAP_System/workflow/task_graph.json"],
+    )
+    sync_files(args.db, args.output_dir)
+    print(json.dumps({"task_id": args.task_id, "added": args.path}, separators=(",", ":")))
     return 0
 
 
@@ -452,6 +514,12 @@ def parse_args() -> argparse.Namespace:
     release.add_argument("--checklist", type=Path, required=True)
     release.add_argument("--summary", default="")
     release.set_defaults(func=release_task_state)
+
+    add_output = sub.add_parser("add-output-path", help="Register an additional output path on an existing task")
+    add_output.add_argument("task_id")
+    add_output.add_argument("--path", required=True)
+    add_output.add_argument("--actor", required=True)
+    add_output.set_defaults(func=add_output_path)
 
     show = sub.add_parser("show")
     show.add_argument("task_id")

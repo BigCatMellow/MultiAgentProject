@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-140",
+  "title": "Audit MAP process use in Command Center Lab",
+  "task_type": "process-audit",
+  "role": "MAP process auditor and corrective implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-neko",
+  "description": "Review whether the Command Center Lab is using available MAP processes correctly and consistently, with emphasis on recent operating-loop friction, helper routing, hcom/Monitor use, route/status checks, task/review/release gates, and opportunities for low-risk self-repair or documentation improvements.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/README.md",
+    "MAP_System/artifacts/reports/task-140-process-use-audit.md",
+    "MAP_System/notes/helper-agent-guide.md",
+    "MAP_System/scripts/reconcile_agents.py",
+    "MAP_System/tasks/TASK-140.json",
+    "MAP_System/tests/test_reconcile_agents.py",
+    "MAP_System/workflow/task_graph.json"
+  ],
+  "acceptance_criteria": [
+    "Audit covers recent route/task/event/helper behavior against documented MAP/HPOM processes",
+    "Findings distinguish documented-but-unused systems from operational gaps observed in recent work",
+    "Low-risk process/documentation fixes are implemented directly, while larger changes are recorded as recommendations or follow-up tasks",
+    "Audit is submitted for independent review and not self-approved"
+  ]
+}

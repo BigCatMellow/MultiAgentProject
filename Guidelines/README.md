@@ -22,6 +22,12 @@ For MAP-specific operating rules, see `MAP_System/AGENTS.md` and `MAP_System/not
 | `ai-improvement-scout-protocol.md` | How to audit a project and surface improvement candidates |
 | `agent-file-watch-mode-outline.md` | Outline for file-watch-based agent trigger patterns |
 
+## Compatibility Pointers
+
+| File | Canonical location |
+|---|---|
+| `MAP_repo_systems_gap_review.md` | `MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md` |
+
 ## What does NOT live here
 
 - MAP operating rules → `MAP_System/AGENTS.md`

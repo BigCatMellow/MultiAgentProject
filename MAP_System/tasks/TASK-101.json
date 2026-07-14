@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-101",
+  "title": "Add source/mirror invariant tests for MAP exports",
+  "task_type": "maintenance",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-lema",
+  "description": "Effectiveness review item: source-of-truth drift recurred across map.db, task JSON, workflow graph, and agents/status.json. Add focused regression tests so exporter/seeder changes must preserve DB-to-file invariants, including task status consistency and documented filtered operational agent export semantics.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/status.json",
+    "MAP_System/migration/export_to_files.py",
+    "MAP_System/migration/seed_from_files.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_task_graph.py",
+    "MAP_System/tests/test_exporter_invariants.py",
+    "MAP_System/tests/test_validate_task_graph_shared_outputs.py"
+  ],
+  "acceptance_criteria": [
+    "Tests fail if task status in SQLite diverges from exported task JSON or workflow/task_graph.json",
+    "Tests encode agents/status.json filtered operational view semantics for inactive historical/tool identities",
+    "Full MAP test suite passes"
+  ]
+}

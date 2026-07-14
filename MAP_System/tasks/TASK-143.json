@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-143",
+  "title": "Add task-state mirror reconciliation gate",
+  "task_type": "implementation",
+  "role": "worker",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-veto",
+  "description": "Implement a focused MAP gate that compares canonical SQLite task state with file mirrors in MAP_System/tasks/TASK-*.json and MAP_System/workflow/task_graph.json before review/release, addressing TASK-140/TASK-141 findings about manual SQLite/file sync drift. Also record a short systems-use decision note answering whether Emergence/Insights and Research need improvement or forced adoption.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/task-143-systems-use-note.md",
+    "MAP_System/scripts/map_task.py",
+    "MAP_System/scripts/release_task.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_task_mirrors.py",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/improvement-backlog.md",
+    "MAP_System/tasks",
+    "MAP_System/tests/test_release_gate.py",
+    "MAP_System/tests/test_review_gate.py",
+    "MAP_System/tests/test_validate_task_mirrors.py"
+  ],
+  "acceptance_criteria": [
+    "A validator detects mismatches between SQLite task status/output_paths and task JSON mirrors plus workflow/task_graph.json for active tasks.",
+    "Release/review workflow has a documented or scripted way to run the mirror check.",
+    "Regression tests cover matching state and deliberate mismatch cases.",
+    "A durable note answers the systems-use question: which systems are used, which remain specification-only, and whether Emergence/Insights or Research needs immediate improvement."
+  ]
+}

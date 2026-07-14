@@ -1,0 +1,34 @@
+{
+  "task_id": "TASK-144",
+  "title": "Full MAP renewal assessment and cleanup cycle",
+  "task_type": "process-improvement",
+  "role": "coordinator",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-veto",
+  "description": "Operator-requested full assessment of MAP system folders, structure, wording, processes, Emergence/Insights, LangGraph use, HPOM, and stale-old-vs-new alignment. Make a whole MAP backup before edits, run current validators and targeted research where needed, produce a renewal assessment, and implement bounded safe improvements or create follow-up tasks for larger changes.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/task-144-map-renewal-assessment.md",
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/insights/INS-0016-validator-coverage-must-include-live-command-surfaces-not-only-d.md",
+    "MAP_System/events/README.md",
+    "MAP_System/requirements.txt",
+    "MAP_System/scripts/agent-deck",
+    "MAP_System/scripts/ai-command-center-antigravity",
+    "MAP_System/scripts/ai-command-center-cli",
+    "MAP_System/scripts/ai-command-center-shell",
+    "MAP_System/scripts/validate_canonical_repo_paths.py",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/improvement-backlog.md",
+    "MAP_System/tasks",
+    "MAP_System/workflow/task_graph.json",
+    "Projects/Backups/MAP_System-backup-2026-07-04T043707Z"
+  ],
+  "acceptance_criteria": [
+    "A whole MAP_System backup exists before any renewal edits and its path is recorded in the assessment.",
+    "Assessment covers folder structure, stale wording/path drift, process gates, Emergence/Insights, Research use, LangGraph/graph use, HPOM, and open improvement backlog.",
+    "Safe high-confidence wording/process cleanups are implemented under declared output paths; larger or risky changes become explicit follow-up tasks instead of silent broad edits.",
+    "Relevant validators and tests are run, including task mirrors, task graph, shared state, decisions, events, emergence, and the full MAP test suite when feasible."
+  ]
+}

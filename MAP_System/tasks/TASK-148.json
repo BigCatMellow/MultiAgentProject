@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-148",
+  "title": "MAP 6.13: Plan cold-start migration for runtime changes",
+  "task_type": "planning",
+  "role": "planner",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "command-center",
+  "description": "Wave 1.5 from MAP 6.13 plan. Inventory current MAP state and write a migration rollout plan before shipping new runtime layers, so the project does not repeat repo-drift, two-copy, task-mirror, hcom-session, or CommandCenterUI state incidents. Read MAP_System/artifacts/planning/map-613-master-implementation-plan.md, MAP_System/shared/current-state.md, MAP_System/shared/canonical-repo.md, MAP_System/notes/git-setup.md, MAP_System/workflow/task_graph.json, MAP_System/agents/status.json, and Projects/Pathwell routing notes before writing.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/planning/map-runtime-migration-inventory.md",
+    "MAP_System/artifacts/planning/map-runtime-migration-plan.md",
+    "MAP_System/artifacts/tests/map-runtime-migration-smoke.md"
+  ],
+  "acceptance_criteria": [
+    "Inventory names current canonical repo, SQLite/file mirrors, task graph, event log, hcom session state, helper notes, agent status, Pathwell/private project state, and CommandCenterUI assumptions.",
+    "Rollout plan includes order of operations, freeze/lock points, rollback points, validation commands, operator checkpoints, and do-not-proceed gates.",
+    "Smoke-check artifact lists pre/post validation commands for canonical path, task mirrors, event baseline, agent status, and CommandCenterUI state."
+  ],
+  "claimed_by": "claude-lab-zera"
+}

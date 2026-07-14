@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-175",
+  "title": "Exercise command-center runtime surfaces",
+  "task_type": "audit",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Operator directive follow-up: exercise the built Command Center, LangGraph runner, RnS/liveness, HPOM pre-dispatch, mission-control, and replay surfaces with real commands, then record what is active, stale, or missing. This task does not edit external CommandCenterUI; it may read it for currency evidence.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/command-center-runtime-exercise-2026-07-14.md"
+  ],
+  "acceptance_criteria": [
+    "Artifact records real command outputs for runner, command-center intake dry-run, mission-control JSON, liveness/RnS dry-run, HPOM/pre-dispatch, and session replay status.",
+    "Artifact distinguishes actively working mechanisms from stale or not-yet-integrated mechanisms and names concrete follow-up implementation tasks.",
+    "Artifact checks external CommandCenterUI currency read-only and states whether a separate approved edit task is needed.",
+    "Task avoids editing external CommandCenterUI or overlapping TASK-174 output paths."
+  ]
+}

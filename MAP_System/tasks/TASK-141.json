@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-141",
+  "title": "MAP systems-adherence audit + emergence ID-allocation race fix",
+  "task_type": "process-audit",
+  "role": "MAP process auditor and corrective implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-vino",
+  "description": "Operator asked to review whether MAP processes are being used properly and find room for improvement (hcom #24367). Split with codex-lab-neko (TASK-140 covers operating-loop/mechanics); this task covers systems-adherence: which of the ~15 documented systems are genuinely exercised vs specification-only, building on TASK-129/130's prior audit. Found and fixed a real gap the prior audit missed: map_emergence.py's create-artifact ID allocation (next_id()) had no lock at all, unlike what TASK-129's Finding 2 assumed -- reproduced a genuine ID collision under concurrent creation, then fixed it with a per-kind file lock (MAP_System/.locks/emergence-<prefix>.lock), verified the fix closes the race, and confirmed the two previously-recommended-but-never-built follow-ups (map_repair.py ID allocation, a second Retrospective record) are still open. Also files a standalone RETRO-0002 for today's ProjectUpdater/CommandCenterUI cycle (TASK-135-139), since the last audit found Retrospective specifically under-used.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/RETROSPECTIVE_SYSTEM.md",
+    "MAP_System/artifacts/audits/task-141-systems-adherence-followup.md",
+    "MAP_System/repairs/",
+    "MAP_System/retros/",
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/scripts/map_task.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/shared/improvement-backlog.md",
+    "MAP_System/tasks/",
+    "MAP_System/tests/test_map_task_add_output_path.py"
+  ],
+  "acceptance_criteria": [
+    "map_emergence.py's create-artifact ID allocation is race-safe under concurrent invocation (demonstrated by a before/after reproduction, not just re-running the existing test suite)",
+    "Audit artifact distinguishes genuinely-exercised systems from documented-but-unused ones, cross-referencing TASK-129/130 rather than re-deriving from scratch",
+    "A standalone RETRO-0002 record exists for the TASK-135-139 cycle using templates/RETROSPECTIVE_TEMPLATE.md",
+    "Existing map_emergence.py tests and the full MAP validator suite still pass",
+    "Task is submitted for independent review, not self-approved"
+  ]
+}

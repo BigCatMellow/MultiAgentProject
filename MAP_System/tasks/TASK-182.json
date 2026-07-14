@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-182",
+  "title": "CommandCenterUI currency: MAP runtime health cards",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-mira",
+  "description": "Operator directive (hcom #33284 context, #33409 lead assignment, and model-upgrade directive): bring external CommandCenterUI current with the MAP runtime built in TASK-171-179. Add a read-only /api/map/health endpoint to app/server.py aggregating LangGraph runner route, librarian validation, session-replay status, and RnS/limit-watcher staleness, plus a MAP health card strip in the chat UI. Operator messages naming Claude as agent-in-charge and 'get it done and implemented as needed' are treated as the explicit approval TASK-175 required for naming /home/home/Projects/CommandCenterUI as an output boundary. Read-only against MAP state; no writes to MAP_System from the UI.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/README.md",
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js",
+    "MAP_System/artifacts/command-center-ui/task-182-map-health-cards.md"
+  ],
+  "acceptance_criteria": [
+    "GET /api/map/health returns JSON with runner route, librarian finding_count, session-replay safe_for_mission_control/drift, and RnS stale-incident summary, each with per-source error isolation so one failed source cannot break the endpoint.",
+    "Endpoint is read-only: no MAP_System file writes, no subprocess with write side effects; MAP scripts invoked are validate/status/route computations only.",
+    "Chat UI renders a MAP health card strip from the endpoint with OK/WARN/ERROR states and degrades gracefully when the endpoint or a source is unavailable.",
+    "Responses are cached with a short TTL so UI polling does not hammer MAP scripts.",
+    "Verified live: server started, endpoint curled, UI screenshot or DOM check confirming cards render; results recorded in the MAP-side artifact.",
+    "Pre-existing uncommitted ProjectUpdater work in the repo is baseline-committed separately before TASK-182 changes so the task diff is reviewable in isolation."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "task_id": "TASK-130",
+  "title": "Gather MAP systems real-usage evidence for TASK-129",
+  "task_type": "audit",
+  "role": "evidence gatherer",
+  "status": "RELEASED",
+  "dependencies": [
+    "TASK-129"
+  ],
+  "owner": "codex-lab-muva",
+  "description": "Dependent findings-only slice for TASK-129. Gather grep-backed real-usage evidence for the MAP systems built in TASK-103 through TASK-126, distinguishing operational use from documentation-only existence. Do not edit system documents or implement fixes; provide evidence to the TASK-129 Process Steward for routing into repairs or follow-up tasks.",
+  "objective": "Gather grep-backed evidence for whether the MAP systems built in TASK-103 through TASK-126 are being used operationally beyond their own build artifacts, and hand the findings to TASK-129 without applying fixes.",
+  "required_context": [
+    "MAP_System/tasks/TASK-129.json",
+    "MAP_System/tasks/TASK-130.json",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/*_SYSTEM.md",
+    "MAP_System/templates/",
+    "MAP_System/scripts/",
+    "MAP_System/artifacts/",
+    "Projects/ProjectUpdater/"
+  ],
+  "files_in_scope": [
+    "MAP_System/artifacts/audits/task-130-map-systems-real-usage-evidence.md",
+    "MAP_System/tasks/TASK-130.json",
+    "MAP_System/events/events.jsonl",
+    "MAP_System/workflow/task_graph.json"
+  ],
+  "forbidden_changes": [
+    "Do not edit MAP system documents, templates, validators, runtime scripts, or project source files.",
+    "Do not create repair records or follow-up implementation tasks unless the TASK-129 steward requests them.",
+    "Do not resolve the TASK-127/TASK-128 duplicate race inside this findings task."
+  ],
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/task-130-map-systems-real-usage-evidence.md"
+  ],
+  "acceptance_criteria": [
+    "Evidence note covers each newly built MAP system from Research through Retrospective plus DEC-026 Emergence enforcement where relevant",
+    "Findings distinguish actual operational/template/script usage from documentation-only mentions using reproducible grep/file evidence",
+    "No system documents, templates, validators, or runtime behavior are changed by this findings-only slice",
+    "Report is stored under MAP_System/artifacts/audits/ with unique task-scoped path coordination",
+    "Task graph and event validation pass before submission"
+  ],
+  "expected_artifacts": [
+    "MAP_System/artifacts/audits/task-130-map-systems-real-usage-evidence.md"
+  ],
+  "reviewer_role": "TASK-129 Process Steward or non-owner MAP reviewer",
+  "risk": "Low implementation risk because this is findings-only, but medium process risk if the evidence overstates documentation mentions as real operational use."
+}

@@ -15,6 +15,7 @@ REPO = ROOT.parent
 SCHEMA = ROOT / "migration" / "schema.sql"
 RELEASE_TASK = ROOT / "scripts" / "release_task.py"
 MAP_TASK = ROOT / "scripts" / "map_task.py"
+EXPORTER = ROOT / "migration" / "export_to_files.py"
 
 VALID_CHECKLIST = """\
 # Release Checklist: TASK-R
@@ -33,6 +34,7 @@ release_date: 2026-06-29
 - [x] Decisions recorded
 - [x] Follow-up tasks created
 - [x] Event log entry prepared
+- [x] Emergence capture considered
 
 ## Summary
 
@@ -42,6 +44,10 @@ Ready to release.
 INCOMPLETE_CHECKLIST = VALID_CHECKLIST.replace(
     "- [x] Follow-up tasks created",
     "- [ ] Follow-up tasks created",
+)
+
+MISSING_EMERGENCE_CHECKLIST = VALID_CHECKLIST.replace(
+    "- [x] Emergence capture considered\n", ""
 )
 
 
@@ -101,6 +107,17 @@ def run_map_task_release(db: Path, out: Path, checklist: Path) -> subprocess.Com
     )
 
 
+def export_mirrors(db: Path, out: Path) -> None:
+    result = subprocess.run(
+        [sys.executable, str(EXPORTER), "--db", str(db), "--output-dir", str(out)],
+        cwd=REPO,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    assert result.returncode == 0, result.stderr
+
+
 def task_state(path: Path) -> tuple[str, int]:
     with sqlite3.connect(path) as conn:
         status = conn.execute("SELECT status FROM tasks WHERE task_id='TASK-R'").fetchone()[0]
@@ -124,6 +141,22 @@ def test_incomplete_checklist_blocks_release() -> None:
         assert task_state(db) == ("APPROVED", 0)
 
 
+def test_missing_emergence_line_blocks_release() -> None:
+    with tempfile.TemporaryDirectory() as tmp:
+        base = Path(tmp)
+        db = base / "map.db"
+        out = base / "out"
+        checklist = base / "release.md"
+        init_db(db)
+        checklist.write_text(MISSING_EMERGENCE_CHECKLIST, encoding="utf-8")
+
+        result = run_release_task(db, out, checklist)
+
+        assert result.returncode != 0, result.stdout
+        assert "emergence capture considered" in result.stderr.lower(), result.stderr
+        assert task_state(db) == ("APPROVED", 0)
+
+
 def test_release_task_marks_released_with_record() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
@@ -132,6 +165,7 @@ def test_release_task_marks_released_with_record() -> None:
         checklist = base / "release.md"
         init_db(db)
         checklist.write_text(VALID_CHECKLIST, encoding="utf-8")
+        export_mirrors(db, out)
 
         result = run_release_task(db, out, checklist)
 
@@ -147,6 +181,7 @@ def test_map_task_release_subcommand() -> None:
         checklist = base / "release.md"
         init_db(db)
         checklist.write_text(VALID_CHECKLIST, encoding="utf-8")
+        export_mirrors(db, out)
 
         result = run_map_task_release(db, out, checklist)
 
@@ -157,6 +192,7 @@ def test_map_task_release_subcommand() -> None:
 def main() -> int:
     tests = [
         test_incomplete_checklist_blocks_release,
+        test_missing_emergence_line_blocks_release,
         test_release_task_marks_released_with_record,
         test_map_task_release_subcommand,
     ]

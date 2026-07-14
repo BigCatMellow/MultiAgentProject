@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-133",
+  "title": "ProjectUpdater editing, goals, references, and open-folder actions",
+  "task_type": "implementation",
+  "role": "ProjectUpdater feature implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-dino",
+  "description": "Operator reported ProjectUpdater cannot edit/delete projects, change/add goals, store a folder/reference for visiting the project, or open the project folder. Implement these project-management operations in the offline single-file app without adding a backend, shell command generation, clipboard command flow, or breaking existing localStorage data.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/tasks/",
+    "Projects/ProjectUpdater/app/index.html",
+    "Projects/ProjectUpdater/artifacts/",
+    "Projects/ProjectUpdater/scripts/validate_project_updater.py",
+    "Projects/ProjectUpdater/shared/requirements.md"
+  ],
+  "acceptance_criteria": [
+    "Projects can be edited after creation, including name, area, goal, next action, status, priority, progress, reminder window, due date, and reference folder/path",
+    "Projects can be deleted with confirmation, removing related notes according to documented behavior",
+    "Users can add/change multiple project goals or goal entries without losing existing single-goal localStorage data",
+    "Project cards expose visit/open-folder actions using bounded local/offline behavior appropriate for a static app",
+    "Validator/manual checks cover edit/delete/goal/reference/open-folder behavior and existing add/note/filter persistence still passes"
+  ]
+}

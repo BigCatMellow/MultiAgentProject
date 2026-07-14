@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-171",
+  "title": "Audit repo reference folder for MAP runtime patterns",
+  "task_type": "audit",
+  "role": "engineer",
+  "status": "APPROVED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Survey /home/home/Projects/MultiAgentProject/repo reference projects from the 6.13 notes for MAP-useful runtime, memory, compression, orchestration, observability, and command-center patterns. Coordinate with claude-lab-zera to avoid the wikilink/knowledge-graph cluster and produce a durable recommendation artifact.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/repo-reference-map-runtime-audit.md"
+  ],
+  "acceptance_criteria": [
+    "Artifact inventories inspected reference projects and explicitly distinguishes useful patterns from non-useful/noise.",
+    "Artifact recommends concrete MAP follow-up tasks or states no action where adoption is not justified.",
+    "Audit avoids copying external code into MAP and treats repo/ as reference-only."
+  ]
+}

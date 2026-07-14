@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-123",
+  "title": "Implement ProjectUpdater app from Claude Design mockup",
+  "task_type": "implementation",
+  "role": "Claude (implementer, HPOM tier-1)",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-valo",
+  "description": "Implement a working version of the 'Project Updater' personal project-tracker design imported via DesignSync from claude.ai/design/p/9e3f5e32-b481-4f33-8091-67f8b3456daf ('Project Updater.dc.html'). Build a self-contained client-side single-page app (no server) under Projects/ProjectUpdater/app/ combining the dark-theme visual design from the .dc.html mockup with the functional data model/logic from the companion prototype (uploads/project updater.txt, Google-Apps-Script-based), replacing google.script.run calls with a localStorage-backed store. Must implement all 4 views (Dashboard, Projects, Quick Note, Add Project), real stale/due-soon detection against actual dates, and persist data across reloads. Source design artifacts saved at Projects/ProjectUpdater/artifacts/design/. Project bootstrapped per NEW_PROJECT_WIZARD.md (shared/project-brief.md, requirements.md, unresolved-questions.md, risks/RISK_REGISTER.md all in place) - this is also the wizard's first real end-to-end validation, noted in RETROSPECTIVE_SYSTEM.md/HEALTH-0001 as previously untested.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/ProjectUpdater/app/",
+    "Projects/ProjectUpdater/events/events.jsonl",
+    "Projects/ProjectUpdater/handoffs/",
+    "Projects/ProjectUpdater/tasks/"
+  ],
+  "acceptance_criteria": [
+    "Projects/ProjectUpdater/app/index.html exists and implements Dashboard, Projects, Quick Note, and Add Project views matching the dark-theme visual design",
+    "Stale detection (daysIdle >= reminderDays) and due-soon detection (due within 7 days) compute against real current dates, not hardcoded sample values",
+    "Adding a project, saving a note, and marking a project visited all persist to localStorage and survive a page reload",
+    "App runs standalone by opening index.html in a browser with no server or build step",
+    "Manually exercised end-to-end per shared/requirements.md quality bar before submission"
+  ]
+}
