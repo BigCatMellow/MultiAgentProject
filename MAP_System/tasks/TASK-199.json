@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-199",
+  "title": "Atomic review claiming (claim_review in db/claims.py)",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-toku",
+  "description": "IDEA-0017: SQLite-arbitrated review claiming, mirroring claim_task's atomic pattern, so independent reviewers stop duplicating full review work before either finalizes (TASK-196 zera+mira, TASK-197 toku+mira both duplicated review effort same day despite broadcast claim messages). Add claim_review(task_id, reviewer_id)/release_review_claim()/get_open_review_claim() to db/claims.py using a partial-unique index on reviews(task_id) WHERE completed_at IS NULL for atomicity. Self-review blocked (reviewer != owner). Document the convention in notes/review-guide.md. Best-effort: map_task.py approve/reject releases an open claim if the caller holds one, but does not require a claim to exist (non-breaking for reviewers who don't adopt it yet).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/db/claims.py",
+    "MAP_System/migration/schema.sql",
+    "MAP_System/notes/review-guide.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_review_claims.py"
+  ],
+  "acceptance_criteria": [
+    "claim_review() atomically reserves a review slot for a SUBMITTED task; a second concurrent claim_review() for the same task returns False without corrupting state.",
+    "Self-review is blocked: claim_review() refuses when reviewer_id equals the task owner.",
+    "release_review_claim() records verdict/completed_at and only the claim holder can release it.",
+    "Focused tests cover concurrent claim race, self-review block, and release-by-non-holder rejection; wired into run_tests.sh; suite green.",
+    "notes/review-guide.md documents the claim-before-review convention."
+  ]
+}

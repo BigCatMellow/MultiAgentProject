@@ -4378,6 +4378,29 @@
         "Due out_of_tokens records are cleared when hcom shows the agent is already live",
         "The current 4:11 stuck Claude lab entries are reconciled back to available"
       ]
+    },
+    {
+      "task_id": "TASK-199",
+      "title": "Atomic review claiming (claim_review in db/claims.py)",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-toku",
+      "output_paths": [
+        "MAP_System/db/claims.py",
+        "MAP_System/migration/schema.sql",
+        "MAP_System/notes/review-guide.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_review_claims.py"
+      ],
+      "acceptance_criteria": [
+        "claim_review() atomically reserves a review slot for a SUBMITTED task; a second concurrent claim_review() for the same task returns False without corrupting state.",
+        "Self-review is blocked: claim_review() refuses when reviewer_id equals the task owner.",
+        "release_review_claim() records verdict/completed_at and only the claim holder can release it.",
+        "Focused tests cover concurrent claim race, self-review block, and release-by-non-holder rejection; wired into run_tests.sh; suite green.",
+        "notes/review-guide.md documents the claim-before-review convention."
+      ]
     }
   ],
   "approval_gates": [

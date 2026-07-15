@@ -111,6 +111,13 @@ CREATE TABLE IF NOT EXISTS reviews (
     completed_at  TEXT
 );
 
+-- TASK-199 (IDEA-0017): at most one open (uncompleted) review claim per task
+-- at a time, so independent reviewers can't both start full review work on
+-- the same SUBMITTED task before either finalizes.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_open_claim
+    ON reviews(task_id)
+    WHERE completed_at IS NULL;
+
 CREATE TABLE IF NOT EXISTS task_release_records (
     task_id         TEXT PRIMARY KEY REFERENCES tasks(task_id),
     checklist_path  TEXT NOT NULL,

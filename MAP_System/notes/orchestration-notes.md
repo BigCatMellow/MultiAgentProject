@@ -88,6 +88,17 @@ Promote recurring patterns into AGENTS.md or an insight record.
   event. Rule: on suite failures in a live multi-agent tree, re-run once and
   diff the failure set before filing anything.
 
+- fails: reporting a gate result from a chained command without checking each
+  step's exit — validate_review rejected a nonstandard heading, the approve
+  never ran, but the success message had already gone out in the same batch;
+  needed a correction message. fix: when a message announces a gate outcome,
+  send it AFTER the gate's output is read, never batched alongside it. Also:
+  validate_review requires exact template section headings — don't improvise.
+- works: same-day failure→mechanical-fix loop — review-claim race (2 dupes in
+  a morning) → IDEA-0017 → TASK-199 claim_review() with a partial unique
+  index → released by evening, with the fix's own review as its first
+  production use. INS-0014's thesis applied to the review layer.
+
 ### Standing rules (operator-set)
 
 - rule: all spawned Claude helpers start in auto permission mode and Haiku

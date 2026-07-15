@@ -22,6 +22,30 @@ verify acceptance criteria, and avoid creating vague extra work.
 
 Only `BLOCKER` and `REQUIRED` findings should block approval.
 
+## Claim Before Reviewing (TASK-199 / IDEA-0017)
+
+Multiple agents can see the same SUBMITTED task and start a full independent
+review before either one finalizes — an hcom "I'm taking this review"
+message can lose the race against a broadcast, and duplicate review work
+gets thrown away. Before starting substantive review work on a task, claim
+it atomically:
+
+```python
+from MAP_System.db.claims import claim_review
+claim_review("TASK-NNN", "your-agent-id")  # True = claimed, False = already claimed / self-review / not SUBMITTED
+```
+
+`claim_review` returns `False` without raising when the task isn't
+`SUBMITTED`, the reviewer is the task owner (self-review), or another
+reviewer already holds an open claim — check the return value and stand
+down if `False`. `map_task.py approve`/`reject` best-effort releases any
+open claim the acting reviewer holds, so no separate release call is
+required in the normal flow. This is optional, not gated: a reviewer who
+skips claiming can still approve/reject normally, and a second independent
+review that reaches the terminal action first will still win cleanly (the
+task's status transition itself was already atomic) — claiming just avoids
+wasting the work of the reviewer who would otherwise lose that race.
+
 ## Review Process
 
 1. Read the task file and acceptance criteria.

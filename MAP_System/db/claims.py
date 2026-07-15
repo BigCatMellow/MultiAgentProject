@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import sqlite3
 import sys
+import uuid
 from pathlib import Path
 from typing import Sequence
 
@@ -261,3 +262,88 @@ def expire_leases(*, db_path: str | Path = DEFAULT_DB) -> Sequence[str]:
             [(task_id,) for task_id in task_ids],
         )
         return task_ids
+
+
+def claim_review(
+    task_id: str,
+    reviewer_id: str,
+    *,
+    db_path: str | Path = DEFAULT_DB,
+) -> bool:
+    """Atomically claim the review slot for a SUBMITTED task (TASK-199 /
+    IDEA-0017): SQLite-arbitrated like claim_task, so two independent
+    reviewers can't both start full review work on the same submission
+    before either finalizes.
+
+    Returns False (never raises) when the task doesn't exist, isn't
+    SUBMITTED, the reviewer is the task owner (self-review), or another
+    reviewer already holds an open claim -- the last case is enforced by
+    idx_reviews_open_claim, so a genuine race between two concurrent callers
+    can only ever let one INSERT succeed.
+    """
+    with connect(db_path) as conn:
+        row = conn.execute(
+            "SELECT status, owner FROM tasks WHERE task_id = ?",
+            (task_id,),
+        ).fetchone()
+        if row is None:
+            return False
+        status, owner = row
+        if status != "SUBMITTED":
+            return False
+        if owner and owner.lower() == reviewer_id.lower():
+            return False
+        review_id = f"REV-{task_id}-{reviewer_id}-{uuid.uuid4().hex[:8]}"
+        try:
+            conn.execute(
+                "INSERT INTO reviews (review_id, task_id, reviewer_id) VALUES (?, ?, ?)",
+                (review_id, task_id, reviewer_id),
+            )
+        except sqlite3.IntegrityError:
+            return False
+        return True
+
+
+def get_open_review_claim(
+    task_id: str,
+    *,
+    db_path: str | Path = DEFAULT_DB,
+) -> dict | None:
+    """Return the open (uncompleted) review claim for a task, or None."""
+    with connect(db_path) as conn:
+        row = conn.execute(
+            """
+            SELECT review_id, reviewer_id, created_at
+            FROM reviews
+            WHERE task_id = ? AND completed_at IS NULL
+            """,
+            (task_id,),
+        ).fetchone()
+    if row is None:
+        return None
+    return {"review_id": row[0], "reviewer_id": row[1], "created_at": row[2]}
+
+
+def release_review_claim(
+    task_id: str,
+    reviewer_id: str,
+    *,
+    verdict: str | None = None,
+    summary: str | None = None,
+    db_path: str | Path = DEFAULT_DB,
+) -> bool:
+    """Complete the open review claim held by reviewer_id.
+
+    Returns False (never raises) if no open claim exists for the task or a
+    different reviewer holds it -- only the claim holder may release it.
+    """
+    with connect(db_path) as conn:
+        cursor = conn.execute(
+            """
+            UPDATE reviews
+            SET verdict = ?, summary = ?, completed_at = datetime('now')
+            WHERE task_id = ? AND reviewer_id = ? AND completed_at IS NULL
+            """,
+            (verdict, summary, task_id, reviewer_id),
+        )
+        return cursor.rowcount == 1

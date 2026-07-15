@@ -264,6 +264,17 @@ def set_review_state(args: argparse.Namespace, *, approved: bool) -> int:
             """,
             (status, args.task_id),
         )
+        # TASK-199 (IDEA-0017): best-effort release of an open review claim
+        # this reviewer holds. Not required -- a reviewer who never called
+        # claim_review() can still approve/reject normally.
+        conn.execute(
+            """
+            UPDATE reviews
+            SET verdict=?, completed_at=datetime('now')
+            WHERE task_id=? AND reviewer_id=? AND completed_at IS NULL
+            """,
+            (status, args.task_id, args.reviewer),
+        )
     summary = (
         f"{args.task_id} approved by {args.reviewer}."
         if approved

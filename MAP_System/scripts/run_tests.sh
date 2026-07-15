@@ -38,6 +38,7 @@ run_check validate_context_packets python3 MAP_System/scripts/validate_context_p
 run_check validate_risk_registers python3 MAP_System/scripts/validate_risk_registers.py
 run_check promote_task_test python3 MAP_System/tests/test_promote_task.py
 run_check no_self_review_test python3 MAP_System/tests/test_no_self_review.py
+run_check review_claims_test python3 MAP_System/tests/test_review_claims.py
 run_check exporter_hpom_fields_test python3 MAP_System/tests/test_exporter_hpom_fields.py
 run_check exporter_invariants_test python3 MAP_System/tests/test_exporter_invariants.py
 run_check review_gate_test python3 MAP_System/tests/test_review_gate.py
