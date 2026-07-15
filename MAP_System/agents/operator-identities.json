@@ -1,0 +1,15 @@
+{
+  "_comment": "Machine-readable mirror of shared/operator-identities.md. Edit both together.",
+  "operator_identities": [
+    {
+      "hcom_identity": "bigboss",
+      "channel": "direct_terminal",
+      "evidence": "agents/README.md human/relay identity note (F6 semantics, TASK-082)"
+    },
+    {
+      "hcom_identity": "command-center",
+      "channel": "command_center_ui_relay",
+      "evidence": "CommandCenterUI/app/server.py OPERATOR_NAME default"
+    }
+  ]
+}

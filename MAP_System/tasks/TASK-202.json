@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-202",
+  "title": "Operator-identity + message-intent conventions in durable state",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-toku",
+  "description": "Unlocks calibration parameter 7 (operator approval load) and the P1-practice grade, both flagged missing-data in map-real-parameter-calibration-results-2026-07-14.md. (1) Durable operator-identity registry: shared/operator-identities.md + agents/operator-identities.json listing which hcom identities count as 'the operator' (bigboss = direct terminal, command-center = CommandCenterUI's OPERATOR_NAME relay per CommandCenterUI/app/server.py), cross-linked from agents/README.md. (2) Intent recording: session_replay.py does NOT currently index hcom at all (verified: zero hcom references in the file) so the packet's assumption that it already indexes hcom sources was incorrect -- document instead that hcom intent lives in hcom's own DB, queryable live via  or  against the events_v view, joined to MAP task/event data by timestamp/agent -- do not backfill or bridge hcom's DB into session_replay.py. (3) Append a 'measuring parameter 7 and P1-practice' section to map-real-parameter-calibration-results-2026-07-14.md with runnable queries and current numbers as a smoke test.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/README.md",
+    "MAP_System/agents/operator-identities.json",
+    "MAP_System/artifacts/audits/map-real-parameter-calibration-results-2026-07-14.md",
+    "MAP_System/notes/communication-architecture.md",
+    "MAP_System/shared/operator-identities.md"
+  ],
+  "acceptance_criteria": [
+    "shared/operator-identities.md + agents/operator-identities.json list bigboss and command-center as operator identities with the source evidence (agents/README.md's existing bigboss note; CommandCenterUI server.py's OPERATOR_NAME) and how to add a new one.",
+    "notes/communication-architecture.md documents that hcom message intent lives only in hcom's own DB, with a runnable hcom events query example, and explicitly does not propose backfilling/bridging it into session_replay.py's disposable index.",
+    "map-real-parameter-calibration-results-2026-07-14.md gets an appended section with concrete, runnable queries for parameter 7 (operator approval load) and the P1-practice hcom-intent split, executed once as a smoke test with real current numbers.",
+    "agents/README.md cross-links the new operator-identities.md."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "TASK-201",
+  "title": "Bounded halt-authority window mechanism",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Wave 3 NIVO lane: implement a disabled-by-default halt_authority_window in runtime_policy.yaml so layer1/protocol validators can set operator-clearable halts only during a bounded active window, while inactive/expired windows preserve telemetry-only behavior.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/notes/halt-authority-window-runbook.md",
+    "MAP_System/scripts/halt_state.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_layer1.py",
+    "MAP_System/scripts/validate_protocol.py",
+    "MAP_System/tests/test_halt_authority_window.py",
+    "MAP_System/workflow/runtime_policy.yaml"
+  ],
+  "acceptance_criteria": [
+    "Window inactive or expired preserves current telemetry-only validator behavior.",
+    "Active window scoped to layer1/protocol writes an operator-clearable halt through halt_state.py when a validator violation fires.",
+    "Scope filtering prevents unrelated validators from halting.",
+    "Halt-or-would-halt decisions are logged with adjudication status pending.",
+    "Mechanism ships disabled; operator enablement is documented as a one-line action.",
+    "Focused tests and relevant suite checks pass."
+  ]
+}

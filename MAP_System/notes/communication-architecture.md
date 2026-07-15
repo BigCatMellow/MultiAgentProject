@@ -194,3 +194,48 @@ Include:
 - whether the helper or inbox note is still active.
 
 Do not leave important communication only in a helper terminal or chat transcript.
+
+## hcom Message Intent (TASK-202)
+
+hcom messages **may** carry an `intent` (`request` | `inform` | `ack`) —
+agents should set one on every send (see this file's Style/promotion rules
+for the underlying discipline), but it is not guaranteed present: the
+real-world measurement in `map-real-parameter-calibration-results-2026-07-14.md`
+found roughly half of agent messages and nearly all operator messages have
+no `intent` set. Any code or query that consumes hcom intent must handle
+`None`/unset explicitly rather than assuming every message has one.
+Separately, and regardless of whether intent is set, **hcom intent is not
+durable MAP state.** It lives only inside hcom's own
+SQLite store (queried via the `hcom events` CLI's `events_v` view,
+`msg_intent` column), not in `events/events.jsonl` and not in
+`runtime/session_replay.sqlite` — `scripts/session_replay.py` does not
+ingest hcom at all (zero hcom references in that file, confirmed by TASK-202;
+an earlier work packet had assumed otherwise). This is a deliberate
+boundary, not a gap: hcom already owns and indexes its own message store,
+and MAP's disposable replay index intentionally covers only MAP-canonical
+sources (`events.jsonl`, task JSON/SQLite mirrors).
+
+**Do not backfill or bridge hcom's message history into
+`session_replay.sqlite`.** If a measurement needs hcom intent, query hcom
+directly and join by timestamp/agent to MAP's own event/task data in the
+measurement script itself — keep the two stores separate and query them
+independently rather than duplicating one into the other.
+
+Runnable query example (used as the parameter-7/P1-practice smoke test in
+`artifacts/audits/map-real-parameter-calibration-results-2026-07-14.md`):
+
+```bash
+# All request-intent messages, most recent first
+hcom events --last 5000 --type message --intent request --name <your-name>
+
+# Raw SQL form (same events_v view), e.g. messages from an operator identity
+hcom events --last 5000 --sql "type='message' AND msg_from='command-center'" --name <your-name>
+```
+
+Both return JSON lines shaped `{"data": {"from": ..., "intent": ..., "text":
+...}, "id": ..., "instance": ..., "ts": ..., "type": "message"}` — the
+`--sql` form's WHERE clause uses the underlying `events_v` column names
+(`msg_from`, `msg_intent`, `msg_scope`, `msg_thread`), but the JSON result
+still surfaces them as `data.from`/`data.intent`. Join on `data.from`/`ts`
+against `agents/operator-identities.json` and MAP task/event timestamps for
+operator-load or intent-mix measurements.

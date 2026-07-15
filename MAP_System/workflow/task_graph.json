@@ -4401,6 +4401,138 @@
         "Focused tests cover concurrent claim race, self-review block, and release-by-non-holder rejection; wired into run_tests.sh; suite green.",
         "notes/review-guide.md documents the claim-before-review convention."
       ]
+    },
+    {
+      "task_id": "TASK-200",
+      "title": "Housekeeping sweep: supersedes reciprocity, langgraph refs, emergence closeouts",
+      "task_type": "maintenance",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-mozu",
+      "output_paths": [
+        "MAP_System/emergence/INDEX.md",
+        "MAP_System/emergence/ideas/IDEA-0016-extend-the-task-191-redaction-guard-to-events-jsonl-appenders.md",
+        "MAP_System/emergence/ideas/IDEA-0017-atomic-review-claiming-add-claim-review-task-id-reviewer-to-db-c.md",
+        "MAP_System/emergence/insights/INS-0021-real-data-contradicts-the-simulation-cut-of-peer-review-reviews-.md",
+        "MAP_System/shared/decisions.md",
+        "MAP_System/shared/improvement-backlog.md"
+      ],
+      "acceptance_criteria": [
+        "validate_decisions.py reports 0 conflict notes after the reciprocity edits; validate_shared_state stays 21/21.",
+        "Active-file langgraph/ references fixed or annotated; archive/artifacts untouched; backlog item closed with evidence.",
+        "IDEA-0017 closed out to PROMOTED_TO_TASK linking TASK-199; IDEA-0016 status reflects real intent; INDEX rebuilt; map_emergence validate+stale clean."
+      ]
+    },
+    {
+      "task_id": "TASK-201",
+      "title": "Bounded halt-authority window mechanism",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/notes/halt-authority-window-runbook.md",
+        "MAP_System/scripts/halt_state.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_layer1.py",
+        "MAP_System/scripts/validate_protocol.py",
+        "MAP_System/tests/test_halt_authority_window.py",
+        "MAP_System/workflow/runtime_policy.yaml"
+      ],
+      "acceptance_criteria": [
+        "Window inactive or expired preserves current telemetry-only validator behavior.",
+        "Active window scoped to layer1/protocol writes an operator-clearable halt through halt_state.py when a validator violation fires.",
+        "Scope filtering prevents unrelated validators from halting.",
+        "Halt-or-would-halt decisions are logged with adjudication status pending.",
+        "Mechanism ships disabled; operator enablement is documented as a one-line action.",
+        "Focused tests and relevant suite checks pass."
+      ]
+    },
+    {
+      "task_id": "TASK-202",
+      "title": "Operator-identity + message-intent conventions in durable state",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-toku",
+      "output_paths": [
+        "MAP_System/agents/README.md",
+        "MAP_System/agents/operator-identities.json",
+        "MAP_System/artifacts/audits/map-real-parameter-calibration-results-2026-07-14.md",
+        "MAP_System/notes/communication-architecture.md",
+        "MAP_System/shared/operator-identities.md"
+      ],
+      "acceptance_criteria": [
+        "shared/operator-identities.md + agents/operator-identities.json list bigboss and command-center as operator identities with the source evidence (agents/README.md's existing bigboss note; CommandCenterUI server.py's OPERATOR_NAME) and how to add a new one.",
+        "notes/communication-architecture.md documents that hcom message intent lives only in hcom's own DB, with a runnable hcom events query example, and explicitly does not propose backfilling/bridging it into session_replay.py's disposable index.",
+        "map-real-parameter-calibration-results-2026-07-14.md gets an appended section with concrete, runnable queries for parameter 7 (operator approval load) and the P1-practice hcom-intent split, executed once as a smoke test with real current numbers.",
+        "agents/README.md cross-links the new operator-identities.md."
+      ]
+    },
+    {
+      "task_id": "TASK-203",
+      "title": "CommandCenterUI outcome + cost/yield rows in MAP runtime card",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zero",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "/home/home/Projects/CommandCenterUI/src/chat.css",
+        "/home/home/Projects/CommandCenterUI/src/chat.html",
+        "/home/home/Projects/CommandCenterUI/src/chat.js",
+        "MAP_System/artifacts/reports/task-203-ui-metrics-cards-evidence.md",
+        "MAP_System/artifacts/reports/task-2xx-ui-metrics-cards-evidence.md",
+        "MAP_System/artifacts/reports/task203-map-health-card.png"
+      ],
+      "acceptance_criteria": [
+        "map_health() gains cost_yield and outcomes sources behind the same TTL cache/lock/error-isolation plumbing as the other five sources (TASK-182 pattern).",
+        "cost_yield row surfaces productive/pending(+task count)/abandoned percents from cost_yield.py --json; outcomes row surfaces outcome_event_count + blind-spot rate from map_metrics.py --json, showing 'no outcomes recorded yet' instead of an error when zero events.",
+        "MAP runtime card gains exactly two rows without a new sidebar section, respecting the operator's restructured layout.",
+        "Live verification: server up, curl cold+warm on /api/map/health, Playwright DOM check for the two new rows, evidence recorded in a MAP-side artifact.",
+        "Operator's uncommitted CommandCenterUI work baseline-committed first as its own commit before this change's commit, mirroring TASK-182's bb847f6 precedent."
+      ]
+    },
+    {
+      "task_id": "TASK-204",
+      "title": "Optional debate pre-escalation step for conflict-freeze / decision-authority path",
+      "task_type": "documentation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "gune",
+      "output_paths": [
+        "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+        "MAP_System/notes/review-guide.md"
+      ],
+      "acceptance_criteria": [
+        "DECISION_AUTHORITY_SYSTEM.md gains a clearly-labeled OPTIONAL 'debate pre-escalation' subsection stating debate is opt-in and does not replace or gate any existing escalation path.",
+        "A short 'when to invoke debate' guidance block (CONFLICT-frozen tasks, contested high-authority DECISION_CLASSES calls) is documented, referencing the exact command 'hcom run debate'.",
+        "No existing behavior changes: flag_conflict.py and the current escalation flow are untouched; the step is additive and optional."
+      ]
+    },
+    {
+      "task_id": "TASK-205",
+      "title": "ProjectUpdater full JSON backup export + import (complete IDEA-0015 data-loss mitigation)",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "Projects/ProjectUpdater/app/index.html",
+        "Projects/ProjectUpdater/artifacts/task-projectupdater-backup-verification.md"
+      ],
+      "acceptance_criteria": [
+        "A full-fidelity backup export writes the COMPLETE internal model (all project fields incl. id, goal, nextAction, points, streak, reminderDays, lastVisited, dueDate), not the lossy status snapshot.",
+        "Import reads a backup file, runs it through normalizeData, saves to localStorage, and re-renders; a confirm-overwrite prompt guards against silently replacing existing data.",
+        "Round-trip proven: export backup -> modify/clear -> import backup restores identical state (documented in the verification artifact).",
+        "The existing 'Export status' button and exportStatus() are unchanged; no other files touched."
+      ]
     }
   ],
   "approval_gates": [

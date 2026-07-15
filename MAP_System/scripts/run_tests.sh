@@ -75,6 +75,7 @@ run_check limit_watcher_test python3 MAP_System/tests/test_limit_watcher.py
 run_check liveness_reaper_test python3 MAP_System/tests/test_liveness_reaper.py
 run_check validate_layer1_test python3 MAP_System/tests/test_validate_layer1.py
 run_check validate_protocol_test python3 MAP_System/tests/test_validate_protocol.py
+run_check halt_authority_window_test python3 MAP_System/tests/test_halt_authority_window.py
 run_check capability_whitelist_test python3 MAP_System/tests/test_capability_whitelist.py
 run_check pre_dispatch_policy_test python3 MAP_System/tests/test_pre_dispatch_policy.py
 run_check runner_policy_gate_test MAP_System/.venv/bin/python MAP_System/tests/test_runner_policy_gate.py

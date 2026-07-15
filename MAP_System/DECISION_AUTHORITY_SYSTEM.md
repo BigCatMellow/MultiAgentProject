@@ -125,6 +125,22 @@ Emergence's promoted ideas become decisions or tasks through here.
   rule and this system's approval requirement are the same discipline
   applied at different stages.
 
+## Optional: debate pre-escalation (IDEA-0019 / TASK-204)
+
+Before escalating a contested decision to the operator, an agent MAY run a
+structured multi-perspective critique using the existing `hcom run debate`
+workflow. This is **opt-in and additive**: it does not replace, gate, or
+change any existing escalation or conflict-resolution path. If debate is not
+used, every current path behaves exactly as before.
+
+Use it to pressure-test a decision when reviewers genuinely disagree, not as a
+routine step. When a debate informs a decision, cite it in the decision or
+conflict-resolution record (e.g. "debate: <thread/summary>") so the reasoning
+is durable.
+
+See `notes/review-guide.md` ("When to invoke debate") for when this is worth
+the cost.
+
 ## Related files
 
 - `HUMAN_INTERFACE_SYSTEM.md` [[HUMAN_INTERFACE_SYSTEM]] — where pending decisions requiring

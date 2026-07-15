@@ -207,6 +207,75 @@ reported rather than estimated.
 - Misattribution (parameter 3) came in at 0/15 — far under the 20% pruning
   guard threshold (consequences in the grading report).
 
+## Addendum (TASK-202): Measuring Parameter 7 And P1-Practice, Now Runnable
+
+The original run (above) marked parameter 7 (operator approval load) PARTIAL
+and the P1-practice grade Conditional, both citing the same missing data:
+"no durable convention mapping hcom identities to 'the operator'" and
+"the intent split... not recorded consistently." TASK-202 closed both gaps —
+`shared/operator-identities.md` [[shared/operator-identities]] now names
+`bigboss` and `command-center` as the two operator identities with concrete
+evidence, and `notes/communication-architecture.md`'s new hcom-intent
+section documents the live query path. Below are the concrete queries and a
+smoke-test run against real current data.
+
+### Parameter 7: Operator Approval Load
+
+```bash
+# Total operator-authored hcom messages, all history
+hcom events --last 100000 --sql "type='message'" --name <your-name>
+# then filter data.from in {bigboss, command-center} client-side (see
+# agents/operator-identities.json), and bucket data.intent / ts[:10]
+```
+
+Smoke test (2026-07-15, full history, 2026-06-17 → 2026-07-15):
+
+- Total hcom messages: 4,888. Operator-authored: **230** (4.7%).
+- Operator messages by day: bursty, ranging 1-47/day across 15 active days
+  (busiest: 2026-06-29 with 47, matching the HPOM-sprint close date already
+  noted in `notes/command-center-later.md`).
+- **Honest finding, not previously visible**: 221/230 (96%) of operator
+  messages carry no `intent` field at all (`None`), vs. 9 marked `inform`.
+  This is not missing data — it means the operator's own hcom client
+  doesn't set `--intent` on sends, unlike agent-to-agent messages. Any
+  future operator-load metric built from `--intent request` filtering alone
+  would silently miss nearly all operator messages; it must filter by
+  identity (`agents/operator-identities.json`) first, intent second.
+- This closes the "no durable convention" half of the original gap. It does
+  NOT close the other half named in the original run — `needs_approval`
+  event coverage from Wave 3/8 remains inconsistent, so total *gated*
+  attention load (vs. total message volume) still needs that infrastructure
+  before it's fully measurable.
+
+### P1-Practice: hcom Intent Mix (Shared-State-vs-Relay Probe)
+
+```bash
+hcom events --last 100000 --sql "type='message'" --name <your-name>
+# filter data.from NOT IN operator identities AND instance != '[hcom-events]',
+# then bucket data.intent
+```
+
+Smoke test (same window): 4,658 agent-authored messages (excluding operator
+and `[hcom-events]` system notices) split `request`=445 (9.6%),
+`inform`=1,396 (30.0%), `ack`=518 (11.1%), unset=2,299 (49.4%). The original
+run's 2.35:1 message-to-state-write ratio stands; this addendum adds the
+requested intent breakdown underneath it. Reading: less than 10% of agent
+messages are `request`-class (the coordination-that-could-have-been-state
+category); the rest is `inform`/`ack`/routing chatter or unset intent.
+
+**Checked, not assumed**: a per-day breakdown was run before writing this
+finding, because the first draft's guess ("unset intent is mostly early
+history, before the intent convention took hold") was wrong and would have
+gone in uncorrected. The real per-day unset share is volatile and, if
+anything, trends *higher* on the busiest recent days (2026-07-13: 396/513
+=77% unset; 2026-07-14: 1,090/1,356 = 80% unset — both far above the
+overall 49.4%) rather than concentrated early. The more defensible reading:
+unset-intent share tracks message *volume*/burstiness, not calendar recency
+— high-throughput days produce more unlabeled routing chatter, independent
+of when the intent convention was introduced. This is itself a small
+P1-practice finding: intent hygiene degrades under load, exactly the
+condition where MAP's actual coordination volume peaks.
+
 ## Related Files
 
 - `map-real-parameter-calibration.md` [[map-real-parameter-calibration]]

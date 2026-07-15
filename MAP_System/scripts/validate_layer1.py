@@ -20,6 +20,12 @@ REPO = ROOT.parent
 sys.path.insert(0, str(REPO))
 
 from MAP_System.scripts.halt_state import set_halt  # noqa: E402
+from MAP_System.scripts.halt_state import (  # noqa: E402
+    DEFAULT_EVENT_LOG,
+    DEFAULT_RUNTIME_POLICY_PATH,
+    append_validator_halt_event,
+    halt_authority_window_status,
+)
 
 DEFAULT_SEVERITY_CAP = "DRIFT"
 ESCALATABLE_SEVERITIES = ("DRIFT", "BLOCKING", "STRUCTURAL")
@@ -73,6 +79,9 @@ def maybe_set_halt(
     target: str | None = None,
     set_by: str = "validator-layer1",
     halt_path: str | None = None,
+    runtime_policy_path: str | None = None,
+    event_log_path: str | None = None,
+    now=None,
 ) -> str | None:
     """Write into TASK-159's shared halt store on a BLOCKING/STRUCTURAL
     L1 finding -- same reconciled design as validate_protocol.py's
@@ -83,19 +92,52 @@ def maybe_set_halt(
         return None
     if severity not in ESCALATABLE_SEVERITIES:
         raise ValueError(f"unknown severity: {severity}")
-    if severity == "DRIFT":
+
+    window = halt_authority_window_status(
+        "layer1",
+        runtime_policy_path=runtime_policy_path,
+        now=now,
+    )
+    effective_severity = "BLOCKING" if severity == "DRIFT" and window["active"] else severity
+    if effective_severity == "DRIFT":
+        if event_log_path:
+            append_validator_halt_event(
+                event_log_path=event_log_path,
+                task_id=target or "MAP-VALIDATORS",
+                sender=set_by,
+                validator_scope="layer1",
+                decision="would_halt",
+                window_status=window,
+                configured_severity=severity,
+                effective_severity=effective_severity,
+                reasons=list(report.get("failing", [])),
+            )
         return None
 
-    state = "halt_all_dispatch" if severity == "STRUCTURAL" else "repair_only"
-    halt_scope = "global" if severity == "STRUCTURAL" else scope
+    state = "halt_all_dispatch" if effective_severity == "STRUCTURAL" else "repair_only"
+    halt_scope = "global" if effective_severity == "STRUCTURAL" else scope
     record = set_halt(
         state=state,
         reason="validator_blocking_anomaly",
         set_by=set_by,
         scope=halt_scope,
         target=target if halt_scope != "global" else None,
+        clear_requires="operator" if window["active"] else "command_center",
         path=halt_path,
     )
+    if event_log_path:
+        append_validator_halt_event(
+            event_log_path=event_log_path,
+            task_id=target or "MAP-VALIDATORS",
+            sender=set_by,
+            validator_scope="layer1",
+            decision="halt_set",
+            window_status=window,
+            configured_severity=severity,
+            effective_severity=effective_severity,
+            halt_id=record["halt_id"],
+            reasons=list(report.get("failing", [])),
+        )
     return record["halt_id"]
 
 
@@ -103,10 +145,22 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--review-record", help="Optional review record path to also validate")
     parser.add_argument("--task-id", help="Expected task ID for --review-record cross-check")
+    parser.add_argument("--halt-path", help="Override halt-state path")
+    parser.add_argument("--runtime-policy", default=str(DEFAULT_RUNTIME_POLICY_PATH), help="Runtime policy YAML path")
+    parser.add_argument("--event-log", default=str(DEFAULT_EVENT_LOG), help="Event log path for halt/would-halt records")
+    parser.add_argument("--no-event", action="store_true", help="Do not append halt/would-halt event records")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
     report = run_layer1(args.review_record, args.task_id)
+    halt_id = maybe_set_halt(
+        report,
+        target=args.task_id,
+        halt_path=args.halt_path,
+        runtime_policy_path=args.runtime_policy,
+        event_log_path=None if args.no_event else args.event_log,
+    )
+    report["halt_id"] = halt_id
 
     if args.json:
         print(json.dumps(report, indent=2))

@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-200",
+  "title": "Housekeeping sweep: supersedes reciprocity, langgraph refs, emergence closeouts",
+  "task_type": "maintenance",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-mozu",
+  "description": "Bundled S-items, all pre-sanctioned: (1) add reciprocal Supersedes fields to DEC-008 (for DEC-004/007) and DEC-014 (for DEC-012) \u2014 the three TASK-197 findings, sanctioned as 'fold into next decisions.md touch'; validate_decisions should drop to 0 conflict notes. (2) improvement-backlog item 'Clean up stale langgraph/ references': fix or annotate remaining langgraph/ directory mentions in active (non-archive, non-artifact) files only \u2014 historical artifacts stay untouched. (3) Emergence lifecycle closeouts: IDEA-0016 status update (still CANDIDATE? set owner intent), IDEA-0017 -> PROMOTED_TO_TASK with TASK-199 linked and a lifecycle note (INS-0007's capture-needs-closeout rule).",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/emergence/INDEX.md",
+    "MAP_System/emergence/ideas/IDEA-0016-extend-the-task-191-redaction-guard-to-events-jsonl-appenders.md",
+    "MAP_System/emergence/ideas/IDEA-0017-atomic-review-claiming-add-claim-review-task-id-reviewer-to-db-c.md",
+    "MAP_System/emergence/insights/INS-0021-real-data-contradicts-the-simulation-cut-of-peer-review-reviews-.md",
+    "MAP_System/shared/decisions.md",
+    "MAP_System/shared/improvement-backlog.md"
+  ],
+  "acceptance_criteria": [
+    "validate_decisions.py reports 0 conflict notes after the reciprocity edits; validate_shared_state stays 21/21.",
+    "Active-file langgraph/ references fixed or annotated; archive/artifacts untouched; backlog item closed with evidence.",
+    "IDEA-0017 closed out to PROMOTED_TO_TASK linking TASK-199; IDEA-0016 status reflects real intent; INDEX rebuilt; map_emergence validate+stale clean."
+  ]
+}

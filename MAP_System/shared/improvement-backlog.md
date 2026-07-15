@@ -83,22 +83,27 @@ Recommended next action:
 
 ### Clean up stale `langgraph/` references
 
-Status: open
+Status: closed — TASK-200
 
-The live orchestration directory is `graph/`, but historical task and artifact
-records still mention `langgraph/`.
+The live orchestration directory is `graph/`. TASK-200 rechecked active
+non-archive, non-artifact files: live docs point to `graph/`, and
+`shared/current-state.md` explicitly labels remaining old-directory mentions as
+historical provenance. Completed task records, workflow mirror entries, and
+event history still mention `langgraph/`; those records are intentionally left
+untouched as provenance rather than rewritten.
 
 Impact:
 
 - Agents can waste time following dead paths.
 - Historical artifacts are harder to distinguish from current instructions.
 
-Recommended next action:
+Completed action:
 
 - Leave historical records intact when they are clearly provenance.
-- Update live docs and any task records that are still treated as current input.
-- Add a short note to old review/test artifacts only if they are likely to be
-  reused as current instructions.
+- Keep `shared/current-state.md` as the active note that the old
+  `langgraph/` directory is historical and the live code path is `graph/`.
+- Treat future `langgraph/` path edits in live docs as drift unless they refer
+  to the Python package or explicitly say they are historical.
 
 ## Medium Priority
 

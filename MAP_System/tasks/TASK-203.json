@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-203",
+  "title": "CommandCenterUI outcome + cost/yield rows in MAP runtime card",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zero",
+  "description": "TASK-182 follow-on (operator-approved CommandCenterUI output boundary precedent): extend /api/map/health with cost_yield and outcomes sources (read-only, mirrors TASK-182's cache/lock/error-isolation pattern) and two compact rows in the existing MAP runtime card, consuming TASK-189 outcome metrics and TASK-190 cost_yield.py. Packet: MAP_System/inbox/helpers/ui-metrics-cards-packet.md. Baseline-committed the operator's uncommitted sidebar/timer work first (CommandCenterUI commit 1f8b245), per the packet's explicit instruction, before this change's own commit.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "/home/home/Projects/CommandCenterUI/src/chat.css",
+    "/home/home/Projects/CommandCenterUI/src/chat.html",
+    "/home/home/Projects/CommandCenterUI/src/chat.js",
+    "MAP_System/artifacts/reports/task-203-ui-metrics-cards-evidence.md",
+    "MAP_System/artifacts/reports/task-2xx-ui-metrics-cards-evidence.md",
+    "MAP_System/artifacts/reports/task203-map-health-card.png"
+  ],
+  "acceptance_criteria": [
+    "map_health() gains cost_yield and outcomes sources behind the same TTL cache/lock/error-isolation plumbing as the other five sources (TASK-182 pattern).",
+    "cost_yield row surfaces productive/pending(+task count)/abandoned percents from cost_yield.py --json; outcomes row surfaces outcome_event_count + blind-spot rate from map_metrics.py --json, showing 'no outcomes recorded yet' instead of an error when zero events.",
+    "MAP runtime card gains exactly two rows without a new sidebar section, respecting the operator's restructured layout.",
+    "Live verification: server up, curl cold+warm on /api/map/health, Playwright DOM check for the two new rows, evidence recorded in a MAP-side artifact.",
+    "Operator's uncommitted CommandCenterUI work baseline-committed first as its own commit before this change's commit, mirroring TASK-182's bb847f6 precedent."
+  ]
+}

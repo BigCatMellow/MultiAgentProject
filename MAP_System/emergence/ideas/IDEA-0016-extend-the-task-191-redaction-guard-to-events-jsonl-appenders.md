@@ -5,7 +5,7 @@ Project: MAP
 Source insight or synthesis: NONE
 Owner: claude-lab-zero
 Date: 2026-07-14
-Status: CANDIDATE
+Status: PARKED
 
 ## Idea
 
@@ -53,7 +53,14 @@ Status: CANDIDATE
 
 ## Recommendation
 
-- [ ] park
+- [x] park
 - [ ] reject
 - [ ] test
 - [ ] promote-task
+
+## Notes
+
+- note: TASK-200 lifecycle closeout. Owner intent is parked, not abandoned:
+  keep this as a future hardening candidate if MAP extends redaction from the
+  TASK-191 guard into every `events.jsonl` appender. No current Wave 3 task owns
+  that implementation.

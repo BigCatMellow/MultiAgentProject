@@ -24,6 +24,10 @@ runtime_policy:
   reconciliation_interval_seconds: 60
   event_log: events/events.jsonl
   agent_status_path: agents/status.json
+  halt_authority_window:
+    enabled_until: null
+    granted_by: null
+    scope: []
   unavailable_agent_policy:
     continue_without_unavailable_agents: true
     require_handoff_for_owned_work: true

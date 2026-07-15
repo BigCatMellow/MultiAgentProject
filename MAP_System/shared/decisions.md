@@ -2,8 +2,9 @@
 <!-- hpom: project: MAP -->
 <!-- hpom: state_owner: command-center -->
 <!-- hpom: status: CURRENT -->
-<!-- hpom: last_verified: 2026-06-29 -->
-<!-- hpom: verified_against: MAP_System audit 2026-06-29 -->
+<!-- hpom: last_verified: 2026-07-15 -->
+<!-- hpom: verified_against: DEC-028 proving-workflow direction (operator) -->
+<!-- hpom: verified_against_prior: MAP_System audit 2026-06-29 -->
 <!-- hpom: confidence: HIGH -->
 <!-- hpom: supersedes: NONE -->
 <!-- hpom: superseded_by: NONE -->
@@ -104,6 +105,7 @@ Status: approved — 2026-06-19
 Owner: command-center
 Date: 2026-06-19
 Applies-To: all task planning and assignment
+Supersedes: DEC-004, DEC-007
 
 Gemini and Antigravity are not expected to be available for most of the project (confirmed by operator). Codex and Claude Code are the two active core agents going forward. All task planning, assignment, and workload splitting should assume only these two agents.
 
@@ -221,6 +223,7 @@ Status: approved
 Owner: command-center (operator confirmation via hcom #17759; recorded by codex-lab-limo, TASK-090)
 Date: 2026-07-02
 Applies-To: repo layout, git operations, command-center lab sessions, RnS watcher state
+Supersedes: DEC-012
 
 `/home/home/Projects/MultiAgentProject` is the canonical working repo for
 current MAP work.
@@ -642,3 +645,36 @@ Effect:
 - Revisit this decision (supersede or amend) the first time a task's
   unresolved-questions or review reveals a real unverified external claim
   that should have gone through a Research Brief but didn't.
+
+## DEC-028: MAP Commits to Software Delivery as its First Standing Proving Workflow
+
+Status: approved
+Owner: bigboss (operator), selected 2026-07-15 from gune's working-backwards
+brief (`artifacts/planning/working-backwards-proving-workflow-2026-07-15.md`)
+Date: 2026-07-15
+Applies-To: MAP proving-workflow direction; Class: DIRECTION/SCOPE (operator
+authority — this is a project-direction choice, which DECISION_AUTHORITY_SYSTEM
+reserves for the operator as decision owner; reversible)
+
+Reason: MAP is architecturally ahead on durability + mechanical gates
+(INS-0022) but every recent task (197–204) was internal infrastructure, with no
+real deliverable flowing through the gates (INS-0023). Applying Amazon's
+working-backwards method, the operator selected **software delivery** as MAP's
+first standing proving workflow: MAP designs, implements, reviews, and releases
+real software, with every change gated, owned, and reversible. Software was
+chosen over the research-brief and Pathwell candidates because it has the most
+objective acceptance gates — the strongest fit for MAP's mechanical-gate
+differentiator.
+
+- First slice (bounded, reversible): complete **IDEA-0015's deferred import
+  half** — a JSON Import button in ProjectUpdater (export shipped in TASK-136;
+  import was deferred). This mitigates the registered localStorage data-loss
+  risk (`Projects/ProjectUpdater/risks/RISK_REGISTER.md`) with an objective
+  acceptance test (export → import round-trip restores state).
+- Standing workflow: real software features flow through normal MAP
+  intake → claim → implement (Codex-led) → review (Claude/core, cross-review) →
+  release-gate. The research-brief candidate remains available as a second track.
+- This resolves the open `shared/unresolved-questions.md` item ("first real
+  workflow target: writing / software / research / PM?").
+- Revisit/amend if the first feature slices show the software cadence is a poor
+  fit or the operator redirects to another track.

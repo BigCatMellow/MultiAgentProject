@@ -18,12 +18,6 @@
       "resume_after": null,
       "notes": "Capability identity (core agent type), not a live session. See agents/README.md."
     },
-    "claude-lab-magi": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
     "claude-lab-mira": {
       "status": "available",
       "reason": null,
@@ -31,18 +25,6 @@
       "notes": ""
     },
     "claude-lab-toku": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
-    "claude-lab-valo": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
-    "claude-lab-vino": {
       "status": "available",
       "reason": null,
       "resume_after": null,
@@ -72,18 +54,6 @@
       "resume_after": null,
       "notes": "Capability identity (core agent type), not a live session. See agents/README.md."
     },
-    "codex-lab-dino": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
-    "codex-lab-lema": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
     "codex-lab-limo": {
       "status": "standby",
       "reason": "awaiting_work",
@@ -96,25 +66,7 @@
       "resume_after": null,
       "notes": ""
     },
-    "codex-lab-muva": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": "RnS recovery 2026-07-03: live hcom session available; no root MAP task claimed; TASK-117 belongs to claude-lab-valo."
-    },
-    "codex-lab-neko": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
     "codex-lab-nivo": {
-      "status": "available",
-      "reason": null,
-      "resume_after": null,
-      "notes": ""
-    },
-    "codex-lab-veto": {
       "status": "available",
       "reason": null,
       "resume_after": null,
@@ -124,6 +76,12 @@
       "status": "standby",
       "reason": "long_term_unavailable",
       "resume_after": "when operator prompts it",
+      "notes": ""
+    },
+    "gune": {
+      "status": "available",
+      "reason": null,
+      "resume_after": null,
       "notes": ""
     }
   }

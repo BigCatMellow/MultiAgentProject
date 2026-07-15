@@ -18,7 +18,11 @@ The file mixes three kinds of identity. Read it with these rules:
   session.
 - **Human / relay identities**: `bigboss` is the operator. `antigravity` is
   reachable only by asking the operator to prompt it
-  (`reason: operator_relay_only`).
+  (`reason: operator_relay_only`). Full operator-identity registry (both
+  `bigboss` and the CommandCenterUI relay identity `command-center`), with
+  evidence and how to add one, lives in `shared/operator-identities.md`
+  [[shared/operator-identities]] + its machine-readable mirror
+  `operator-identities.json`.
 - **Tool artifacts** (`map-task`): side effects of `map_task.py
   ensure_agent()`; not agents (`inactive` / `tool_identity`).
 

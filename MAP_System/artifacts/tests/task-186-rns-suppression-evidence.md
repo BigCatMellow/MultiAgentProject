@@ -2,7 +2,7 @@
 <!-- hpom: project: MAP -->
 <!-- hpom: state_owner: command-center -->
 <!-- hpom: status: CURRENT -->
-<!-- hpom: last_verified: 2026-07-14 -->
+<!-- hpom: last_verified: 2026-07-15 -->
 <!-- hpom: verified_against: TASK-186 / EXP-0001 experiment run -->
 <!-- hpom: confidence: HIGH -->
 <!-- hpom: supersedes: NONE -->
@@ -58,15 +58,60 @@ both suppressions reported, zero probe attempts.
 
 ## Live marks + after-evidence
 
-Status: PENDING OPERATOR ACTION. The harness permission layer blocks the
-acting agent from batch-writing lifecycle marks for sessions it didn't create
-(`declare_standby.py <agent> --terminal session_superseded` × 10). Operator
-asked to run the one-line loop (hcom request 2026-07-14); on completion this
-section gets the real post-change `--once --dry-run` output, which must show:
+Status: APPLIED 2026-07-15 by owner claude-lab-mira (resumed session; the
+harness no longer blocked the marks). The 8 dead early-July sessions were
+marked `inactive/disposable_session_ended` via the SQLite-first
+`declare_standby.py <agent> --terminal disposable_session_ended` path:
+claude-lab-valo, codex-lab-dino, codex-lab-lema, codex-lab-muva,
+claude-lab-vino, codex-lab-neko, claude-lab-magi, codex-lab-veto. SQLite
+`agents` table confirms all 8 as `inactive/disposable_session_ended`.
 
-1. incident-closure lines for all marked agents with open incidents;
-2. suppression lines for marked agents in `last_live`;
-3. zero `hcom r` probe attempts for marked agents.
+### Real end-to-end result — DESIGN CONFLICT FOUND (2026-07-15)
+
+The intended TASK-186 outcome was: watcher reads terminal `reason` from
+`status.json`, closes each open incident with a *visible* terminal-suppression
+line (IDEA-0009 distinction: deliberate death, not crash). That path did **not**
+fire. What actually happened, verified against `events.jsonl` and the live
+daemon (`limit_watcher.py --interval 60`, running):
+
+1. `migration/export_to_files.py` `load_agents()` already lists BOTH TASK-186
+   terminal reasons in `NON_OPERATIONAL_REASONS`
+   (`{session_ended, session_superseded, tool_identity, disposable_session_ended}`).
+   Marking an agent terminal therefore **removes it from `status.json`
+   entirely** (unless tied to an active task): status.json dropped from ~22 to
+   14 agents; SQLite still holds all 53.
+2. The watcher reads `status.json`, so `is_terminal_session()` /
+   `close_terminal_incidents()` never see the terminal reason — the agents are
+   simply absent. The TASK-186 visible-terminal path is effectively dead code
+   for real marks.
+3. Instead, because each agent is now absent from BOTH durable status and the
+   hcom snapshot, the pre-existing `prune_absent_session_tracking()` closed all
+   8 incidents via the generic **TASK-176 "pruned stale session tracking
+   absent from durable status and current hcom snapshot"** event
+   (events.jsonl 2026-07-15T17:33:19-04:00).
+
+Net effect: **acceptance criterion "zero probes for the 8" IS met** (incidents
+closed, no further nudges — verified: no probe/nudge events for the 8 after the
+marks). But the IDEA-0009 *value* — a visible, intentional terminal attribution
+distinct from "gone, cause unknown" — is **not** delivered; the closure reads as
+a generic stale prune. The helper's earlier green run used synthetic status
+files that *included* the terminal agents, so it never exercised the real
+exporter filter — that is why this was not caught until the live marks landed.
+
+Design decision required before TASK-186 can be closed as designed (routed to
+operator via hcom request 2026-07-15). Options on the table:
+
+- **A (recommended):** make the prune path attribution-aware — when an agent
+  being pruned is terminal in SQLite (source of truth), emit it as an IDEA-0009
+  terminal suppression rather than a generic TASK-176 stale prune. Keeps
+  status.json lean, honors source-of-truth, delivers the visible distinction.
+  Touches watcher prune logic (now TASK-187's file) + a SQLite read.
+- **B:** exporter carve-out — retain terminal agents in status.json while they
+  still carry an open incident, so the watcher's existing status.json terminal
+  path fires. Touches `export_to_files.py`; adds noise to the routing view.
+- **C:** accept that the prune path already suppresses probes; close TASK-186
+  recording the redundancy + exporter conflict as an insight, and drop the
+  now-unreachable status.json-terminal path.
 
 ## Output-path handoff (2026-07-14, hcom #34173)
 

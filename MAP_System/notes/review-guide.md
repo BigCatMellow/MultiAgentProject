@@ -74,3 +74,22 @@ Poor findings are vague:
 ## Output
 
 Use `templates/review.md` for review artifacts.
+
+## When to Invoke Debate (IDEA-0019 / TASK-204)
+
+`hcom run debate` runs a structured multi-perspective critique. It is an
+OPTIONAL pre-escalation tool, not a required review step.
+
+Invoke it when:
+
+- A task is CONFLICT-frozen (`scripts/flag_conflict.py`) and the resolution is
+  genuinely contested — two defensible readings, no clear winner.
+- A high-authority `DECISION_CLASSES` call is close and a single reviewer's
+  verdict would feel under-tested.
+- Two reviewers reach opposite verdicts and you would otherwise escalate
+  straight to the operator.
+
+Do NOT invoke it for routine reviews, clear-cut findings, or to avoid making a
+call you can already make. Debate costs tokens and time; use it where
+multi-perspective critique actually changes the outcome. If a debate informs
+the result, cite it in the review/decision/conflict record.

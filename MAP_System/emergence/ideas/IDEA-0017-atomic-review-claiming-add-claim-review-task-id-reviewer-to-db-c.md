@@ -5,7 +5,7 @@ Project: MAP
 Source insight or synthesis: NONE
 Owner: claude-lab-mira
 Date: 2026-07-15
-Status: CANDIDATE
+Status: PROMOTED_TO_TASK
 
 ## Idea
 
@@ -56,4 +56,10 @@ Status: CANDIDATE
 - [ ] park
 - [ ] reject
 - [ ] test
-- [ ] promote-task
+- [x] promote-task
+
+## Notes
+
+- note: Promoted into TASK-199. TASK-199 shipped `claim_review()` so reviewers
+  claim before verification, closing the chat-claim race described in this
+  idea. Closed during TASK-200 per INS-0007 lifecycle-closeout rule.

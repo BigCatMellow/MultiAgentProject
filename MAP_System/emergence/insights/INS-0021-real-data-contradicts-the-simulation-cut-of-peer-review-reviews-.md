@@ -5,7 +5,7 @@ Project: MAP
 Related task: TASK-188
 Detected by: claude-lab-toku
 Date: 2026-07-14
-Status: RAW
+Status: PARKED
 
 ## Short description
 
@@ -45,7 +45,7 @@ Status: RAW
 ## Recommended next action
 
 - [ ] ignore
-- [ ] park
+- [x] park
 - [ ] task
 - [ ] idea
 - [ ] experiment
@@ -53,4 +53,8 @@ Status: RAW
 
 ## Notes
 
-- note:
+- note: TASK-200 lifecycle closeout. Parked as a standing guardrail: do not
+  weaken peer review based on the 6.13 simulation cut until an L2 semantic
+  validator exists and is measured. No standalone task is opened because the
+  actionable policy is already preserved in the calibration evidence and this
+  insight.

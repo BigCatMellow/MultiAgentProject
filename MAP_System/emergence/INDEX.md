@@ -28,7 +28,9 @@
 | [INS-0018](insights/INS-0018-when-a-rules-heavy-generative-task-hits-a-genuinely-ambiguous-so.md) | Riftbound | obs: When a rules-heavy generative task hits a genuinely ambiguous source-text interaction, explicitly flagging it unresolved preserves more ... | RAW | claude-lab-lori | 2026-07-04 |
 | [INS-0019](insights/INS-0019-a-100-line-domain-validator-written-at-the-start-of-a-generative.md) | Riftbound | obs: A 100-line domain validator written at the start of a generative batch immediately caught legality bugs in ... | RAW | claude-lab-fimo | 2026-07-05 |
 | [INS-0020](insights/INS-0020-when-a-derived-dataset-looks-ambiguous-one-targeted-check-of-the.md) | Riftbound | obs: When a derived dataset looks ambiguous, one targeted check of the primary source can convert a flagged ... | RAW | claude-lab-fimo | 2026-07-06 |
-| [INS-0021](insights/INS-0021-real-data-contradicts-the-simulation-cut-of-peer-review-reviews-.md) | MAP | obs: Real data contradicts the simulation cut of peer review: reviews catch 1-in-4.3 submissions pre-release while the semantic ... | RAW | claude-lab-toku | 2026-07-14 |
+| [INS-0021](insights/INS-0021-real-data-contradicts-the-simulation-cut-of-peer-review-reviews-.md) | MAP | obs: Real data contradicts the simulation cut of peer review: reviews catch 1-in-4.3 submissions pre-release while the semantic ... | PARKED | claude-lab-toku | 2026-07-14 |
+| [INS-0022](insights/INS-0022-obs-map-is-a-supervisor-durable-blackboard-swarm-handoff-hybrid-.md) | MAP | obs: obs: MAP is a supervisor + durable-blackboard + swarm-handoff hybrid, and the durable file/SQLite blackboard plus mechanical ... | RAW | gune | 2026-07-15 |
+| [INS-0023](insights/INS-0023-obs-map-keeps-building-inward-infrastructure-without-a-working-b.md) | MAP | obs: obs: MAP keeps building inward infrastructure without a working-backwards external customer workflow; the open backlog item 'decide ... | RAW | gune | 2026-07-15 |
 
 ## Active Synthesis Notes
 
@@ -55,8 +57,11 @@
 | [IDEA-0013](ideas/IDEA-0013-add-an-idea-scouting-role-a-role-cadence-responsible-for-activel.md) | MAP | Add an Idea-Scouting role: a role/cadence responsible for actively scanning MAP + project state for promotable insights and ... | PARKED | claude-lab-valo | 2026-07-02 |
 | [IDEA-0014](ideas/IDEA-0014-after-gap-review-implementation-run-a-backed-up-full-folder-file.md) | MAP | After gap-review implementation, run a backed-up full folder/file-structure audit using MAP's own systems on itself. | PROMOTED_TO_TASK | codex-lab-dino | 2026-07-02 |
 | [IDEA-0015](ideas/IDEA-0015-add-an-export-import-json-button-to-projectupdater-to-mitigate-i.md) | ProjectUpdater | Add an Export/Import JSON button to ProjectUpdater to mitigate its accepted localStorage data-loss risk without adding a server ... | PROMOTED_TO_TASK | claude-lab-valo | 2026-07-03 |
-| [IDEA-0016](ideas/IDEA-0016-extend-the-task-191-redaction-guard-to-events-jsonl-appenders.md) | MAP | idea: Extend the TASK-191 redaction guard to events.jsonl appenders | CANDIDATE | claude-lab-zero | 2026-07-14 |
-| [IDEA-0017](ideas/IDEA-0017-atomic-review-claiming-add-claim-review-task-id-reviewer-to-db-c.md) | MAP | idea: Atomic review claiming: add claim_review(task_id, reviewer) to db/claims.py so review assignment is SQLite-arbitrated like task claiming — ... | CANDIDATE | claude-lab-mira | 2026-07-15 |
+| [IDEA-0016](ideas/IDEA-0016-extend-the-task-191-redaction-guard-to-events-jsonl-appenders.md) | MAP | idea: Extend the TASK-191 redaction guard to events.jsonl appenders | PARKED | claude-lab-zero | 2026-07-14 |
+| [IDEA-0017](ideas/IDEA-0017-atomic-review-claiming-add-claim-review-task-id-reviewer-to-db-c.md) | MAP | idea: Atomic review claiming: add claim_review(task_id, reviewer) to db/claims.py so review assignment is SQLite-arbitrated like task claiming — ... | PROMOTED_TO_TASK | claude-lab-mira | 2026-07-15 |
+| [IDEA-0018](ideas/IDEA-0018-adopt-a-three-layer-eval-discipline-1-unit-evals-on-discrete-gat.md) | MAP | idea: Adopt a three-layer eval discipline: (1) unit-evals on discrete gate steps, (2) LLM-as-judge regression on agent review/output ... | CANDIDATE | gune | 2026-07-15 |
+| [IDEA-0019](ideas/IDEA-0019-promote-debate-to-a-first-class-review-decision-mode-for-conflic.md) | MAP | idea: Promote 'debate' to a first-class review/decision mode for CONFLICT or high-stakes tasks: hcom already ships a debate ... | PROMOTED_TO_TASK | gune | 2026-07-15 |
+| [IDEA-0020](ideas/IDEA-0020-two-pizza-ownership-metrics-give-each-agent-lane-a-well-defined-.md) | MAP | idea: Two-pizza ownership metrics: give each agent/lane a well-defined metric set and full responsibility for its area, surfaced ... | CANDIDATE | gune | 2026-07-15 |
 
 ## Active Experiments
 
@@ -76,6 +81,7 @@
 | [PROMO-0006](promotions/PROMO-0006-declared-idle-checkin.md) | MAP | Promote the declared-idle/check-in protocol into a watcher extension (RnS v2.1): declare_standby helper + 2h check-in nudges for live ... | HPOM / decision gate | APPROVED | 2026-07-02 |
 | [PROMO-0007](promotions/PROMO-0007-idea-0012.md) | MAP | Operator (hcom #22305) independently re-raised this exact need: no agent is continuously checking that HPOM/RnS/E/I/LangGraph are being used ... | HPOM / decision gate | APPROVED | 2026-07-03 |
 | [PROMO-0008](promotions/PROMO-0008-idea-0010.md) | MAP | Promote [[emergence/ideas/IDEA-0010-add-a-proactive-e-i-operator-friction-scouting-loop-for-commandc]] into a scoped operator-friction closeout habit ([[notes/task-authoring-guide]]), not a standing scouting role. | HPOM / decision gate | APPROVED | 2026-07-04 |
+| [PROMO-0009](promotions/PROMO-0009-idea-0019.md) | MAP | promote: Promote [[emergence/ideas/IDEA-0019-promote-debate-to-a-first-class-review-decision-mode-for-conflic]] into an HPOM task: wire the existing 'hcom run debate' workflow into the conflict-freeze / ... | HPOM / decision gate | APPROVED | 2026-07-15 |
 
 ---
 

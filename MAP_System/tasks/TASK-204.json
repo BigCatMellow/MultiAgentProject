@@ -1,0 +1,45 @@
+{
+  "task_id": "TASK-204",
+  "title": "Optional debate pre-escalation step for conflict-freeze / decision-authority path",
+  "task_type": "documentation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "gune",
+  "description": "PROMO-0009 / IDEA-0019: wire the existing 'hcom run debate' workflow into the conflict-freeze and decision-authority path as an OPTIONAL, non-breaking pre-escalation step, so contested CONFLICT-frozen tasks and high-authority DECISION_CLASSES calls can get a structured multi-perspective critique before defaulting to operator escalation. Doc + convention only: no new wrapper script (hcom already ships 'hcom run debate'); existing escalation paths remain valid and unchanged when debate is not used.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/notes/review-guide.md"
+  ],
+  "acceptance_criteria": [
+    "DECISION_AUTHORITY_SYSTEM.md gains a clearly-labeled OPTIONAL 'debate pre-escalation' subsection stating debate is opt-in and does not replace or gate any existing escalation path.",
+    "A short 'when to invoke debate' guidance block (CONFLICT-frozen tasks, contested high-authority DECISION_CLASSES calls) is documented, referencing the exact command 'hcom run debate'.",
+    "No existing behavior changes: flag_conflict.py and the current escalation flow are untouched; the step is additive and optional."
+  ],
+  "objective": "Add an OPTIONAL, non-breaking 'debate' multi-perspective-critique step to MAP's conflict-freeze / decision-authority path so contested decisions can be pressure-tested before defaulting to operator escalation, using the already-shipped 'hcom run debate' workflow (no new tooling).",
+  "required_context": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/DECISION_CLASSES.md",
+    "MAP_System/scripts/flag_conflict.py (read-only; do not change behavior)",
+    "MAP_System/emergence/ideas/IDEA-0019-promote-debate-to-a-first-class-review-decision-mode-for-conflic.md",
+    "MAP_System/emergence/promotions/PROMO-0009-idea-0019.md",
+    "hcom run debate (existing workflow; the command to reference)"
+  ],
+  "files_in_scope": [
+    "MAP_System/DECISION_AUTHORITY_SYSTEM.md",
+    "MAP_System/notes/review-guide.md"
+  ],
+  "forbidden_changes": [
+    "Do not modify scripts/flag_conflict.py or any escalation/gate behavior.",
+    "Do not add a new wrapper script or command; reference 'hcom run debate' directly.",
+    "Do not make debate mandatory or a gate on any path; it must stay opt-in.",
+    "Do not edit files outside files_in_scope."
+  ],
+  "expected_artifacts": [
+    "Updated MAP_System/DECISION_AUTHORITY_SYSTEM.md with an OPTIONAL debate pre-escalation subsection.",
+    "Updated MAP_System/notes/review-guide.md with 'when to invoke debate' guidance."
+  ],
+  "reviewer_role": "reviewer (a core agent other than gune, the idea author/owner; no-self-review gate enforces separation)",
+  "risk": "Low. Doc + convention only, additive and opt-in; no code or gate behavior changes. Main risk is scope creep into making debate mandatory \u2014 explicitly forbidden above."
+}

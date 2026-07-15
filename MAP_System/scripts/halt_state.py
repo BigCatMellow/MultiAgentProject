@@ -15,12 +15,17 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_HALT_PATH = ROOT / "shared" / "halt-state.json"
+DEFAULT_RUNTIME_POLICY_PATH = ROOT / "workflow" / "runtime_policy.yaml"
+DEFAULT_EVENT_LOG = ROOT / "events" / "events.jsonl"
 
 VALID_STATES = {"clear", "halt_paid_dispatch", "halt_all_dispatch", "repair_only"}
 VALID_SCOPES = {"paid", "project", "task", "agent", "global"}
+VALID_HALT_AUTHORITY_SCOPES = {"layer1", "protocol", "*"}
 REQUIRED_FIELDS = {
     "halt_id",
     "state",
@@ -66,6 +71,133 @@ def current_halt_path(path: str | Path | None = None) -> Path:
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _parse_iso_datetime(value: str) -> datetime:
+    normalized = value.strip()
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    parsed = datetime.fromisoformat(normalized)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _normalize_window_scopes(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        scopes = [value]
+    elif isinstance(value, list):
+        scopes = [str(item) for item in value]
+    else:
+        scopes = []
+    return [scope.strip().lower() for scope in scopes if scope and scope.strip()]
+
+
+def _json_safe_window_value(value: Any) -> Any:
+    if isinstance(value, datetime):
+        return value.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    return value
+
+
+def load_runtime_policy(path: str | Path | None = None) -> dict[str, Any]:
+    policy_path = Path(path) if path is not None else DEFAULT_RUNTIME_POLICY_PATH
+    if not policy_path.exists():
+        return {}
+    data = yaml.safe_load(policy_path.read_text(encoding="utf-8")) or {}
+    if not isinstance(data, dict):
+        return {}
+    runtime_policy = data.get("runtime_policy", data)
+    return runtime_policy if isinstance(runtime_policy, dict) else {}
+
+
+def halt_authority_window_status(
+    validator_scope: str,
+    *,
+    runtime_policy_path: str | Path | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Return whether the passive validator halt-authority window is active.
+
+    The fail-safe default is inactive: missing config, null timestamps, past
+    timestamps, invalid timestamps, or scope mismatch all preserve the existing
+    telemetry-only validator behavior.
+    """
+    policy = load_runtime_policy(runtime_policy_path)
+    window = policy.get("halt_authority_window") or {}
+    if not isinstance(window, dict):
+        window = {}
+
+    enabled_until = window.get("enabled_until")
+    scopes = _normalize_window_scopes(window.get("scope"))
+    granted_by = window.get("granted_by")
+    scope = validator_scope.strip().lower()
+    current = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+
+    base = {
+        "active": False,
+        "validator_scope": scope,
+        "enabled_until": _json_safe_window_value(enabled_until),
+        "granted_by": granted_by,
+        "scopes": scopes,
+        "adjudication": "pending",
+    }
+    if not enabled_until:
+        return {**base, "reason": "disabled"}
+    try:
+        expires_at = _parse_iso_datetime(str(enabled_until))
+    except ValueError:
+        return {**base, "reason": "invalid_enabled_until"}
+    if current >= expires_at:
+        return {**base, "reason": "expired"}
+    if scope not in VALID_HALT_AUTHORITY_SCOPES:
+        return {**base, "reason": "unknown_validator_scope"}
+    if "*" not in scopes and scope not in scopes:
+        return {**base, "reason": "scope_mismatch"}
+    return {**base, "active": True, "reason": "active"}
+
+
+def append_validator_halt_event(
+    *,
+    event_log_path: str | Path,
+    task_id: str,
+    sender: str,
+    validator_scope: str,
+    decision: str,
+    window_status: dict[str, Any],
+    configured_severity: str,
+    effective_severity: str,
+    halt_id: str | None = None,
+    reasons: list[str] | None = None,
+) -> None:
+    event_log = Path(event_log_path)
+    event_log.parent.mkdir(parents=True, exist_ok=True)
+    summary = {
+        "kind": "validator_halt_authority",
+        "validator_scope": validator_scope,
+        "decision": decision,
+        "window_active": bool(window_status.get("active")),
+        "window_reason": window_status.get("reason"),
+        "enabled_until": window_status.get("enabled_until"),
+        "granted_by": window_status.get("granted_by"),
+        "window_scopes": window_status.get("scopes", []),
+        "configured_severity": configured_severity,
+        "effective_severity": effective_severity,
+        "halt_id": halt_id,
+        "reasons": reasons or [],
+        "adjudication": "pending",
+    }
+    payload = {
+        "created_at": utc_now(),
+        "type": "PROGRESS",
+        "task_id": task_id,
+        "sender": sender,
+        "summary": json.dumps(summary, sort_keys=True),
+        "artifact_paths": [],
+    }
+    with event_log.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, separators=(",", ":")) + "\n")
 
 
 def clear_record() -> dict[str, Any]:

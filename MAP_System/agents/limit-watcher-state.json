@@ -9,70 +9,49 @@
     "antigravity": "when operator restores token budget"
   },
   "silent_reported": [],
-  "last_live": [
-    "claude-lab-mira",
-    "claude-lab-toku",
-    "claude-lab-zera",
-    "claude-lab-zero",
-    "codex-lab-mozu",
-    "codex-lab-nivo"
-  ],
+  "last_live": [],
   "incidents": {
-    "claude-lab-valo": {
-      "detected_at": "2026-07-03T17:55:36-04:00",
+    "claude-lab-mira": {
+      "detected_at": "2026-07-15T18:10:20-04:00",
       "reset_at": null,
-      "probes_sent": 6,
+      "probes_sent": 0,
       "reset_nudged": false,
-      "gave_up": true
+      "gave_up": false
     },
-    "codex-lab-dino": {
-      "detected_at": "2026-07-03T17:55:36-04:00",
+    "claude-lab-toku": {
+      "detected_at": "2026-07-15T18:10:20-04:00",
       "reset_at": null,
-      "probes_sent": 6,
+      "probes_sent": 0,
       "reset_nudged": false,
-      "gave_up": true
+      "gave_up": false
     },
-    "codex-lab-lema": {
-      "detected_at": "2026-07-03T17:55:36-04:00",
+    "claude-lab-zera": {
+      "detected_at": "2026-07-15T18:10:20-04:00",
       "reset_at": null,
-      "probes_sent": 6,
+      "probes_sent": 0,
       "reset_nudged": false,
-      "gave_up": true
+      "gave_up": false
     },
-    "codex-lab-muva": {
-      "detected_at": "2026-07-03T17:55:36-04:00",
+    "codex-lab-mozu": {
+      "detected_at": "2026-07-15T18:10:20-04:00",
       "reset_at": null,
-      "probes_sent": 6,
+      "probes_sent": 0,
       "reset_nudged": false,
-      "gave_up": true
+      "gave_up": false
     },
-    "claude-lab-vino": {
-      "detected_at": "2026-07-04T00:02:44-04:00",
+    "codex-lab-nivo": {
+      "detected_at": "2026-07-15T18:13:20-04:00",
       "reset_at": null,
-      "probes_sent": 6,
+      "probes_sent": 0,
       "reset_nudged": false,
-      "gave_up": true
+      "gave_up": false
     },
-    "codex-lab-neko": {
-      "detected_at": "2026-07-04T00:02:44-04:00",
+    "gune": {
+      "detected_at": "2026-07-15T18:13:20-04:00",
       "reset_at": null,
-      "probes_sent": 6,
+      "probes_sent": 0,
       "reset_nudged": false,
-      "gave_up": true
-    },
-    "claude-lab-magi": {
-      "detected_at": "2026-07-04T07:28:06-04:00",
-      "reset_at": null,
-      "probes_sent": 6,
-      "reset_nudged": false,
-      "gave_up": true
-    },
-    "codex-lab-veto": {
-      "detected_at": "2026-07-04T07:28:06-04:00",
-      "reset_at": null,
-      "probes_sent": 6,
-      "reset_nudged": false,
-      "gave_up": true
+      "gave_up": false
     }
   },
   "checkins": {},
@@ -81,5 +60,10 @@
     "TASK-186": "2026-07-15T09:12:50-04:00"
   },
   "terminal_suppressed": {},
-  "failed_nudges": {}
+  "failed_nudges": {
+    "claude-lab-mira": {
+      "resume_after": "2026-07-15T14:05:00-04:00",
+      "last_failed_at": "2026-07-15T17:10:19-04:00"
+    }
+  }
 }

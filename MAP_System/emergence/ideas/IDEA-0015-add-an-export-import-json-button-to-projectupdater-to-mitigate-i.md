@@ -71,3 +71,9 @@ one-way status export, not full backup/restore. RISK-0001's data-loss
 risk is now partially mitigated (manual export exists) but not fully
 (no import path back in yet). Revisit import separately if backup/
 restore becomes a real need rather than just a read-only status bridge.
+
+**Closeout (2026-07-15):** the import/backup half shipped in **TASK-205**
+(first feature of DEC-028's software-delivery proving workflow) — full-fidelity
+backup Export/Import restoring the complete model, with a confirm-overwrite
+guard and fail-safe malformed-input handling. RISK-0001's data-loss risk is now
+**fully** mitigated (both export and restore paths exist). IDEA-0015 is complete.

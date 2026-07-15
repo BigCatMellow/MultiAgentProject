@@ -1,0 +1,44 @@
+{
+  "task_id": "TASK-205",
+  "title": "ProjectUpdater full JSON backup export + import (complete IDEA-0015 data-loss mitigation)",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "DEC-028 first software-delivery slice. IDEA-0015's export shipped in TASK-136 but only as a LOSSY status snapshot (exportStatus() drops id/goal/nextAction/points/streak/reminderDays/lastVisited/dueDate), so it cannot restore state. Add a FULL backup Export + Import of the complete internal model (the STORE_KEY localStorage payload / db) to actually mitigate the registered localStorage data-loss risk. Keep the existing 'Export status' button unchanged (different purpose: tool interop). Add 'Export backup' (full db as JSON) and 'Import backup' (read file -> normalizeData -> save -> render), with a confirm-overwrite guard before replacing existing data. Single-file app: Projects/ProjectUpdater/app/index.html.",
+  "input_paths": [],
+  "output_paths": [
+    "Projects/ProjectUpdater/app/index.html",
+    "Projects/ProjectUpdater/artifacts/task-projectupdater-backup-verification.md"
+  ],
+  "acceptance_criteria": [
+    "A full-fidelity backup export writes the COMPLETE internal model (all project fields incl. id, goal, nextAction, points, streak, reminderDays, lastVisited, dueDate), not the lossy status snapshot.",
+    "Import reads a backup file, runs it through normalizeData, saves to localStorage, and re-renders; a confirm-overwrite prompt guards against silently replacing existing data.",
+    "Round-trip proven: export backup -> modify/clear -> import backup restores identical state (documented in the verification artifact).",
+    "The existing 'Export status' button and exportStatus() are unchanged; no other files touched."
+  ],
+  "objective": "Complete IDEA-0015's deferred data-loss mitigation: add a full-fidelity JSON backup export + import to ProjectUpdater so a user can save and restore their complete project data, closing the registered localStorage data-loss risk.",
+  "required_context": [
+    "Projects/ProjectUpdater/app/index.html (single-file app: STORE_KEY='projectUpdater.v1' line 339; load() line 417; save() line 431; normalizeData() line 367; existing exportStatus() line 1081; export button markup line 295)",
+    "Projects/ProjectUpdater/risks/RISK_REGISTER.md (the data-loss risk this mitigates)",
+    "MAP_System/emergence/ideas/IDEA-0015-add-an-export-import-json-button-to-projectupdater-to-mitigate-i.md",
+    "MAP_System/shared/decisions.md DEC-028 (why this is the first software-delivery slice)"
+  ],
+  "files_in_scope": [
+    "Projects/ProjectUpdater/app/index.html",
+    "Projects/ProjectUpdater/artifacts/task-projectupdater-backup-verification.md"
+  ],
+  "forbidden_changes": [
+    "Do not modify or remove the existing 'Export status' button or exportStatus() (that is a separate tool-interop feature).",
+    "Do not change the STORE_KEY value or the on-disk data schema.",
+    "Do not add a build step, framework, server, or external dependency \u2014 the app must stay a single self-contained index.html opened directly in a browser.",
+    "Do not edit any file outside files_in_scope."
+  ],
+  "expected_artifacts": [
+    "Updated Projects/ProjectUpdater/app/index.html with 'Export backup' + 'Import backup' controls and their handlers.",
+    "Projects/ProjectUpdater/artifacts/task-projectupdater-backup-verification.md documenting the round-trip test."
+  ],
+  "reviewer_role": "reviewer (a core agent other than the implementer and other than gune; prefer a Claude core agent for UI/UX + risk review, cross-model)",
+  "risk": "Low-to-medium. Client-side only, no data schema change. Main risks: (1) import overwriting data without confirmation \u2014 mitigated by a confirm guard; (2) malformed file handling \u2014 validate JSON + run through normalizeData and fail safely without corrupting existing state."
+}
