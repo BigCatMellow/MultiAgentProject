@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-193",
+  "title": "First brain compaction: archive TASK-147-192 era narrative",
+  "task_type": "maintenance",
+  "role": "implementer",
+  "status": "IN_PROGRESS",
+  "dependencies": [],
+  "owner": "claude-lab-mira",
+  "description": "notes/brain-compaction-guide.md trigger is ~45 tasks overdue (no compaction has ever run; archive/compactions/ does not exist). Compact completed-work narrative from shared active memory into archive/compactions/compaction-2026-07-14-tasks-147-192.md per the guide and templates/compaction-summary.md: preserve decisions/risks/outcomes, remove stale progress narrative from current-state.md and improvement-backlog.md, keep raw history untouched in events/artifacts, backlink from active files. Follows the guide's safety rules: no raw-log deletion, no history rewriting, no closing unresolved questions without evidence.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/archive/README.md",
+    "MAP_System/archive/compactions/compaction-2026-07-14-tasks-147-192.md",
+    "MAP_System/shared/current-state.md",
+    "MAP_System/shared/improvement-backlog.md",
+    "MAP_System/shared/memory-map.md"
+  ],
+  "acceptance_criteria": [
+    "Compaction summary follows templates/compaction-summary.md with scope, sources, tasks covered, durable outcomes, decisions preserved, open follow-ups, archive links, active files updated.",
+    "current-state.md sheds superseded/stale narrative while keeping current capabilities, risks, and next maintenance; validate_shared_state passes 21/21 after edits.",
+    "No raw history deleted anywhere; active files backlink to the compaction summary.",
+    "Closed improvement-backlog items moved to the compaction summary, open ones retained."
+  ]
+}

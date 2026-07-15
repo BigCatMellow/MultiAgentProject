@@ -371,6 +371,176 @@ def test_stale_claim_owner_nudge_logic():
     assert list(decide_stale_claim_owner_nudges(claims, old, NOW)) == ["claude-lab-valo"]
 
 
+def test_terminal_session_classification():
+    """TASK-186 / IDEA-0009: only durable inactive + a terminal reason counts.
+    Anything else stays in normal RnS territory."""
+    from limit_watcher import TERMINAL_SESSION_REASONS, is_terminal_session
+
+    assert TERMINAL_SESSION_REASONS == {"session_superseded", "disposable_session_ended"}
+    assert is_terminal_session({"status": "inactive", "reason": "session_superseded"}) is True
+    assert is_terminal_session({"status": "inactive", "reason": "disposable_session_ended"}) is True
+    # inactive without a terminal reason is NOT terminal
+    assert is_terminal_session({"status": "inactive", "reason": None}) is False
+    assert is_terminal_session({"status": "inactive", "reason": "out_of_tokens"}) is False
+    # terminal reason without inactive status is NOT terminal
+    assert is_terminal_session({"status": "standby", "reason": "session_superseded"}) is False
+    assert is_terminal_session({"status": "available", "reason": "disposable_session_ended"}) is False
+    assert is_terminal_session({}) is False
+
+
+def test_close_terminal_incidents_pops_and_labels():
+    """TASK-186: open incidents for now-terminal agents are popped and labeled
+    closed_reason='terminal_session' — an explicit closure, not a silent drop.
+    Non-terminal incidents stay open."""
+    from limit_watcher import close_terminal_incidents
+
+    state = {"incidents": {
+        "zera": {"probes_sent": 6, "gave_up": True},
+        "mozu": {"probes_sent": 1, "gave_up": False},
+        "rose": {"probes_sent": 2, "gave_up": False},
+    }}
+    st = status(zera={"status": "inactive", "reason": "session_superseded"},
+                mozu={"status": "inactive", "reason": "disposable_session_ended"},
+                rose={"status": "available"})
+
+    closed = close_terminal_incidents(state, st)
+
+    assert [name for name, _ in closed] == ["mozu", "zera"]
+    assert all(inc["closed_reason"] == "terminal_session" for _, inc in closed)
+    # popped records keep their history (probes_sent etc.)
+    assert dict(closed)["zera"]["probes_sent"] == 6
+    assert list(state["incidents"]) == ["rose"]
+    # idempotent: nothing terminal left to close
+    assert close_terminal_incidents(state, st) == []
+
+
+def test_detect_terminal_suppressions_selects_only_terminal_absentees():
+    """TASK-186: mirror of detect_presumed_down, but selecting the absentees
+    RnS must deliberately leave dead. The two sets never overlap: presumed-down
+    skips any recorded reason, terminal requires one."""
+    from limit_watcher import detect_presumed_down, detect_terminal_suppressions
+
+    snapshot = {"limo": {"status": "listening", "status_age_seconds": 5}}
+    st = status(zera={"status": "inactive", "reason": "session_superseded"},
+                mozu={"status": "inactive", "reason": "disposable_session_ended"},
+                rose={"status": "available"},
+                limo={"status": "available"})
+    prev_live = ["zera", "mozu", "rose", "limo"]
+
+    assert detect_terminal_suppressions(prev_live, snapshot, st) == ["mozu", "zera"]
+    # still-live agents are never suppression-reported
+    assert detect_terminal_suppressions(["limo"], snapshot, st) == []
+    # the non-terminal absentee remains presumed-down territory, terminal ones do not
+    assert detect_presumed_down(prev_live, snapshot, st, incidents={}) == ["rose"]
+
+
+def test_terminal_entries_suppressed_in_checkins_work_nudges_and_v1_nudges():
+    """TASK-186: decide_checkins/decide_work_nudges/decide_nudges already
+    suppress non-available/reason-set agents; these assertions pin that
+    terminal entries stay suppressed there."""
+    from limit_watcher import decide_checkins, decide_nudges, decide_work_nudges
+
+    idle3h = {"status": "listening", "status_age_seconds": 3 * 3600, "process_bound": True}
+    idle5m = {"status": "listening", "status_age_seconds": 300, "process_bound": True}
+    work = {"ready": [("TASK-050", "Fix flags", "codex")],
+            "review": [], "rework": [], "stale_claim": []}
+
+    for reason in ("session_superseded", "disposable_session_ended"):
+        st = status(rose={"status": "inactive", "reason": reason})
+        assert decide_checkins({"rose": idle3h}, st, set(), {"checkins": {}}, NOW) == []
+        assert decide_work_nudges({"rose": idle5m}, st, set(), work,
+                                  {"work_nudges": {}}, NOW) == []
+        # v1 recorded-reset path: terminal entries are never resume-nudged,
+        # even with a passed resume_after lingering on the record
+        past = (NOW - timedelta(minutes=5)).isoformat()
+        st2 = status(rose={"status": "inactive", "reason": reason, "resume_after": past})
+        nudges, unparseable = decide_nudges(st2, {"nudged": {}, "warned_unparseable": {}}, NOW)
+        assert nudges == [] and unparseable == []
+
+
+def test_send_nudge_resume_success_keeps_visible_terminal():
+    import limit_watcher as lw
+
+    class FakeResult:
+        returncode = 0
+        stdout = ""
+        stderr = ""
+
+    calls = []
+    real_run = lw.subprocess.run
+    try:
+        def fake_run(cmd, **kwargs):
+            calls.append(cmd)
+            return FakeResult()
+
+        lw.subprocess.run = fake_run
+        assert lw.send_nudge("claude-lab-mira") is True
+    finally:
+        lw.subprocess.run = real_run
+
+    assert calls[0][:4] == ["hcom", "send", "@claude-lab-mira", "--intent"]
+    assert calls[1][:6] == ["hcom", "r", "claude-lab-mira", "--terminal", "wezterm-tab", "--go"]
+    assert "--headless" not in calls[1]
+    assert len(calls) == 2
+
+
+def test_send_nudge_active_session_fallback_sends_prompt():
+    import limit_watcher as lw
+
+    class FakeResult:
+        def __init__(self, code=0, stdout="", stderr=""):
+            self.returncode = code
+            self.stdout = stdout
+            self.stderr = stderr
+
+    calls = []
+    real_run = lw.subprocess.run
+    try:
+        def fake_run(cmd, **kwargs):
+            calls.append(cmd)
+            if cmd[:2] == ["hcom", "r"]:
+                return FakeResult(1, stderr="mira is still active -- run hcom kill mira first")
+            return FakeResult(0)
+
+        lw.subprocess.run = fake_run
+        assert lw.send_nudge("claude-lab-mira") is True
+    finally:
+        lw.subprocess.run = real_run
+
+    assert len(calls) == 3
+    assert calls[1][:6] == ["hcom", "r", "claude-lab-mira", "--terminal", "wezterm-tab", "--go"]
+    assert calls[2][:4] == ["hcom", "send", "@claude-lab-mira", "--intent"]
+    assert lw.NUDGE_PROMPT in calls[2][-1]
+
+
+def test_send_nudge_active_session_fallback_failure_returns_false():
+    import limit_watcher as lw
+
+    class FakeResult:
+        def __init__(self, code=0, stdout="", stderr=""):
+            self.returncode = code
+            self.stdout = stdout
+            self.stderr = stderr
+
+    calls = []
+    real_run = lw.subprocess.run
+    try:
+        def fake_run(cmd, **kwargs):
+            calls.append(cmd)
+            if cmd[:2] == ["hcom", "r"]:
+                return FakeResult(1, stderr="target is still active")
+            if len(calls) == 3:
+                return FakeResult(1, stderr="send failed")
+            return FakeResult(0)
+
+        lw.subprocess.run = fake_run
+        assert lw.send_nudge("claude-lab-mira") is False
+    finally:
+        lw.subprocess.run = real_run
+
+    assert len(calls) == 3
+
+
 def main():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in tests:

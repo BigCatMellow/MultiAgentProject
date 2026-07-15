@@ -85,6 +85,12 @@ Controls:
 
 - workspace roots and sandboxing;
 - secret-handling rules in `SECURITY_PERMISSIONS_SYSTEM.md`;
+- redaction guard (`scripts/redaction.py`, TASK-191): capture CLIs
+  (`map_emergence.py` create/compact, `map_repair.py` create,
+  `local_runner.py` note/output writes) warn-and-redact known credential
+  shapes, URL userinfo, sensitive-assignment values, and high-entropy tokens
+  to `[REDACTED:<pattern>]` before anything lands on disk; events.jsonl
+  appenders are not yet covered (follow-up idea filed);
 - file mirror validation;
 - canonical store degradation policy;
 - task output path collision checks.

@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-185",
+  "title": "Add atomic repair record CLI",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Improvement-backlog follow-up: add MAP_System/scripts/map_repair.py as a thin file-lock based repair-record CLI with atomic --repair-id auto allocation, following the proven REPAIR-0005 fcntl pattern. No SQLite dependency for repair ID allocation.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/repairs/README.md",
+    "MAP_System/scripts/map_repair.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_map_repair.py"
+  ],
+  "acceptance_criteria": [
+    "map_repair.py can create repair records with explicit IDs and atomic --repair-id auto allocation under a file lock.",
+    "The implementation uses a file-lock/fcntl pattern and does not use SQLite for repair ID allocation.",
+    "Focused tests cover explicit create, auto allocation, and concurrent/no-collision behavior.",
+    "validate_task_mirrors, validate_events --fail-on-new, and relevant tests pass."
+  ]
+}

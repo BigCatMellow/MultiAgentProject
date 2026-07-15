@@ -93,8 +93,18 @@ and `ai helper stop`.
 Do not run assistants in an unreachable background mode.
 
 ```bash
-hcom 1 claude --tag helper-review-01 --terminal wezterm-tab
+hcom 1 claude --tag helper-review-01 --terminal wezterm-tab --model haiku
 ```
+
+Claude helpers default to auto permission mode and Haiku. This is a resource
+management default, not a capability ceiling. If a helper needs Sonnet or Opus,
+the owning agent must first write a short escalation request with the helper
+scope, why Haiku is insufficient, the requested tier, and the expected bounded
+use. A different core agent reviews that request and chooses the lowest tier
+that can reasonably handle the work. Review should be generous when the
+reasoning is sound: do not force Haiku onto work that needs stronger reasoning,
+and do not spend Sonnet or Opus on tasks Haiku can reliably perform. See
+`notes/helper-agent-guide.md` for the tier rubric and request format.
 
 Helper agents are not permanent identities. Each helper must have:
 
@@ -153,6 +163,29 @@ This is deliberately a convention, not new tooling: it targets exactly the
 gap TASK-140 found (duplicate-owner risk on broadcasts) without adding a new
 process file for something two agents can resolve by talking to each other
 first.
+
+## Broad Directive Intake Convention
+
+Broad operator directives should enter MAP through the visible intake wrapper
+before an agent decomposes them into tasks or lanes. Default path:
+
+```bash
+python3 MAP_System/scripts/command_center_intake.py \
+  --hcom-inform-to @bigboss \
+  --hcom-name <agent-hcom-name> \
+  "operator directive text"
+```
+
+The wrapper classifies the directive, validates its own hcom-shaped summary,
+optionally posts that summary as `hcom --intent inform`, records the intake
+event, and prints the current runner route. This makes the dispatch packet
+visible before decomposition without requiring a human approval step.
+
+Urgent live-control messages are exempt: stop/pause/resume instructions,
+approval prompts, safety/privacy/scope conflicts, and direct agent routing
+messages may be handled immediately through hcom. If the urgent message later
+turns into broad implementation work, run intake for the follow-on directive
+before creating or splitting tasks.
 
 ## Autonomous Claim Loop
 

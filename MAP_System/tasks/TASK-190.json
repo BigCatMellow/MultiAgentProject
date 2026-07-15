@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-190",
+  "title": "Cost/yield rollup: per-task cost x outcome view",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-zero",
+  "description": "Source-mining audit item #3 (codeburn pattern, TASK-171 Priority 2, zero follow-on so far): per-task cost-proxy x outcome rollup joining events.jsonl volumes and map.db lifecycle spans, classifying RELEASED / approved-not-released / RETIRED / abandoned, with productive-vs-abandoned spend split. Proxies labeled as proxies, no invented dollar figures. Work packet: MAP_System/inbox/helpers/cost-yield-rollup-packet.md; reference vocabulary repo/codeburn-main/src/yield.ts.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/reports/cost-yield-rollup-2026-07-14.md",
+    "MAP_System/scripts/cost_yield.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_cost_yield.py"
+  ],
+  "acceptance_criteria": [
+    "Rollup joins per-task event volume, lifecycle spans, attempts, and rework rounds with task outcome class; text and --json outputs match map_metrics.py conventions.",
+    "Cost signals are explicitly labeled proxies; no fabricated currency figures.",
+    "Read-only against canonical state; focused fixture tests wired into run_tests.sh; suite green.",
+    "Real rollup output over the actual repo included in the report artifact."
+  ]
+}

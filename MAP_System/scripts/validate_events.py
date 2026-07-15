@@ -26,6 +26,8 @@ CANONICAL_TYPES = {
     "HANDOFF",
     "DECISION_PROPOSED",
     "DECISION_RECORDED",
+    "outcome_pass",
+    "outcome_fail",
 }
 TYPE_ALIASES = {
     "REVIEW_APPROVED": "APPROVED",
@@ -34,6 +36,43 @@ TYPE_ALIASES = {
 }
 REQUIRED = {"created_at", "type", "task_id", "sender", "summary"}
 OPTIONAL_CANONICAL = {"artifact_paths"}
+OUTCOME_TYPES = {"outcome_pass", "outcome_fail"}
+OUTCOME_FIELDS = {
+    "outcome_id",
+    "observed_at",
+    "observed_by",
+    "outcome_status",
+    "use_context",
+    "validation_status_at_ship",
+    "review_status_at_ship",
+    "failure_class",
+    "severity",
+    "evidence_paths",
+    "follow_up",
+}
+REQUIRED_OUTCOME_FIELDS = {
+    "outcome_id",
+    "observed_at",
+    "observed_by",
+    "outcome_status",
+    "validation_status_at_ship",
+    "review_status_at_ship",
+    "follow_up",
+}
+OUTCOME_STATUSES = {"pass", "fail", "partial", "unknown", "not_exercised"}
+VALIDATION_STATUSES = {"passed", "failed", "waived", "not_applicable"}
+REVIEW_STATUSES = {"approved", "changes_requested", "waived", "not_applicable"}
+FAILURE_CLASSES = {
+    "validator_blind_spot",
+    "review_blind_spot",
+    "requirement_gap",
+    "stale_context",
+    "integration_gap",
+    "operator_mismatch",
+    "external_change",
+}
+SEVERITIES = {"COSMETIC", "DRIFT", "BLOCKING", "STRUCTURAL"}
+FOLLOW_UPS = {"none", "repair", "risk", "validator_improvement", "research", "task_backlog"}
 
 # Trace schema (MAP 6.13 Wave 2 / TASK-149): fields for reconstructing a
 # causal chain across events, handoffs, and hcom threads. Recognized when
@@ -42,6 +81,60 @@ OPTIONAL_CANONICAL = {"artifact_paths"}
 # event append helper exists to populate them by default. Validated for
 # shape only when an agent does supply them.
 TRACE_FIELDS = {"trace_id", "parent_event_id", "actor", "action", "target", "thread"}
+
+
+def summary_object(event: dict) -> dict:
+    summary = event.get("summary")
+    if not isinstance(summary, str):
+        return {}
+    try:
+        parsed = json.loads(summary)
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def outcome_payload(event: dict) -> dict:
+    """Outcome fields may live at top level or in JSON summary for SQLite compatibility."""
+    payload = summary_object(event)
+    for field in OUTCOME_FIELDS:
+        if field in event:
+            payload[field] = event[field]
+    return payload
+
+
+def validate_choice(
+    errors: list[str],
+    lineno: int,
+    payload: dict,
+    field: str,
+    allowed: set[str],
+) -> None:
+    value = payload.get(field)
+    if value is None:
+        return
+    if not isinstance(value, str) or value not in allowed:
+        errors.append(
+            f"line {lineno}: outcome field {field} has invalid value {value!r}; "
+            f"expected one of {', '.join(sorted(allowed))}"
+        )
+
+
+def validate_outcome_event(errors: list[str], lineno: int, event: dict) -> None:
+    payload = outcome_payload(event)
+    missing = sorted(field for field in REQUIRED_OUTCOME_FIELDS if not payload.get(field))
+    if missing:
+        errors.append(f"line {lineno}: outcome event missing field(s): {', '.join(missing)}")
+    validate_choice(errors, lineno, payload, "outcome_status", OUTCOME_STATUSES)
+    validate_choice(errors, lineno, payload, "validation_status_at_ship", VALIDATION_STATUSES)
+    validate_choice(errors, lineno, payload, "review_status_at_ship", REVIEW_STATUSES)
+    validate_choice(errors, lineno, payload, "follow_up", FOLLOW_UPS)
+    if payload.get("failure_class"):
+        validate_choice(errors, lineno, payload, "failure_class", FAILURE_CLASSES)
+    if payload.get("severity"):
+        validate_choice(errors, lineno, payload, "severity", SEVERITIES)
+    if "evidence_paths" in payload and not isinstance(payload["evidence_paths"], list):
+        errors.append(f"line {lineno}: outcome field evidence_paths must be a list")
 
 
 def load_warning_baseline(path: Path) -> int:
@@ -106,6 +199,8 @@ def validate_event_log(
             event_type = TYPE_ALIASES[event_type]
         elif event_type and event_type not in CANONICAL_TYPES:
             warn(lineno, f"line {lineno}: non-canonical event type {event_type}")
+        if event_type in OUTCOME_TYPES:
+            validate_outcome_event(errors, lineno, event)
         if event_type:
             counts[event_type] = counts.get(event_type, 0) + 1
     return errors, legacy_warnings, new_warnings, counts

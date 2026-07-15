@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Hanken Grotesk', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    @keyframes staleGlow {
+      0%,100% { box-shadow: inset 3px 0 0 #CA8E7A, 0 0 0 1px rgba(202,142,122,0.45), 0 0 24px -6px rgba(202,142,122,0.35); }
+      50%     { box-shadow: inset 3px 0 0 #CA8E7A, 0 0 0 1px rgba(202,142,122,0.75), 0 0 34px -4px rgba(202,142,122,0.6); }
+    }
+    @keyframes dotPulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%     { opacity: 0.35; transform: scale(0.7); }
+    }
+  </style>
+</helmet>
+
+<div style="position:relative; min-height:100vh; width:100%; display:flex; align-items:center; justify-content:center; padding:40px 22px; background:radial-gradient(120% 120% at 26% 10%, #0D2235 0%, #07111C 56%, #050A11 100%); overflow:auto;">
+
+  <div style="position:absolute; top:-150px; left:-110px; width:540px; height:540px; border-radius:50%; background:{{accent}}; opacity:0.10; filter:blur(95px); pointer-events:none;"></div>
+  <div style="position:absolute; bottom:-170px; right:-90px; width:480px; height:480px; border-radius:50%; background:#CA8E7A; opacity:0.08; filter:blur(105px); pointer-events:none;"></div>
+
+  <!-- ============ WINDOW ============ -->
+  <div style="position:relative; width:1120px; max-width:100%; height:min(760px, calc(100vh - 80px)); min-height:560px; display:flex; flex-direction:column; background:#0D2235; border-radius:15px; overflow:hidden; box-shadow:0 1px 0 0 rgba(244,241,232,0.06) inset, 0 0 0 1px rgba(42,90,122,0.55), 0 44px 90px -30px rgba(0,0,0,0.75), 0 18px 44px -24px rgba(0,0,0,0.6);">
+
+    <!-- title bar -->
+    <div style="display:flex; align-items:center; justify-content:space-between; height:46px; padding:0 12px 0 18px; background:linear-gradient(#0F2739, #0D2235); border-bottom:1px solid rgba(42,90,122,0.35); flex:none;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none"><rect x="3" y="2.5" width="14" height="15" rx="2.4" stroke="{{accent}}" stroke-width="1.6"/><path d="M6.6 4.2h6.8" stroke="{{accent}}" stroke-width="1.6" stroke-linecap="round"/><path d="M6.7 10l2.1 2.1 4-4.4" stroke="{{accent}}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-size:14px; font-weight:600; color:#F4F1E8; letter-spacing:0.01em;">Project Updater</span>
+        <span style="font-size:13px; color:rgba(219,216,202,0.42);">— Task Tracker</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:4px;">
+        <div style="width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:default;" style-hover="background:rgba(244,241,232,0.07);">
+          <svg width="13" height="13" viewBox="0 0 13 13"><line x1="2.5" y1="9.5" x2="10.5" y2="9.5" stroke="#DBD8CA" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div style="width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:default;" style-hover="background:rgba(244,241,232,0.07);">
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect x="2.7" y="2.7" width="7.6" height="7.6" rx="1.4" fill="none" stroke="#DBD8CA" stroke-width="1.4"/></svg>
+        </div>
+        <div style="width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:default;" style-hover="background:rgba(202,142,122,0.22);">
+          <svg width="13" height="13" viewBox="0 0 13 13"><line x1="3.2" y1="3.2" x2="9.8" y2="9.8" stroke="#DBD8CA" stroke-width="1.4" stroke-linecap="round"/><line x1="9.8" y1="3.2" x2="3.2" y2="9.8" stroke="#DBD8CA" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- toolbar -->
+    <div style="display:flex; align-items:center; gap:14px; height:56px; padding:0 16px; background:#0D2235; border-bottom:1px solid rgba(42,90,122,0.28); flex:none;">
+      <div style="display:flex; align-items:center; gap:2px;">
+        <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:default;" style-hover="background:rgba(244,241,232,0.06);">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M10.5 3.5 5.5 8.5l5 5" stroke="#DBD8CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:default;">
+          <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M6.5 3.5 11.5 8.5l-5 5" stroke="rgba(219,216,202,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <!-- breadcrumb -->
+      <div style="display:flex; align-items:center; gap:2px; padding:5px 6px 5px 12px; background:#081A29; border:1px solid rgba(42,90,122,0.5); border-radius:10px; flex:1; min-width:0;">
+        <span style="font-size:13.5px; color:rgba(219,216,202,0.55); cursor:default;" style-hover="color:#DBD8CA;">Home</span>
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style="opacity:0.4;"><path d="M6 4l3 3.5L6 11" stroke="#DBD8CA" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-size:13.5px; color:#F4F1E8; font-weight:600; padding:0 4px;">{{crumb}}</span>
+      </div>
+
+      <!-- search -->
+      <div style="display:flex; align-items:center; gap:8px; width:210px; padding:8px 12px; background:#081A29; border:1px solid rgba(42,90,122,0.5); border-radius:10px;">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4" stroke="rgba(219,216,202,0.5)" stroke-width="1.4"/><line x1="9.6" y1="9.6" x2="12.5" y2="12.5" stroke="rgba(219,216,202,0.5)" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span style="font-size:13.5px; color:rgba(219,216,202,0.4);">Search projects</span>
+      </div>
+
+      <!-- new project -->
+      <div onClick="{{goAdd}}" style="display:flex; align-items:center; gap:7px; padding:8px 14px; background:{{accent}}; border-radius:10px; cursor:default; box-shadow:0 6px 16px -8px rgba(0,0,0,0.6);" style-hover="filter:brightness(1.07);">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2.5v9M2.5 7h9" stroke="#07111C" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span style="font-size:13.5px; font-weight:700; color:#07111C;">New</span>
+      </div>
+    </div>
+
+    <!-- body -->
+    <div style="display:flex; flex:1; min-height:0;">
+
+      <!-- sidebar -->
+      <div style="width:224px; flex:none; background:#081A29; border-right:1px solid rgba(42,90,122,0.28); padding:14px 12px; overflow-y:auto;">
+
+        <div style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(219,216,202,0.36); font-weight:600; padding:0 10px; margin:2px 0 8px;">Views</div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div onClick="{{goDash}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:{{dashColor}}; background:{{dashBg}}; box-shadow:{{dashBar}};" style-hover="background:rgba(244,241,232,0.05);">
+            <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><rect x="2.5" y="2.5" width="6" height="6" rx="1.4" stroke="currentColor" stroke-width="1.5"/><rect x="9.5" y="2.5" width="6" height="6" rx="1.4" stroke="currentColor" stroke-width="1.5"/><rect x="2.5" y="9.5" width="6" height="6" rx="1.4" stroke="currentColor" stroke-width="1.5"/><rect x="9.5" y="9.5" width="6" height="6" rx="1.4" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span style="font-size:14px; font-weight:500;">Dashboard</span>
+          </div>
+          <div onClick="{{goProjects}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:{{projColor}}; background:{{projBg}}; box-shadow:{{projBar}};" style-hover="background:rgba(244,241,232,0.05);">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M2.5 6a2 2 0 0 1 2-2h4l2 2h5a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px; font-weight:500;">Projects</span>
+            <span style="margin-left:auto; font-size:11.5px; font-weight:600; color:rgba(219,216,202,0.5); font-family:'IBM Plex Mono', monospace;">{{openCount}}</span>
+          </div>
+          <div onClick="{{goNote}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:{{noteColor}}; background:{{noteBg}}; box-shadow:{{noteBar}};" style-hover="background:rgba(244,241,232,0.05);">
+            <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M11.5 2.5 15 6l-8.5 8.5-4 1 1-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 4 13.5 7.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span style="font-size:14px; font-weight:500;">Quick Note</span>
+          </div>
+          <div onClick="{{goAdd}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:{{addColor}}; background:{{addBg}}; box-shadow:{{addBar}};" style-hover="background:rgba(244,241,232,0.05);">
+            <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v6M6 9h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="font-size:14px; font-weight:500;">Add Project</span>
+          </div>
+        </div>
+
+        <div style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(219,216,202,0.36); font-weight:600; padding:0 10px; margin:22px 0 8px;">Attention</div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div onClick="{{goProjects}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:rgba(219,216,202,0.82);" style-hover="background:rgba(244,241,232,0.05);">
+            <span style="width:9px; height:9px; border-radius:50%; background:#CA8E7A; box-shadow:0 0 10px 1px rgba(202,142,122,0.7); animation:dotPulse 2.2s ease-in-out infinite; flex:none;"></span>
+            <span style="font-size:14px;">Stale</span>
+            <span style="margin-left:auto; font-size:11.5px; font-weight:700; color:#CA8E7A; font-family:'IBM Plex Mono', monospace;">{{staleCount}}</span>
+          </div>
+          <div onClick="{{goProjects}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:rgba(219,216,202,0.82);" style-hover="background:rgba(244,241,232,0.05);">
+            <span style="width:9px; height:9px; border-radius:50%; background:#3E8FC2; flex:none;"></span>
+            <span style="font-size:14px;">Due soon</span>
+            <span style="margin-left:auto; font-size:11.5px; font-weight:700; color:#3E8FC2; font-family:'IBM Plex Mono', monospace;">{{dueCount}}</span>
+          </div>
+          <div onClick="{{goProjects}}" style="display:flex; align-items:center; gap:11px; padding:8px 11px; border-radius:9px; cursor:default; color:rgba(219,216,202,0.82);" style-hover="background:rgba(244,241,232,0.05);">
+            <span style="width:9px; height:9px; border-radius:50%; background:#A2CDB5; flex:none;"></span>
+            <span style="font-size:14px;">On track</span>
+            <span style="margin-left:auto; font-size:11.5px; font-weight:700; color:#A2CDB5; font-family:'IBM Plex Mono', monospace;">{{healthyCount}}</span>
+          </div>
+        </div>
+
+        <div style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(219,216,202,0.36); font-weight:600; padding:0 10px; margin:22px 0 8px;">Areas</div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <sc-for list="{{areas}}" as="a" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:11px; padding:7px 11px; border-radius:9px; cursor:default; color:rgba(219,216,202,0.7);" style-hover="background:rgba(244,241,232,0.05);">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="4" fill="{{a.color}}" fill-opacity="0.85"/></svg>
+              <span style="font-size:13.5px;">{{a.name}}</span>
+              <span style="margin-left:auto; font-size:11.5px; color:rgba(219,216,202,0.42); font-family:'IBM Plex Mono', monospace;">{{a.count}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- content -->
+      <div style="flex:1; min-width:0; background:#07111C; overflow-y:auto;">
+
+        <!-- ===================== DASHBOARD ===================== -->
+        <sc-if value="{{isDash}}" hint-placeholder-val="{{true}}">
+          <div style="padding:24px 26px 30px;">
+
+            <!-- reminder banner -->
+            <div style="display:flex; align-items:center; gap:14px; padding:15px 18px; margin-bottom:22px; border-radius:13px; background:linear-gradient(90deg, rgba(202,142,122,0.16), rgba(202,142,122,0.04)); box-shadow:0 0 0 1px rgba(202,142,122,0.4); animation:staleGlow 3.4s ease-in-out infinite;">
+              <div style="width:38px; height:38px; flex:none; display:flex; align-items:center; justify-content:center; border-radius:10px; background:rgba(202,142,122,0.2);">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5 18 16H2z" stroke="#CA8E7A" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 8v3.5" stroke="#CA8E7A" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="13.6" r="0.9" fill="#CA8E7A"/></svg>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:15px; font-weight:700; color:#F4F1E8;">{{staleCount}} projects need an update</div>
+                <div style="font-size:13px; color:rgba(219,216,202,0.62); margin-top:1px;">You haven't touched these past their reminder window. A quick note keeps them alive.</div>
+              </div>
+              <div onClick="{{goNote}}" style="padding:8px 15px; border-radius:9px; background:#CA8E7A; cursor:default; flex:none;" style-hover="filter:brightness(1.07);">
+                <span style="font-size:13px; font-weight:700; color:#07111C;">Update now</span>
+              </div>
+            </div>
+
+            <!-- stats -->
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:22px;">
+              <sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
+                <div style="padding:16px 16px 15px; border-radius:13px; background:#0D2235; box-shadow:inset 0 0 0 1px rgba(42,90,122,0.4);">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(219,216,202,0.5); font-weight:600;">{{s.label}}</span>
+                    <span style="width:8px; height:8px; border-radius:50%; background:{{s.color}};"></span>
+                  </div>
+                  <div style="font-size:30px; font-weight:800; color:#F4F1E8; line-height:1.05; margin-top:8px; font-family:'IBM Plex Mono', monospace;">{{s.value}}</div>
+                  <div style="font-size:12px; color:{{s.color}}; margin-top:3px; font-weight:500;">{{s.hint}}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1.35fr 1fr; gap:18px;">
+
+              <!-- needs attention -->
+              <div>
+                <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
+                  <h2 style="margin:0; font-size:16px; font-weight:700; color:#F4F1E8;">Needs attention</h2>
+                  <span style="font-size:12.5px; color:rgba(219,216,202,0.45);">sorted by days idle</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:11px;">
+                  <sc-for list="{{staleProjects}}" as="p" hint-placeholder-count="3">
+                    <div style="position:relative; padding:14px 16px; border-radius:12px; background:#0D2235; box-shadow:{{p.glow}}; overflow:hidden;">
+                      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+                        <div style="min-width:0;">
+                          <div style="font-size:15px; font-weight:700; color:#F4F1E8; line-height:1.25;">{{p.name}}</div>
+                          <div style="font-size:12.5px; color:rgba(219,216,202,0.55); margin-top:2px;">{{p.area}} · Next: {{p.nextAction}}</div>
+                        </div>
+                        <div style="flex:none; padding:4px 9px; border-radius:999px; background:rgba(202,142,122,0.18); box-shadow:inset 0 0 0 1px rgba(202,142,122,0.5);">
+                          <span style="font-size:11.5px; font-weight:700; color:#CA8E7A; white-space:nowrap;">{{p.idleText}}</span>
+                        </div>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:10px; margin-top:12px;">
+                        <div style="flex:1; height:6px; border-radius:99px; background:rgba(42,90,122,0.4); overflow:hidden;">
+                          <div style="height:100%; width:{{p.progressW}}; border-radius:99px; background:{{p.progressColor}};"></div>
+                        </div>
+                        <span style="font-size:12px; color:rgba(219,216,202,0.6); font-family:'IBM Plex Mono', monospace;">{{p.progressText}}</span>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <!-- recent notes -->
+              <div>
+                <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
+                  <h2 style="margin:0; font-size:16px; font-weight:700; color:#F4F1E8;">Recent notes</h2>
+                  <span style="font-size:12.5px; color:rgba(219,216,202,0.45);">last 7 days</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <sc-for list="{{notes}}" as="n" hint-placeholder-count="3">
+                    <div style="padding:12px 14px; border-radius:11px; background:#0D2235; box-shadow:inset 3px 0 0 {{n.color}}, inset 0 0 0 1px rgba(42,90,122,0.35);">
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                        <span style="font-size:13.5px; font-weight:700; color:#F4F1E8;">{{n.project}}</span>
+                        <span style="font-size:11px; font-weight:600; color:{{n.color}}; text-transform:uppercase; letter-spacing:0.05em;">{{n.type}}</span>
+                      </div>
+                      <div style="font-size:13px; color:rgba(219,216,202,0.78); margin-top:5px; line-height:1.4;">{{n.text}}</div>
+                      <div style="font-size:11.5px; color:rgba(219,216,202,0.42); margin-top:6px; font-family:'IBM Plex Mono', monospace;">{{n.time}}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <!-- status bar -->
+    <div style="display:flex; align-items:center; justify-content:space-between; height:34px; padding:0 18px; background:#081A29; border-top:1px solid rgba(42,90,122,0.28); flex:none;">
+      <span style="font-size:12.5px; color:rgba(219,216,202,0.5);">{{statusLeft}}</span>
+      <span style="font-size:12.5px; color:rgba(219,216,202,0.5);">Last synced today · 09:24</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<!--
+  NOTE: This file is a design reference imported from
+  claude.ai/design/p/9e3f5e32-b481-4f33-8091-67f8b3456daf ("Project Updater.dc.html").
+  It uses hardcoded sample data and a Claude Design (DC) component runtime
+  (support.js) not present in this repo, so it will not render standalone.
+  The Projects/Screens, tab logic, filters, and Quick Note/Add Project forms
+  from the full original mockup, plus the fuller interaction logic from the
+  companion prototype (project-updater-prototype.html), were used to build
+  the real working implementation at Projects/ProjectUpdater/app/index.html.
+-->
+</body>
+</html>

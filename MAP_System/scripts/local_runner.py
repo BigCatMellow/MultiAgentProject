@@ -16,6 +16,7 @@ sys.path.insert(0, str(REPO))
 
 from MAP_System.scripts.event_trace import add_trace_fields
 from MAP_System.scripts.local_assistant_health import REQUIRED_MODELS, build_report
+from MAP_System.scripts.redaction import guard as redaction_guard
 
 EVENT_LOG = ROOT / "events" / "events.jsonl"
 HELPERS_DIR = ROOT / "inbox" / "helpers"
@@ -94,7 +95,7 @@ def write_helper_note(
     note_dir.mkdir(parents=True, exist_ok=True)
     stamp = utc_stamp()
     path = note_dir / f"{slug(task_id)}-{slug(model)}-{stamp.replace(':', '')}.md"
-    path.write_text(
+    note_text = redaction_guard(
         "\n".join(
             [
                 f"# Local Helper Invocation: {task_id}",
@@ -111,8 +112,9 @@ def write_helper_note(
                 "",
             ]
         ),
-        encoding="utf-8",
+        f"local_runner helper note {path.name}",
     )
+    path.write_text(note_text, encoding="utf-8")
     return path
 
 
@@ -137,6 +139,7 @@ def run(args: argparse.Namespace) -> dict[str, str]:
     output_path = args.output
     check_health(args.model, args.health_timeout)
     response = run_ollama(args.model, prompt, args.run_timeout)
+    response = redaction_guard(response, f"local_runner output {output_path.name}")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(response, encoding="utf-8")
     prompt_source = str(args.prompt_file) if args.prompt_file else "inline"

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <!--
+    NOTE: Design provenance. Imported from
+    claude.ai/design/p/9e3f5e32-b481-4f33-8091-67f8b3456daf,
+    uploads/project updater.txt. Originally written against a Google Apps
+    Script backend (google.script.run calls to getAppData/addNote/
+    addProject/markVisited) which does not exist in this repo. Its data
+    model, stale/due-soon logic, and UI structure were reused when building
+    Projects/ProjectUpdater/app/index.html; the google.script.run calls
+    were replaced with a localStorage-backed client-side store there.
+  -->
+
+  <style>
+  :root {
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --line: #d1d5db;
+    --blue: #2563eb;
+    --blue-dark: #1d4ed8;
+    --red: #dc2626;
+    --yellow: #f59e0b;
+    --green: #16a34a;
+    --radius: 16px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #111827;
+    color: white;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  header p {
+    margin: 4px 0 0;
+    color: #cbd5e1;
+    font-size: 13px;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin-bottom: 16px;
+    padding-bottom: 2px;
+  }
+
+  .tabs button {
+    width: auto;
+    white-space: nowrap;
+    background: #e5e7eb;
+    color: #111827;
+    min-height: 44px;
+    padding: 10px 14px;
+  }
+
+  .tabs button.active {
+    background: var(--blue);
+    color: white;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .stat {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 4px;
+    line-height: 1.1;
+  }
+
+  .label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  h2 {
+    font-size: 19px;
+    margin: 0 0 12px;
+  }
+
+  h3 {
+    font-size: 16px;
+    margin: 0 0 8px;
+  }
+
+  label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    width: 100%;
+    font: inherit;
+    border-radius: 12px;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid var(--line);
+    padding: 12px;
+    background: white;
+    font-size: 16px;
+    min-height: 46px;
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  button {
+    border: 0;
+    background: var(--blue);
+    color: white;
+    padding: 12px 14px;
+    min-height: 46px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 12px;
+    touch-action: manipulation;
+  }
+
+  button:active {
+    transform: scale(0.99);
+  }
+
+  button.secondary {
+    background: #4b5563;
+  }
+
+  button.danger {
+    background: var(--red);
+  }
+
+  .project {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .project.stale {
+    border-color: var(--red);
+    background: #fff7f7;
+  }
+
+  .project.due {
+    border-color: var(--yellow);
+    background: #fffbeb;
+  }
+
+  .project-title {
+    font-weight: bold;
+    font-size: 17px;
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+
+  .meta {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    font-size: 12px;
+    margin-right: 4px;
+    margin-top: 5px;
+  }
+
+  .badge.red {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .badge.yellow {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .badge.green {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .note {
+    border-left: 4px solid var(--blue);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .status {
+    color: var(--muted);
+    margin-top: 10px;
+    font-size: 14px;
+    min-height: 18px;
+  }
+
+  .small-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 800px) {
+    body {
+      font-size: 16px;
+    }
+
+    header {
+      padding: 12px 14px;
+    }
+
+    header h1 {
+      font-size: 19px;
+    }
+
+    header p {
+      font-size: 12px;
+    }
+
+    main {
+      padding: 12px;
+      padding-bottom: 92px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .two,
+    .small-row {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      padding: 14px;
+      border-radius: 15px;
+    }
+
+    .stat {
+      font-size: 25px;
+    }
+
+    .tabs {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 0;
+      padding: 8px;
+      background: rgba(255,255,255,0.96);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -3px 12px rgba(0,0,0,0.10);
+      overflow-x: visible;
+    }
+
+    .tabs button {
+      margin: 0;
+      padding: 9px 5px;
+      min-height: 48px;
+      font-size: 13px;
+      border-radius: 12px;
+      white-space: normal;
+      line-height: 1.15;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    .project-title {
+      font-size: 16px;
+    }
+
+    .project {
+      padding: 13px;
+    }
+
+    .meta {
+      font-size: 13px;
+    }
+
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+      min-height: 48px;
+    }
+
+    textarea {
+      min-height: 130px;
+    }
+
+    button {
+      min-height: 48px;
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    main {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .card {
+      padding: 12px;
+    }
+
+    .stat {
+      font-size: 23px;
+    }
+
+    .label {
+      font-size: 11px;
+    }
+
+    .tabs button {
+      font-size: 12px;
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+  }
+
+  @media (min-width: 801px) {
+    .tabs button:hover,
+    button:hover {
+      filter: brightness(0.96);
+    }
+  }
+</style>
+</head>
+
+<body>
+  <header>
+    <h1>Project Hub</h1>
+    <p>Capture notes, revisit stale projects, and keep next actions visible.</p>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <button id="tabDashboard" class="active" onclick="showTab('dashboard')">Dashboard</button>
+      <button id="tabCapture" onclick="showTab('capture')">Quick Note</button>
+      <button id="tabProjects" onclick="showTab('projects')">Projects</button>
+      <button id="tabAdd" onclick="showTab('add')">Add Project</button>
+    </div>
+
+    <section id="dashboard">
+      <div class="grid">
+        <div class="card">
+          <div class="label">Active</div>
+          <div id="statActive" class="stat">0</div>
+        </div>
+        <div class="card">
+          <div class="label">Stale</div>
+          <div id="statStale" class="stat">0</div>
+        </div>
+        <div class="card">
+          <div class="label">Due Soon</div>
+          <div id="statDueSoon" class="stat">0</div>
+        </div>
+        <div class="card">
+          <div class="label">Points</div>
+          <div id="statPoints" class="stat">0</div>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:16px;">
+        <div class="card">
+          <h2>Needs Attention</h2>
+          <div id="staleList"></div>
+        </div>
+
+        <div class="card">
+          <h2>Recent Notes</h2>
+          <div id="recentNotes"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="capture" class="hidden">
+      <div class="card">
+        <h2>Quick Note</h2>
+
+        <label>Project</label>
+        <select id="noteProject"></select>
+
+        <div class="small-row">
+          <div>
+            <label>Note Type</label>
+            <select id="noteType">
+              <option>Note</option>
+              <option>Idea</option>
+              <option>Decision</option>
+              <option>Blocker</option>
+              <option>Next Action</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Energy</label>
+            <select id="noteEnergy">
+              <option></option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Note</label>
+        <textarea id="noteText" placeholder="What changed, what did you decide, or what should you remember?"></textarea>
+
+        <label>Next Action</label>
+        <input id="noteNextAction" placeholder="Smallest useful next step">
+
+        <div class="small-row">
+          <div>
+            <label>Status</label>
+            <select id="noteStatus"></select>
+          </div>
+
+          <div>
+            <label>Progress</label>
+            <input id="noteProgress" type="number" min="0" max="100">
+          </div>
+        </div>
+
+        <button onclick="saveNote()">Save Note</button>
+        <button class="secondary" onclick="markSelectedVisited()">Mark Visited Only</button>
+
+        <div id="noteStatusMsg" class="status"></div>
+      </div>
+    </section>
+
+    <section id="projects" class="hidden">
+      <div class="card">
+        <h2>All Projects</h2>
+
+        <label>Filter</label>
+        <select id="projectFilter" onchange="renderProjects()">
+          <option value="open">Open Projects</option>
+          <option value="stale">Stale Projects</option>
+          <option value="all">All Projects</option>
+          <option value="finished">Finished</option>
+          <option value="archived">Archived</option>
+        </select>
+
+        <div id="projectList" style="margin-top:14px;"></div>
+      </div>
+    </section>
+
+    <section id="add" class="hidden">
+      <div class="card">
+        <h2>Add Project</h2>
+
+        <label>Project Name</label>
+        <input id="newProject" placeholder="Example: Onion OS sound pack">
+
+        <label>Area</label>
+        <input id="newArea" placeholder="Work, Home, Game Design, School, etc.">
+
+        <label>Goal</label>
+        <textarea id="newGoal" placeholder="What does done look like?"></textarea>
+
+        <label>Next Action</label>
+        <input id="newNextAction" placeholder="The first small action">
+
+        <div class="small-row">
+          <div>
+            <label>Priority</label>
+            <select id="newPriority"></select>
+          </div>
+
+          <div>
+            <label>Reminder Days</label>
+            <input id="newReminderDays" type="number" min="1" max="365" value="14">
+          </div>
+        </div>
+
+        <label>Due Date</label>
+        <input id="newDueDate" type="date">
+
+        <button onclick="createProject()">Add Project</button>
+
+        <div id="addStatusMsg" class="status"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let appData = null;
+
+    function load() {
+      google.script.run
+        .withSuccessHandler(data => {
+          appData = data;
+          renderAll();
+        })
+        .withFailureHandler(err => {
+          alert(err.message || String(err));
+        })
+        .getAppData();
+    }
+
+    function showTab(name) {
+      ['dashboard', 'capture', 'projects', 'add'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== name);
+      });
+
+      ['Dashboard', 'Capture', 'Projects', 'Add'].forEach(label => {
+        const btn = document.getElementById('tab' + label);
+        if (btn) btn.classList.remove('active');
+      });
+
+      const active = {
+        dashboard: 'tabDashboard',
+        capture: 'tabCapture',
+        projects: 'tabProjects',
+        add: 'tabAdd'
+      };
+
+      document.getElementById(active[name]).classList.add('active');
+    }
+
+    function renderAll() {
+      renderStats();
+      renderDropdowns();
+      renderStaleList();
+      renderRecentNotes();
+      renderProjects();
+    }
+
+    function renderStats() {
+      document.getElementById('statActive').textContent = appData.stats.active;
+      document.getElementById('statStale').textContent = appData.stats.stale;
+      document.getElementById('statDueSoon').textContent = appData.stats.dueSoon;
+      document.getElementById('statPoints').textContent = appData.stats.points;
+    }
+
+    function renderDropdowns() {
+      const openProjects = appData.projects.filter(p => !['Finished', 'Archived'].includes(p.status));
+
+      fillSelect(
+        document.getElementById('noteProject'),
+        openProjects.map(p => ({
+          value: p.id,
+          label: p.daysIdle >= p.reminderDays ? `⚠ ${p.project}` : p.project
+        }))
+      );
+
+      fillSelect(
+        document.getElementById('noteStatus'),
+        appData.statuses.map(s => ({ value: s, label: s }))
+      );
+
+      fillSelect(
+        document.getElementById('newPriority'),
+        appData.priorities.map(p => ({ value: p, label: p }))
+      );
+
+      document.getElementById('newPriority').value = 'Medium';
+
+      syncNoteFields();
+      document.getElementById('noteProject').onchange = syncNoteFields;
+    }
+
+    function syncNoteFields() {
+      const id = document.getElementById('noteProject').value;
+      const p = appData.projects.find(x => x.id === id);
+
+      if (!p) return;
+
+      document.getElementById('noteStatus').value = p.status;
+      document.getElementById('noteProgress').value = p.progress;
+      document.getElementById('noteNextAction').placeholder = p.nextAction || 'Smallest useful next step';
+    }
+
+    function renderStaleList() {
+      const el = document.getElementById('staleList');
+
+      const stale = appData.projects
+        .filter(p => !['Finished', 'Archived'].includes(p.status))
+        .filter(p => p.daysIdle >= p.reminderDays)
+        .sort((a, b) => b.daysIdle - a.daysIdle)
+        .slice(0, 8);
+
+      if (stale.length === 0) {
+        el.innerHTML = '<div class="meta">No stale projects.</div>';
+        return;
+      }
+
+      el.innerHTML = stale.map(projectCardHtml).join('');
+    }
+
+    function renderRecentNotes() {
+      const el = document.getElementById('recentNotes');
+
+      if (!appData.notes.length) {
+        el.innerHTML = '<div class="meta">No notes yet.</div>';
+        return;
+      }
+
+      el.innerHTML = appData.notes.map(n => `
+        <div class="note">
+          <strong>${escapeHtml(n.project)}</strong>
+          <div class="meta">${escapeHtml(n.timestamp)} · ${escapeHtml(n.noteType)}</div>
+          <div>${escapeHtml(n.note)}</div>
+          ${n.nextAction ? `<div class="meta"><strong>Next:</strong> ${escapeHtml(n.nextAction)}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderProjects() {
+      const el = document.getElementById('projectList');
+      const filter = document.getElementById('projectFilter').value;
+
+      let projects = [...appData.projects];
+
+      if (filter === 'open') {
+        projects = projects.filter(p => !['Finished', 'Archived'].includes(p.status));
+      }
+
+      if (filter === 'stale') {
+        projects = projects.filter(p => !['Finished', 'Archived'].includes(p.status))
+                           .filter(p => p.daysIdle >= p.reminderDays);
+      }
+
+      if (filter === 'finished') {
+        projects = projects.filter(p => p.status === 'Finished');
+      }
+
+      if (filter === 'archived') {
+        projects = projects.filter(p => p.status === 'Archived');
+      }
+
+      projects.sort((a, b) => b.daysIdle - a.daysIdle);
+
+      if (!projects.length) {
+        el.innerHTML = '<div class="meta">No projects match this filter.</div>';
+        return;
+      }
+
+      el.innerHTML = projects.map(projectCardHtml).join('');
+    }
+
+    function projectCardHtml(p) {
+      const stale = p.daysIdle >= p.reminderDays && !['Finished', 'Archived'].includes(p.status);
+      const dueSoon = p.daysUntilDue !== null && p.daysUntilDue >= 0 && p.daysUntilDue <= 7;
+
+      const cls = stale ? 'project stale' : dueSoon ? 'project due' : 'project';
+
+      return `
+        <div class="${cls}">
+          <div class="project-title">${escapeHtml(p.project)}</div>
+
+          <div>
+            <span class="badge">${escapeHtml(p.status)}</span>
+            <span class="badge">${escapeHtml(p.priority)}</span>
+            ${stale ? `<span class="badge red">Stale: ${p.daysIdle} days</span>` : ''}
+            ${dueSoon ? `<span class="badge yellow">Due soon</span>` : ''}
+            ${p.status === 'Finished' ? `<span class="badge green">Finished</span>` : ''}
+          </div>
+
+          <div class="meta" style="margin-top:8px;">
+            <strong>Goal:</strong> ${escapeHtml(p.goal || 'No goal set')}<br>
+            <strong>Next:</strong> ${escapeHtml(p.nextAction || 'No next action set')}<br>
+            <strong>Progress:</strong> ${p.progress}% ·
+            <strong>Points:</strong> ${p.points} ·
+            <strong>Streak:</strong> ${p.streak}<br>
+            <strong>Last Visited:</strong> ${escapeHtml(p.lastVisitedText || 'Never')} ·
+            <strong>Reminder:</strong> ${p.reminderDays} days
+            ${p.dueDate ? `<br><strong>Due:</strong> ${escapeHtml(p.dueDate)}` : ''}
+          </div>
+
+          <button class="secondary" onclick="markVisitedById('${p.id}')">Mark Visited</button>
+        </div>
+      `;
+    }
+
+    function saveNote() {
+      const payload = {
+        projectId: document.getElementById('noteProject').value,
+        noteType: document.getElementById('noteType').value,
+        energy: document.getElementById('noteEnergy').value,
+        note: document.getElementById('noteText').value,
+        nextAction: document.getElementById('noteNextAction').value,
+        status: document.getElementById('noteStatus').value,
+        progress: document.getElementById('noteProgress').value
+      };
+
+      setStatus('noteStatusMsg', 'Saving...');
+
+      google.script.run
+        .withSuccessHandler(data => {
+          appData = data;
+          document.getElementById('noteText').value = '';
+          document.getElementById('noteNextAction').value = '';
+          setStatus('noteStatusMsg', 'Saved.');
+          renderAll();
+        })
+        .withFailureHandler(err => setStatus('noteStatusMsg', err.message || String(err)))
+        .addNote(payload);
+    }
+
+    function createProject() {
+      const payload = {
+        project: document.getElementById('newProject').value,
+        area: document.getElementById('newArea').value,
+        goal: document.getElementById('newGoal').value,
+        nextAction: document.getElementById('newNextAction').value,
+        priority: document.getElementById('newPriority').value,
+        reminderDays: document.getElementById('newReminderDays').value,
+        dueDate: document.getElementById('newDueDate').value,
+        status: 'Active',
+        progress: 0
+      };
+
+      setStatus('addStatusMsg', 'Adding...');
+
+      google.script.run
+        .withSuccessHandler(data => {
+          appData = data;
+
+          document.getElementById('newProject').value = '';
+          document.getElementById('newArea').value = '';
+          document.getElementById('newGoal').value = '';
+          document.getElementById('newNextAction').value = '';
+          document.getElementById('newDueDate').value = '';
+          document.getElementById('newReminderDays').value = 14;
+          document.getElementById('newPriority').value = 'Medium';
+
+          setStatus('addStatusMsg', 'Project added.');
+          renderAll();
+        })
+        .withFailureHandler(err => setStatus('addStatusMsg', err.message || String(err)))
+        .addProject(payload);
+    }
+
+    function markSelectedVisited() {
+      markVisitedById(document.getElementById('noteProject').value);
+    }
+
+    function markVisitedById(id) {
+      google.script.run
+        .withSuccessHandler(data => {
+          appData = data;
+          renderAll();
+        })
+        .withFailureHandler(err => alert(err.message || String(err)))
+        .markVisited(id);
+    }
+
+    function fillSelect(select, options) {
+      select.innerHTML = '';
+
+      options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        select.appendChild(option);
+      });
+    }
+
+    function setStatus(id, message) {
+      document.getElementById(id).textContent = message;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    load();
+  </script>
+</body>
+</html>

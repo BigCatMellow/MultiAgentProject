@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=AI Command Center Lab
-Comment=Open the test AI command center with an attention monitor tab
+Comment=Open the test AI command center with lab agents, Librarian, and Monitor
 Exec=/home/home/.local/bin/ai-command-center-lab
 Icon=utilities-terminal
 Terminal=false

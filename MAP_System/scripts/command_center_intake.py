@@ -92,6 +92,35 @@ def validate_wrapper_output(hcom_inform: str) -> dict:
     return finding
 
 
+def post_hcom_inform(
+    hcom_inform: str,
+    recipients: list[str],
+    *,
+    sender_name: str,
+    runner=subprocess.run,
+) -> dict | None:
+    """Post the validated intake packet to hcom as a visible inform message.
+
+    This is intentionally optional so tests, dry-runs, and urgent live-control
+    paths can use the same intake classifier without writing to hcom.
+    """
+    if not recipients:
+        return None
+    result = runner(
+        ["hcom", "send", *recipients, "--intent", "inform", "--name", sender_name, "--", hcom_inform],
+        cwd=REPO,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return {
+        "recipients": recipients,
+        "returncode": result.returncode,
+        "stdout": (result.stdout or "").strip(),
+        "stderr": (result.stderr or "").strip(),
+    }
+
+
 def get_next_route() -> dict:
     result = subprocess.run(
         [RUNNER_PYTHON, str(ROOT / "graph" / "runner.py"), "--pretty"],
@@ -109,6 +138,9 @@ def run_intake(
     task_id: str = "TASK-167",
     event_log: Path = DEFAULT_EVENT_LOG,
     record_event: bool = True,
+    hcom_inform_to: list[str] | None = None,
+    hcom_name: str = "command-center-intake",
+    hcom_runner=subprocess.run,
 ) -> dict:
     packet = dispatch_packet(text, owner=owner)
     classification = packet["classification"]
@@ -120,6 +152,13 @@ def run_intake(
     )
     validate_wrapper_output(hcom_inform)
 
+    hcom_post = post_hcom_inform(
+        hcom_inform,
+        hcom_inform_to or [],
+        sender_name=hcom_name,
+        runner=hcom_runner,
+    )
+
     event = None
     if record_event:
         event = append_intake_event(packet, task_id=task_id, event_log=event_log)
@@ -128,6 +167,7 @@ def run_intake(
     return {
         "packet": packet,
         "hcom_inform": hcom_inform,
+        "hcom_post": hcom_post,
         "event": event,
         "next_route": route.get("next_route"),
         "recommended_action": route.get("recommended_action"),
@@ -140,6 +180,14 @@ def main() -> int:
     parser.add_argument("--owner", default="")
     parser.add_argument("--task-id", default="TASK-167")
     parser.add_argument("--no-event", action="store_true", help="Skip appending the intake event (dry run)")
+    parser.add_argument(
+        "--hcom-inform-to",
+        action="append",
+        default=[],
+        metavar="RECIPIENT",
+        help="Post the validated intake packet as hcom --intent inform to this recipient; repeat for multiple recipients",
+    )
+    parser.add_argument("--hcom-name", default="command-center-intake", help="hcom --name value for --hcom-inform-to")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
@@ -148,7 +196,14 @@ def main() -> int:
         print("No operator intent text provided (arg or stdin).", file=sys.stderr)
         return 2
 
-    result = run_intake(text, owner=args.owner, task_id=args.task_id, record_event=not args.no_event)
+    result = run_intake(
+        text,
+        owner=args.owner,
+        task_id=args.task_id,
+        record_event=not args.no_event,
+        hcom_inform_to=args.hcom_inform_to,
+        hcom_name=args.hcom_name,
+    )
 
     if args.json:
         print(json.dumps(result, indent=2))

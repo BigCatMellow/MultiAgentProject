@@ -4,6 +4,12 @@
     declare_standby.py <agent>          -> standby / awaiting_work (queue empty;
                                            RnS check-ins leave you alone)
     declare_standby.py <agent> --back   -> available (working again)
+    declare_standby.py <agent> --terminal session_superseded
+                                        -> inactive / session_superseded
+    declare_standby.py <agent> --terminal disposable_session_ended
+                                        -> inactive / disposable_session_ended
+                                           (dead on purpose, TASK-186/IDEA-0009;
+                                           RnS never probes, resumes, or nudges)
 
 Writes SQLite FIRST (the agents table is the source of truth; status.json is
 an exporter mirror -- see SYN-0001), then exports so all views agree.
@@ -25,11 +31,22 @@ EXPORTER = ROOT / "migration" / "export_to_files.py"
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("agent", help="agent id, e.g. claude-lab-rose")
-    parser.add_argument("--back", action="store_true",
-                        help="return to available instead of declaring standby")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--back", action="store_true",
+                       help="return to available instead of declaring standby")
+    group.add_argument("--terminal",
+                       choices=("session_superseded", "disposable_session_ended"),
+                       help="mark the session durably dead on purpose "
+                            "(inactive/<value>; RnS suppresses probes and nudges, "
+                            "TASK-186/IDEA-0009)")
     args = parser.parse_args()
 
-    status, reason = ("available", None) if args.back else ("standby", "awaiting_work")
+    if args.back:
+        status, reason = "available", None
+    elif args.terminal:
+        status, reason = "inactive", args.terminal
+    else:
+        status, reason = "standby", "awaiting_work"
 
     con = sqlite3.connect(DB)
     row = con.execute("SELECT 1 FROM agents WHERE agent_id=?", (args.agent,)).fetchone()

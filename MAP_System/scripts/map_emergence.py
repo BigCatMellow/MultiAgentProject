@@ -13,6 +13,11 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    from MAP_System.scripts.redaction import guard as redaction_guard
+except ModuleNotFoundError:  # direct script execution
+    from redaction import guard as redaction_guard
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EMERGENCE_DIR = ROOT / "emergence"
@@ -403,6 +408,7 @@ def compact_targets(args: argparse.Namespace) -> int:
         seen.add(resolved)
         original = path.read_text(encoding="utf-8")
         compacted = compact_record_text(original, root)
+        compacted = redaction_guard(compacted, f"emergence compact {path.name}")
         changed = compacted != original
         if args.apply and changed:
             path.write_text(compacted, encoding="utf-8")
@@ -583,6 +589,7 @@ def create_artifact(args: argparse.Namespace) -> int:
         if path.exists():
             raise EmergenceError(f"artifact already exists: {path}")
         text = fill_template(root, kind, args, artifact_id)
+        text = redaction_guard(text, f"emergence create {artifact_id}")
         path.write_text(text, encoding="utf-8")
     rebuild_index_for_root(root)
     print(path.relative_to(root.parent))

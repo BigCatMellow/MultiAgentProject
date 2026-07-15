@@ -79,6 +79,9 @@ deterministic background poller (no LLM) started via
 - when an agent's `out_of_tokens` + `resume_after` window passes, the watcher
   resumes it with `hcom r <name> --terminal wezterm-tab --go` — one nudge per
   window, never headless;
+- if that visible resume reports the session is still active, the watcher
+  sends the same RnS prompt into the active session instead of treating the
+  scheduled nudge as failed;
 - `resume_after` must be ISO-8601 for auto-resume; free-text values get one
   durable BLOCKED event and are never guessed at;
 - agents that vanish from hcom without updating `status.json` get a durable

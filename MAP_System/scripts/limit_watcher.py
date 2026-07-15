@@ -57,6 +57,9 @@ WORK_NUDGE_MIN_IDLE = 120  # don't ping someone who went idle seconds ago (mid-t
 WORK_TASK_ID = "TASK-095"  # work-dispatch events attribute here (operator #17759)
 STALE_CLAIM_OWNER_NUDGE_SECONDS = 1800
 STALE_CLAIM_TASK_ID = "TASK-119"
+TERMINAL_SESSION_REASONS = {"session_superseded", "disposable_session_ended"}
+TERMINAL_TASK_ID = "TASK-186"  # terminal-session suppression events (IDEA-0009)
+ACTIVE_SESSION_RESUME_RE = re.compile(r"\bstill active\b", re.IGNORECASE)
 
 NUDGE_PROMPT = (
     "Rise & Shine (RnS limit watcher, TASK-083): your session appears to have "
@@ -155,6 +158,40 @@ def detect_presumed_down(prev_live, snapshot, status_data, incidents):
             continue
         down.append(name)
     return down
+
+
+def is_terminal_session(entry):
+    """Durable status.json entry for a session that is dead on purpose
+    (TASK-186 / IDEA-0009): superseded by a newer identity, or a disposable
+    helper whose work ended. Terminal sessions must never be probed,
+    incident-tracked, or nudged back to life."""
+    return (entry.get("status") == "inactive"
+            and entry.get("reason") in TERMINAL_SESSION_REASONS)
+
+
+def close_terminal_incidents(state, status_data):
+    """Pop open incidents whose agent is now durably terminal (IDEA-0009).
+    Each popped incident is labeled closed_reason='terminal_session' so the
+    closure is explicit, never a silent drop. Returns [(name, incident)]."""
+    agents = status_data.get("agents", {})
+    incidents = state.get("incidents", {})
+    closed = []
+    for name in sorted(n for n in incidents if is_terminal_session(agents.get(n, {}))):
+        incident = incidents.pop(name)
+        incident["closed_reason"] = "terminal_session"
+        closed.append((name, incident))
+    return closed
+
+
+def detect_terminal_suppressions(prev_live, snapshot, status_data):
+    """Previously-live agents now not-live whose durable record is terminal:
+    the mirror of detect_presumed_down, selecting the sessions RnS must
+    deliberately leave dead. IDEA-0009's reversibility condition requires
+    every such suppression to be reported, never silent."""
+    agents = status_data.get("agents", {})
+    live_now = {n for n, e in snapshot.items() if classify_live(e)}
+    return [name for name in sorted(set(prev_live) - live_now)
+            if is_terminal_session(agents.get(name, {}))]
 
 
 def prune_absent_session_tracking(state, status_data, snapshot):
@@ -480,12 +517,28 @@ def send_nudge(agent, dry_run=False, kind="resume"):
                 "--", f"!NOTE RnS: {kind} nudge for {agent} (TASK-083)."]
     resume = ["hcom", "r", agent, "--terminal", "wezterm-tab", "--go",
               "--hcom-prompt", NUDGE_PROMPT]
+    active_fallback = ["hcom", "send", f"@{agent}", "--intent", "inform", "--name", SENDER,
+                       "--", (
+                           f"!NOTE RnS active-session fallback for {agent} (TASK-083): "
+                           "hcom r reported the session is still active. "
+                           f"{NUDGE_PROMPT}"
+                       )]
     if dry_run:
         print(f"[dry-run] would announce + run: {' '.join(resume)}")
         return True
     subprocess.run(announce, capture_output=True, text=True, timeout=30)
     result = subprocess.run(resume, capture_output=True, text=True, timeout=180)
+    if is_active_session_resume_failure(result):
+        fallback = subprocess.run(active_fallback, capture_output=True, text=True, timeout=30)
+        return fallback.returncode == 0
     return result.returncode == 0
+
+
+def is_active_session_resume_failure(result):
+    if result.returncode == 0:
+        return False
+    text = f"{getattr(result, 'stdout', '') or ''}\n{getattr(result, 'stderr', '') or ''}"
+    return ACTIVE_SESSION_RESUME_RE.search(text) is not None
 
 
 def load_state():
@@ -547,6 +600,29 @@ def poll_once(dry_run=False):
                 dry_run=dry_run,
                 task_id="TASK-176",
             )
+
+        # terminal sessions (TASK-186 / IDEA-0009): sessions durably recorded
+        # dead-on-purpose get open incidents closed and their absence reported
+        # as a deliberate suppression — visibly, never silently.
+        durable_agents = status_data.get("agents", {})
+        for name, inc in close_terminal_incidents(state, status_data):
+            reason = durable_agents.get(name, {}).get("reason")
+            msg = (f"RnS: incident for {name} closed — session recorded as "
+                   f"{reason} (terminal, IDEA-0009). No further probes.")
+            print(f"[dry-run] {msg}" if dry_run else msg)
+            append_event("PROGRESS", msg, dry_run=dry_run, task_id=TERMINAL_TASK_ID)
+
+        state.setdefault("terminal_suppressed", {})
+        for name in detect_terminal_suppressions(state["last_live"], snapshot,
+                                                 status_data):
+            reason = durable_agents.get(name, {}).get("reason")
+            msg = (f"RnS: {name} not live, session recorded as {reason} "
+                   f"(terminal, IDEA-0009) — no probe, incident, or nudge.")
+            print(f"[dry-run] {msg}" if dry_run else msg)
+            if name not in state["terminal_suppressed"]:
+                state["terminal_suppressed"][name] = now.isoformat(timespec="seconds")
+                append_event("PROGRESS", msg, dry_run=dry_run,
+                             task_id=TERMINAL_TASK_ID)
 
         live_now = sorted(n for n, e in snapshot.items() if classify_live(e))
 

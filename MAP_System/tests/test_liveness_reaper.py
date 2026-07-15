@@ -233,7 +233,11 @@ def test_reclaim_with_act_exports_and_validates_mirrors() -> None:
         assert status == ("READY", None)
 
         assert fixture_event_log.exists()
-        event = json.loads(fixture_event_log.read_text(encoding="utf-8").splitlines()[0])
+        events = [
+            json.loads(line)
+            for line in fixture_event_log.read_text(encoding="utf-8").splitlines()
+        ]
+        event = next(event for event in events if event.get("target") == task_id)
         assert task_id in event["summary"]
 
 

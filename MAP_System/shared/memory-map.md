@@ -80,6 +80,9 @@ the live memory first and then pull scoped context as needed.
 - `handoffs/` - session handoffs and snapshots. Read relevant recent ones only.
 - `inbox/` - agent-to-agent notes. Treat as scoped context, not global truth.
 - `archive/` - compacted historical memory. Read only when a current file points there.
+- `archive/compactions/` - brain-compaction summaries. Latest:
+  `compaction-2026-07-14-tasks-147-192.md` (first compaction, TASK-193;
+  covers the 6.13 build-through-measurement era).
 
 When historical memory conflicts with canonical operating memory, prefer
 `shared/`, `AGENTS.md`, current task files, and executable scripts.

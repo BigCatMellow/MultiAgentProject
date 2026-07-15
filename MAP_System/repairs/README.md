@@ -58,6 +58,23 @@ Once a health check (or any other observation) surfaces a `DRIFT`,
    `shared/improvement-backlog.md` and propose a permanent fix (validator,
    template change, or decision) instead of only fixing this instance.
 
+`scripts/map_repair.py` is the preferred way to create new repair records
+because it allocates `REPAIR-NNNN` under a file lock:
+
+```bash
+python3 MAP_System/scripts/map_repair.py create \
+  --repair-id auto \
+  --found-by codex-lab-nivo \
+  --severity DRIFT \
+  --summary "What drift was found" \
+  --surfaced-by "validator or review finding" \
+  --fix "What changed or is proposed" \
+  --verification "Checks rerun"
+```
+
+Use an explicit `--repair-id REPAIR-NNNN` only when preserving a known ID.
+The allocator is intentionally file-lock based and does not use SQLite.
+
 ## Numbering
 
 Use a shared sequence per record type: `REPAIR-0001`, `HEALTH-0001`.

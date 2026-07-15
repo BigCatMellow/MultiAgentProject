@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-186",
+  "title": "RnS terminal-session suppression (IDEA-0009 / EXP-0001)",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "IN_PROGRESS",
+  "dependencies": [],
+  "owner": "claude-lab-mira",
+  "description": "Run IDEA-0009's smallest safe experiment (EXP-0001) and land the fix: the limit watcher treats agents whose durable state records inactive/session_superseded or inactive/disposable_session_ended as terminal \u2014 no probes, no presumed-down incidents, no resume/check-in/work nudges \u2014 and closes existing open incidents for terminal agents. Every suppression must be visible in dry-run output (IDEA-0009 reversibility condition). Lifecycle marks are written through SQLite agents table first, then exported (SYN-0001 rule), for the 8 genuinely-dead early-July sessions currently carrying gave-up incidents. Baseline and post-change --once --dry-run outputs are captured as experiment evidence.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/limit-watcher-state.json",
+    "MAP_System/agents/status.json",
+    "MAP_System/artifacts/tests/task-186-rns-suppression-evidence.md",
+    "MAP_System/emergence/experiments/EXP-0001-dry-run-suppression-check-treat-inactive-session-superseded-and-.md",
+    "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+    "MAP_System/scripts/declare_standby.py"
+  ],
+  "acceptance_criteria": [
+    "Watcher helper classifies inactive/session_superseded and inactive/disposable_session_ended as terminal; terminal agents get no probes, incidents, check-ins, or work nudges.",
+    "Open incidents for now-terminal agents are closed with an explicit closed_reason and surfaced in dry-run output as suppressions, not silently dropped.",
+    "Lifecycle marks written via SQLite-first path (extended declare_standby.py or equivalent), then exported; status.json never hand-edited.",
+    "Before/after --once --dry-run outputs captured in the evidence artifact; after-run shows zero probe attempts for the 8 dead sessions and visible suppression lines.",
+    "Focused tests cover terminal classification, incident closure, and dry-run visibility; full run_tests.sh stays green.",
+    "EXP-0001 updated with results and IDEA-0009 lifecycle closed out per its Test recommendation."
+  ]
+}

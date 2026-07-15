@@ -41,6 +41,7 @@ run_check review_gate_test python3 MAP_System/tests/test_review_gate.py
 run_check release_gate_test python3 MAP_System/tests/test_release_gate.py
 run_check map_metrics_test python3 MAP_System/tests/test_map_metrics.py
 run_check map_metrics_aliases_test python3 MAP_System/tests/test_map_metrics_aliases.py
+run_check outcome_feedback_test python3 MAP_System/tests/test_outcome_feedback.py
 run_check map_emergence_test python3 MAP_System/tests/test_map_emergence.py
 run_check intake_request_test python3 MAP_System/tests/test_intake_request.py
 run_check map_task_auto_id_test python3 MAP_System/tests/test_map_task_auto_id.py
@@ -51,6 +52,7 @@ run_check validate_task_graph_shared_outputs_test python3 MAP_System/tests/test_
 run_check validate_task_mirrors_test python3 MAP_System/tests/test_validate_task_mirrors.py
 run_check validate_research_artifacts_test python3 MAP_System/tests/test_validate_research_artifacts.py
 run_check validate_repair_artifacts_test python3 MAP_System/tests/test_validate_repair_artifacts.py
+run_check map_repair_test python3 MAP_System/tests/test_map_repair.py
 run_check validate_context_packets_test python3 MAP_System/tests/test_validate_context_packets.py
 run_check validate_risk_registers_test python3 MAP_System/tests/test_validate_risk_registers.py
 run_check validate_events_test python3 MAP_System/tests/test_validate_events.py
@@ -61,6 +63,8 @@ run_check git_operation_lock_test python3 MAP_System/tests/test_git_operation_lo
 run_check reconcile_agents_test python3 MAP_System/tests/test_reconcile_agents.py
 run_check halt_state_test MAP_System/.venv/bin/python MAP_System/tests/test_halt_state.py
 run_check cost_governance_test MAP_System/.venv/bin/python MAP_System/tests/test_cost_governance.py
+run_check cost_yield_test python3 MAP_System/tests/test_cost_yield.py
+run_check redaction_test python3 MAP_System/tests/test_redaction.py
 run_check runner_task_classification_test MAP_System/.venv/bin/python MAP_System/tests/test_runner_task_classification.py
 run_check limit_watcher_test python3 MAP_System/tests/test_limit_watcher.py
 run_check liveness_reaper_test python3 MAP_System/tests/test_liveness_reaper.py
@@ -77,6 +81,9 @@ run_check command_center_intake_test python3 MAP_System/tests/test_command_cente
 run_check librarian_test python3 MAP_System/tests/test_librarian.py
 run_check local_runner_test python3 MAP_System/tests/test_local_runner.py
 run_check aider_wrapper_test python3 MAP_System/tests/test_aider_wrapper.py
+run_check decomposer_edges_test MAP_System/.venv/bin/python MAP_System/tests/test_decomposer_edges.py
+run_check context_summary_drift_test python3 MAP_System/tests/test_context_summary_drift.py
+run_check multi_project_isolation_test python3 MAP_System/tests/test_multi_project_isolation.py
 run_check integration_test MAP_System/.venv/bin/python MAP_System/scripts/integration_test.py
 run_check multigate_regression MAP_System/.venv/bin/python MAP_System/scripts/multigate_regression_test.py
 

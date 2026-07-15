@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-191",
+  "title": "Redaction guard for capture pipelines",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "IN_PROGRESS",
+  "dependencies": [],
+  "owner": "claude-lab-zero",
+  "description": "Source-mining audit item #4 (agentcairn pattern; security gap flagged by zera's survey, confirmed absent): shared redaction module (known credential formats + URL userinfo + tuned high-entropy fallback) wired warn-and-redact into map_emergence.py, map_repair.py, and local_runner.py write paths. Packet: MAP_System/inbox/helpers/redaction-guard-packet.md. Starts after TASK-190 release.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-threat-model.md",
+    "MAP_System/scripts/local_runner.py",
+    "MAP_System/scripts/map_emergence.py",
+    "MAP_System/scripts/map_repair.py",
+    "MAP_System/scripts/redaction.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/tests/test_redaction.py"
+  ],
+  "acceptance_criteria": [
+    "Known credential formats, URL userinfo, and a documented-threshold entropy fallback are detected; replacement is [REDACTED:<pattern-name>].",
+    "Wired warn-and-redact (never reject) into emergence, repair, and local_runner write paths; findings go to stderr, clean text to disk.",
+    "Tests cover each pattern family, entropy true/false-positive guards (git SHA, UUID), and one wired-path integration; suite green.",
+    "Threat model updated; events.jsonl appenders explicitly out of scope with a follow-up captured."
+  ]
+}

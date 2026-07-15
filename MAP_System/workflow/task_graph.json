@@ -4064,6 +4064,242 @@
         "map_emergence validate/stale, librarian validate, validate_events --fail-on-new, validate_task_mirrors, and full MAP tests pass.",
         "Report documents the command behavior, records changed, and why local-model direct rewrites were not used."
       ]
+    },
+    {
+      "task_id": "TASK-184",
+      "title": "Make command-center intake the default visible broad-directive path",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/AGENTS.md",
+        "MAP_System/scripts/command_center_intake.py",
+        "MAP_System/tests/test_command_center_intake.py"
+      ],
+      "acceptance_criteria": [
+        "AGENTS.md documents intake-as-default for broad operator directives, including the urgent live-control exemption.",
+        "A lightweight MAP-side mechanism supports or verifies posting an intake packet as an hcom inform before decomposition without changing urgent-control behavior.",
+        "Focused tests cover the new convention/mechanism.",
+        "validate_events --fail-on-new, validate_task_mirrors, and relevant tests pass."
+      ]
+    },
+    {
+      "task_id": "TASK-185",
+      "title": "Add atomic repair record CLI",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/repairs/README.md",
+        "MAP_System/scripts/map_repair.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_map_repair.py"
+      ],
+      "acceptance_criteria": [
+        "map_repair.py can create repair records with explicit IDs and atomic --repair-id auto allocation under a file lock.",
+        "The implementation uses a file-lock/fcntl pattern and does not use SQLite for repair ID allocation.",
+        "Focused tests cover explicit create, auto allocation, and concurrent/no-collision behavior.",
+        "validate_task_mirrors, validate_events --fail-on-new, and relevant tests pass."
+      ]
+    },
+    {
+      "task_id": "TASK-186",
+      "title": "RnS terminal-session suppression (IDEA-0009 / EXP-0001)",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "claude-lab-mira",
+      "output_paths": [
+        "MAP_System/agents/limit-watcher-state.json",
+        "MAP_System/agents/status.json",
+        "MAP_System/artifacts/tests/task-186-rns-suppression-evidence.md",
+        "MAP_System/emergence/experiments/EXP-0001-dry-run-suppression-check-treat-inactive-session-superseded-and-.md",
+        "MAP_System/emergence/ideas/IDEA-0009-rns-should-ignore-superseded-and-disposable-sessions.md",
+        "MAP_System/scripts/declare_standby.py"
+      ],
+      "acceptance_criteria": [
+        "Watcher helper classifies inactive/session_superseded and inactive/disposable_session_ended as terminal; terminal agents get no probes, incidents, check-ins, or work nudges.",
+        "Open incidents for now-terminal agents are closed with an explicit closed_reason and surfaced in dry-run output as suppressions, not silently dropped.",
+        "Lifecycle marks written via SQLite-first path (extended declare_standby.py or equivalent), then exported; status.json never hand-edited.",
+        "Before/after --once --dry-run outputs captured in the evidence artifact; after-run shows zero probe attempts for the 8 dead sessions and visible suppression lines.",
+        "Focused tests cover terminal classification, incident closure, and dry-run visibility; full run_tests.sh stays green.",
+        "EXP-0001 updated with results and IDEA-0009 lifecycle closed out per its Test recommendation."
+      ]
+    },
+    {
+      "task_id": "TASK-187",
+      "title": "Make RnS active-session resume aware",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/notes/limit-exhaustion-protocol.md",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "RnS send_nudge detects the hcom 'still active' resume failure and falls back to sending the RnS prompt to the active session.",
+        "The fallback preserves visible-terminal resume behavior for stopped sessions and does not use headless mode.",
+        "Tests cover normal resume success, active-session fallback success, and active-session fallback failure.",
+        "Focused limit watcher tests, validate_events --fail-on-new, validate_task_mirrors, and full MAP tests pass."
+      ]
+    },
+    {
+      "task_id": "TASK-188",
+      "title": "Real-parameter calibration + first robustness grading",
+      "task_type": "audit",
+      "role": "engineer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-toku",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-real-parameter-calibration-results-2026-07-14.md",
+        "MAP_System/artifacts/audits/map-robustness-grading-2026-07-14.md"
+      ],
+      "acceptance_criteria": [
+        "Every measurement in the calibration plan is either run with real repo data or explicitly marked unsupported with the missing data named; no simulated substitutes.",
+        "Grading report labels each standing conclusion robust/conditional/unsupported with evidence.",
+        "Read-only against MAP state; only the two artifacts written."
+      ]
+    },
+    {
+      "task_id": "TASK-189",
+      "title": "Outcome feedback: event type + validator blind-spot metric",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "SUBMITTED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/events/README.md",
+        "MAP_System/scripts/map_metrics.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_events.py",
+        "MAP_System/tests/test_liveness_reaper.py",
+        "MAP_System/tests/test_outcome_feedback.py"
+      ],
+      "acceptance_criteria": [
+        "Outcome events are recordable per the spec and validate cleanly under validate_events --fail-on-new.",
+        "map_metrics.py reports a blind-spot rate (defects found post-release that gates missed) from outcome events.",
+        "Focused tests wired into run_tests.sh; suite stays green.",
+        "Spec deviations, if any, documented."
+      ]
+    },
+    {
+      "task_id": "TASK-190",
+      "title": "Cost/yield rollup: per-task cost x outcome view",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-zero",
+      "output_paths": [
+        "MAP_System/artifacts/reports/cost-yield-rollup-2026-07-14.md",
+        "MAP_System/scripts/cost_yield.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_cost_yield.py"
+      ],
+      "acceptance_criteria": [
+        "Rollup joins per-task event volume, lifecycle spans, attempts, and rework rounds with task outcome class; text and --json outputs match map_metrics.py conventions.",
+        "Cost signals are explicitly labeled proxies; no fabricated currency figures.",
+        "Read-only against canonical state; focused fixture tests wired into run_tests.sh; suite green.",
+        "Real rollup output over the actual repo included in the report artifact."
+      ]
+    },
+    {
+      "task_id": "TASK-191",
+      "title": "Redaction guard for capture pipelines",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "claude-lab-zero",
+      "output_paths": [
+        "MAP_System/artifacts/audits/map-threat-model.md",
+        "MAP_System/scripts/local_runner.py",
+        "MAP_System/scripts/map_emergence.py",
+        "MAP_System/scripts/map_repair.py",
+        "MAP_System/scripts/redaction.py",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_redaction.py"
+      ],
+      "acceptance_criteria": [
+        "Known credential formats, URL userinfo, and a documented-threshold entropy fallback are detected; replacement is [REDACTED:<pattern-name>].",
+        "Wired warn-and-redact (never reject) into emergence, repair, and local_runner write paths; findings go to stderr, clean text to disk.",
+        "Tests cover each pattern family, entropy true/false-positive guards (git SHA, UUID), and one wired-path integration; suite green.",
+        "Threat model updated; events.jsonl appenders explicitly out of scope with a follow-up captured."
+      ]
+    },
+    {
+      "task_id": "TASK-192",
+      "title": "Close taxonomy-audit regression tests #4-#6",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "claude-lab-toku",
+      "output_paths": [
+        "MAP_System/artifacts/tests/taxonomy-tests-4-6-report.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/tests/test_context_summary_drift.py",
+        "MAP_System/tests/test_decomposer_edges.py",
+        "MAP_System/tests/test_multi_project_isolation.py"
+      ],
+      "acceptance_criteria": [
+        "Dependency-edge cases (multi-node cycles, self-dependency, dangling IDs, mixed-state diamonds) exercised against validate_task_graph.py.",
+        "Drift detectors' negative paths tested: injected drift fires validate_shared_state/validate_task_mirrors.",
+        "Isolation tests anchor on documented boundaries; missing mechanisms produce skipped-with-reason tests listed in the report.",
+        "All three wired into run_tests.sh; suite green; report gives pass/skip counts and any bugs flushed out."
+      ]
+    },
+    {
+      "task_id": "TASK-193",
+      "title": "First brain compaction: archive TASK-147-192 era narrative",
+      "task_type": "maintenance",
+      "role": "implementer",
+      "status": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "claude-lab-mira",
+      "output_paths": [
+        "MAP_System/archive/README.md",
+        "MAP_System/archive/compactions/compaction-2026-07-14-tasks-147-192.md",
+        "MAP_System/shared/current-state.md",
+        "MAP_System/shared/improvement-backlog.md",
+        "MAP_System/shared/memory-map.md"
+      ],
+      "acceptance_criteria": [
+        "Compaction summary follows templates/compaction-summary.md with scope, sources, tasks covered, durable outcomes, decisions preserved, open follow-ups, archive links, active files updated.",
+        "current-state.md sheds superseded/stale narrative while keeping current capabilities, risks, and next maintenance; validate_shared_state passes 21/21 after edits.",
+        "No raw history deleted anywhere; active files backlink to the compaction summary.",
+        "Closed improvement-backlog items moved to the compaction summary, open ones retained."
+      ]
+    },
+    {
+      "task_id": "TASK-194",
+      "title": "Claude helper model-tier defaults and escalation policy",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "SUBMITTED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/AGENTS.md",
+        "MAP_System/notes/helper-agent-guide.md",
+        "MAP_System/notes/orchestration-notes.md"
+      ],
+      "acceptance_criteria": [
+        "Claude helper spawn defaults are documented as auto permission mode plus Haiku model tier, with visible wezterm tabs still mandatory.",
+        "Higher Claude helper tiers require a written request with reasoning and review by another core agent before use.",
+        "A tier capability rubric explains when Haiku is enough and when Sonnet or Opus is justified, including the principle that sound reasoning should be approved generously.",
+        "The hcom Claude default args are updated to include auto permission mode and Haiku."
+      ]
     }
   ],
   "approval_gates": [

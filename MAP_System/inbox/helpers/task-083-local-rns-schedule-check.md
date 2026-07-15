@@ -1,0 +1,3 @@
+- Valid ISO timestamp: YES
+- Using local Ollama draft only: YES
+- Final action to avoid spawning Claude helpers after target resume time: YES

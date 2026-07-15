@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-184",
+  "title": "Make command-center intake the default visible broad-directive path",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "TASK-175 recommendation #4 follow-up: document and lightly enforce a convention that broad operator directives enter through command_center_intake.py as the default visible path before decomposition, while urgent live-control messages remain exempt. Keep scope MAP-side; no CommandCenterUI edits.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/AGENTS.md",
+    "MAP_System/scripts/command_center_intake.py",
+    "MAP_System/tests/test_command_center_intake.py"
+  ],
+  "acceptance_criteria": [
+    "AGENTS.md documents intake-as-default for broad operator directives, including the urgent live-control exemption.",
+    "A lightweight MAP-side mechanism supports or verifies posting an intake packet as an hcom inform before decomposition without changing urgent-control behavior.",
+    "Focused tests cover the new convention/mechanism.",
+    "validate_events --fail-on-new, validate_task_mirrors, and relevant tests pass."
+  ]
+}

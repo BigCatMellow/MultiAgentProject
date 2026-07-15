@@ -15,6 +15,7 @@ sys.path.insert(0, str(REPO))
 from MAP_System.scripts.command_center_intake import (  # noqa: E402
     run_intake,
     append_intake_event,
+    post_hcom_inform,
     validate_wrapper_output,
     IntakeWrapperError,
 )
@@ -43,6 +44,65 @@ def test_no_event_flag_skips_event_write() -> None:
         result = run_intake("Fix the bug", owner="test-owner", event_log=event_log, record_event=False)
         assert result["event"] is None
         assert not event_log.exists()
+
+
+def test_hcom_inform_post_is_optional_and_uses_inform_intent() -> None:
+    calls = []
+
+    class Result:
+        returncode = 0
+        stdout = "sent"
+        stderr = ""
+
+    def fake_runner(argv, **kwargs):
+        calls.append((argv, kwargs))
+        return Result()
+
+    skipped = post_hcom_inform("Intake: worker_fit=codex", [], sender_name="nivo", runner=fake_runner)
+    assert skipped is None
+    assert calls == []
+
+    posted = post_hcom_inform(
+        "Intake: worker_fit=codex",
+        ["@bigboss", "@codex-lab-"],
+        sender_name="nivo",
+        runner=fake_runner,
+    )
+    assert posted["returncode"] == 0
+    argv, kwargs = calls[0]
+    assert argv == [
+        "hcom", "send", "@bigboss", "@codex-lab-",
+        "--intent", "inform", "--name", "nivo", "--", "Intake: worker_fit=codex",
+    ]
+    assert kwargs["check"] is False
+
+
+def test_run_intake_can_post_visible_packet_before_event() -> None:
+    calls = []
+
+    class Result:
+        returncode = 0
+        stdout = "sent"
+        stderr = ""
+
+    def fake_runner(argv, **kwargs):
+        calls.append(argv)
+        return Result()
+
+    with tempfile.TemporaryDirectory() as tmp:
+        event_log = Path(tmp) / "events.jsonl"
+        result = run_intake(
+            "Build a new broad command center feature",
+            owner="test-owner",
+            event_log=event_log,
+            hcom_inform_to=["@bigboss"],
+            hcom_name="nivo",
+            hcom_runner=fake_runner,
+        )
+
+        assert result["hcom_post"]["recipients"] == ["@bigboss"]
+        assert calls[0][:6] == ["hcom", "send", "@bigboss", "--intent", "inform", "--name"]
+        assert event_log.exists()
 
 
 def test_wrapper_output_passes_protocol_validation_for_normal_intake() -> None:
@@ -105,6 +165,8 @@ def main() -> int:
     tests = [
         test_run_intake_produces_packet_event_and_route,
         test_no_event_flag_skips_event_write,
+        test_hcom_inform_post_is_optional_and_uses_inform_intent,
+        test_run_intake_can_post_visible_packet_before_event,
         test_wrapper_output_passes_protocol_validation_for_normal_intake,
         test_wrapper_output_validation_raises_on_malformed_text,
         test_append_intake_event_records_key_classification_fields,

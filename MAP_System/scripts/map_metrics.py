@@ -22,6 +22,8 @@ EVENT_ALIASES = {
     "REVIEW_CHANGES_REQUESTED": "CHANGES_REQUESTED",
     "task_progress": "PROGRESS",
 }
+OUTCOME_EVENT_TYPES = {"outcome_pass", "outcome_fail"}
+OUTCOME_KNOWN_STATUSES = {"pass", "fail", "partial"}
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
@@ -81,12 +83,60 @@ def event_counts(conn: sqlite3.Connection) -> dict[str, int]:
     return counts
 
 
+def summary_payload(summary: str) -> dict[str, Any]:
+    try:
+        parsed = json.loads(summary)
+    except (TypeError, json.JSONDecodeError):
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def outcome_feedback_metrics(conn: sqlite3.Connection) -> dict[str, Any]:
+    rows = conn.execute(
+        """
+        SELECT event_type, summary
+        FROM events
+        WHERE lower(event_type) IN ('outcome_pass', 'outcome_fail')
+        ORDER BY created_at, id
+        """
+    ).fetchall()
+    total = 0
+    known_with_passed_validation = 0
+    blind_spots = 0
+    for row in rows:
+        event_type = row["event_type"].lower()
+        payload = summary_payload(row["summary"])
+        outcome_status = str(payload.get("outcome_status") or event_type.removeprefix("outcome_")).lower()
+        validation_status = str(payload.get("validation_status_at_ship") or "").lower()
+        if event_type in OUTCOME_EVENT_TYPES:
+            total += 1
+        if outcome_status not in OUTCOME_KNOWN_STATUSES:
+            continue
+        if validation_status != "passed":
+            continue
+        known_with_passed_validation += 1
+        if event_type == "outcome_fail":
+            blind_spots += 1
+    rate = (
+        blind_spots / known_with_passed_validation
+        if known_with_passed_validation
+        else 0.0
+    )
+    return {
+        "outcome_event_count": total,
+        "validator_blind_spot_count": blind_spots,
+        "validator_blind_spot_denominator": known_with_passed_validation,
+        "validator_blind_spot_rate": rate,
+    }
+
+
 def collect_metrics(db_path: Path, shared_dir: Path) -> dict[str, Any]:
     with connect(db_path) as conn:
         counts = task_counts(conn)
         submitted = counts.get("SUBMITTED", 0)
         conflicts = counts.get("CONFLICT", 0)
         events = event_counts(conn)
+        outcome_feedback = outcome_feedback_metrics(conn)
     approvals = events.get("APPROVED", 0)
     changes = events.get("CHANGES_REQUESTED", 0)
     reviewed = approvals + changes
@@ -98,6 +148,7 @@ def collect_metrics(db_path: Path, shared_dir: Path) -> dict[str, Any]:
         "stale_shared_file_count": stale_shared_count(shared_dir),
         "change_request_rate": change_request_rate,
         "event_counts": events,
+        "outcome_feedback": outcome_feedback,
     }
 
 
@@ -117,6 +168,15 @@ def print_table(metrics: dict[str, Any]) -> None:
     print(f"| Conflict count | {metrics['conflict_count']} |")
     print(f"| Stale shared file count | {metrics['stale_shared_file_count']} |")
     print(f"| Change request rate | {metrics['change_request_rate']:.2%} |")
+    print(
+        "| Validator blind-spot rate | "
+        f"{metrics['outcome_feedback']['validator_blind_spot_rate']:.2%} |"
+    )
+    print(
+        "| Validator blind-spot count | "
+        f"{metrics['outcome_feedback']['validator_blind_spot_count']} / "
+        f"{metrics['outcome_feedback']['validator_blind_spot_denominator']} |"
+    )
 
 
 def parse_args() -> argparse.Namespace:

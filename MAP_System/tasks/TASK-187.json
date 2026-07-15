@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-187",
+  "title": "Make RnS active-session resume aware",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Learn from the 2026-07-14 Mira scheduled RnS failure: the systemd timer fired but hcom r failed because hcom still considered the session active. Update RnS behavior so a resume nudge that encounters an already-active/listening session delivers the RnS prompt via hcom send instead of failing silently or requiring manual intervention.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/notes/limit-exhaustion-protocol.md",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "RnS send_nudge detects the hcom 'still active' resume failure and falls back to sending the RnS prompt to the active session.",
+    "The fallback preserves visible-terminal resume behavior for stopped sessions and does not use headless mode.",
+    "Tests cover normal resume success, active-session fallback success, and active-session fallback failure.",
+    "Focused limit watcher tests, validate_events --fail-on-new, validate_task_mirrors, and full MAP tests pass."
+  ]
+}

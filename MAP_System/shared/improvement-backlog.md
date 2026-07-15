@@ -16,19 +16,6 @@ intentional follow-up.
 
 ## High Priority
 
-### Add task-state mirror reconciliation gate
-
-Status: **DONE** — completed TASK-143 (2026-07-04)
-
-TASK-140 and TASK-141 independently reproduced SQLite/file mirror drift:
-canonical SQLite task state could change while `tasks/TASK-*.json` and
-`workflow/task_graph.json` stayed stale until a manual export ran.
-
-TASK-143 added `scripts/validate_task_mirrors.py`, wired it into
-`map_task.py approve`, `release_task.py`, and `scripts/run_tests.sh`, and
-added regression tests for matching mirrors plus deliberate status and
-output-path mismatches.
-
 ### Add operator-request worker-fit intake and ownership protocol
 
 Status: first pass complete — TASK-065 added `scripts/intake_request.py` and
@@ -94,22 +81,6 @@ Recommended next action:
 - Prefer a small script-level guard before adding database triggers or broader
   automation.
 
-### Enforce READY state metadata gate
-
-Status: **DONE** — completed TASK-035 (2026-06-29)
-
-`scripts/promote_task.py` now validates 8 HPOM JSON fields and SQLite fields
-before setting status to READY. CONFLICT tasks are blocked. See
-`artifacts/reviews/` for gate test coverage.
-
-### Define Architect/Shaper role
-
-Status: **DONE** — completed TASK-036/TASK-037 batch (2026-06-29)
-
-`shared/agent-capability-matrix.md` defines helper vs. core vs. local model
-roles. `scripts/promote_task.py` is the shaping gate. No agent claims an
-unready task.
-
 ### Clean up stale `langgraph/` references
 
 Status: open
@@ -130,15 +101,6 @@ Recommended next action:
   reused as current instructions.
 
 ## Medium Priority
-
-### Add atomic task ID allocation
-
-Status: **DONE** — completed TASK-065
-
-`scripts/map_task.py create --task-id auto` now reserves the next `TASK-NNN`
-inside a SQLite write transaction and exports file mirrors immediately.
-Agents should use this instead of manually choosing the next ID during active
-multi-agent sessions.
 
 ### Add emergence stale/lifecycle reporting
 
@@ -167,7 +129,7 @@ The report distinguishes durable known-agent status from live hcom sessions.
 
 ### Add live hcom and MAP state wiring to CommandCenterUI
 
-Status: open — follow-up from TASK-055
+Status: **DONE** in substance — live hcom chat/presence/approvals wired by TASK-087/088/093/094; MAP runtime health card by TASK-182. Remaining ideas belong to new tasks, not this item.
 
 TASK-055 delivered the first static Studio-style Command Center UI prototype.
 Live integration was intentionally left out of scope.
@@ -215,19 +177,6 @@ Recommended next action:
 
 - Pick one target and create the next task sequence around it.
 
-### Fix --no-auto-commits in aider_wrapper.py FORBIDDEN_AIDER_FLAGS
-
-Status: **DONE** — completed TASK-050
-
-`FORBIDDEN_AIDER_FLAGS` now blocks `--auto-commits` while allowing the safety
-flag `--no-auto-commits`; `tests/test_aider_wrapper.py` covers both cases.
-
-### Clean up OPTIONAL findings from local_runner.py (TASK-048 review)
-
-Status: **DONE** — completed TASK-051
-
-The optional `local_runner.py` cleanup from the TASK-048 review is complete.
-
 ### Add optional `delete_thread()` coverage to `MapSqliteSaver`
 
 Status: open — found by TASK-145 Research Summary, recorded during TASK-144
@@ -247,7 +196,7 @@ Recommended next action:
 
 ### Add recurring brain compaction
 
-Status: open
+Status: first run complete — TASK-193 (2026-07-14) produced `archive/compactions/compaction-2026-07-14-tasks-147-192.md`. Item stays open for the RECURRING part: next compaction due per the guide's 10-task trigger (~TASK-203) or next phase end.
 
 The active MAP brain should not grow by permanently appending every completed
 task narrative to current files.
@@ -306,42 +255,30 @@ Recommended next action:
   a one-line cross-link backlink in another system's file — counts as an
   output path, not just the task's named primary deliverables.
 
-### Add atomic ID allocation for Self-Repair records
+### RnS watcher small follow-ups from TASK-187 review
 
-Status: partially fixed — `map_emergence.py`'s half fixed in REPAIR-0005
-(TASK-141); `repairs/`'s own half still open, found in REPAIR-0004
-(TASK-129)
+Status: open (OPTIONAL/LOW findings from `artifacts/reviews/task187-review-toku.md`, 2026-07-14)
 
-`repairs/` has no ID-allocation mechanism equivalent to
-`map_task.py create --task-id auto`. Two agents independently filed
-unrelated repairs both numbered `REPAIR-0001` (dino's TASK-116
-runner-dependency repair, valo's TASK-120 risk-validator repair) before
-this was caught during the TASK-129 MAP System Adherence Audit.
+- `state["terminal_suppressed"]` map in `limit_watcher.py` grows forever —
+  entries are never pruned when a terminal agent is deleted from durable
+  status or returns via `--back`. Cosmetic until the map is large; fold into
+  the next watcher task.
+- Dry-run output does not exercise/show the active-session fallback branch
+  (`hcom r` "still active" → `hcom send`), so a dry-run reviewer can't see it.
+  Add a dry-run print for the fallback decision path.
+- LOW risk: the fallback trigger regexes hcom's "is still active" error text;
+  an hcom upgrade that rewords the error silently disables the fallback.
+  Mitigation habit: after `hcom update`, re-run
+  `strings ~/.local/bin/hcom | grep "still active"` (toku's verification
+  trick) or add a health-check line to `local_assistant_health.py`-style
+  checks for it.
 
-TASK-129's own audit assumed `map_emergence.py`'s ID assignment was
-already atomic like `map_task.py`'s. It was not — `next_id()` was (and
-still is) a plain filename scan with no lock around it. TASK-141 verified
-this by reproducing a real ID collision under 8-way concurrent
-`map_emergence.py insight` calls (3 collisions out of 8), then closed it
-with a per-kind `fcntl.flock` around ID allocation + existence-check +
-write (see REPAIR-0005). `repairs/` itself has no equivalent fix yet —
-it would need its own lock (or a small `map_repair.py` wrapper), since
-repair records are appended manually rather than through a shared CLI the
-way emergence artifacts are.
+## Completed (details in archive/compactions/compaction-2026-07-14-tasks-147-192.md and task records)
 
-Impact:
-
-- A bare `REPAIR-NNNN` cross-reference is ambiguous until the collision is
-  manually found and one record renumbered.
-- The same collision could recur for any repair filed without checking
-  every existing filename first — this remains true for `repairs/`
-  specifically; it is no longer true for `emergence/`.
-
-Recommended next action:
-
-- Add a small `map_repair.py` helper (or extend an existing script) with
-  atomic `--repair-id auto` allocation. Given REPAIR-0005 already proved
-  out the pattern (a per-kind `fcntl.flock` wrapping allocate+check+write,
-  no SQLite needed), the fastest version of this fix is likely a thin
-  CLI over the same file-lock technique rather than a new SQLite-backed
-  design.
+- Add task-state mirror reconciliation gate — completed TASK-143 (2026-07-04)
+- Enforce READY state metadata gate — completed TASK-035 (2026-06-29)
+- Define Architect/Shaper role — completed TASK-036/TASK-037 batch (2026-06-29)
+- Add atomic task ID allocation — completed TASK-065
+- Fix --no-auto-commits in aider_wrapper.py FORBIDDEN_AIDER_FLAGS — completed TASK-050
+- Clean up OPTIONAL findings from local_runner.py (TASK-048 review) — completed TASK-051
+- Add atomic ID allocation for Self-Repair records — emergence allocation fixed by REPAIR-0005 (TASK-141);

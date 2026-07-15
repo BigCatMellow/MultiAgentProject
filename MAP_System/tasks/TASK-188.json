@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-188",
+  "title": "Real-parameter calibration + first robustness grading",
+  "task_type": "audit",
+  "role": "engineer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-toku",
+  "description": "Source-mining audit item #1 (Gap-Register 3.1 + Wave 2.5): run every measurement in artifacts/audits/map-real-parameter-calibration.md that current event/trace/replay data supports, honestly marking unsupported ones; apply artifacts/audits/map-sensitivity-robustness-method.md to grade standing 6.13 conclusions robust/conditional/unsupported. Work packet: MAP_System/inbox/helpers/calibration-run-packet.md.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/map-real-parameter-calibration-results-2026-07-14.md",
+    "MAP_System/artifacts/audits/map-robustness-grading-2026-07-14.md"
+  ],
+  "acceptance_criteria": [
+    "Every measurement in the calibration plan is either run with real repo data or explicitly marked unsupported with the missing data named; no simulated substitutes.",
+    "Grading report labels each standing conclusion robust/conditional/unsupported with evidence.",
+    "Read-only against MAP state; only the two artifacts written."
+  ]
+}

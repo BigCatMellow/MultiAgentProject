@@ -36,7 +36,7 @@ Default sequence:
 3. Spawn a visible helper:
 
    ```bash
-   hcom 1 claude --tag helper-review-task-NNN --terminal wezterm-tab
+   hcom 1 claude --tag helper-review-task-NNN --terminal wezterm-tab --model haiku
    ```
 
 4. Send the helper a bounded review packet.
@@ -76,14 +76,20 @@ Do not run assistants or helper agents in an unreachable background mode.
 Example:
 
 ```bash
-hcom 1 claude --tag helper-review-task-048 --terminal wezterm-tab
+hcom 1 claude --tag helper-review-task-048 --terminal wezterm-tab --model haiku
 ```
 
-## Permission Mode For Claude Helpers
+## Claude Helper Model And Permission Defaults
 
-For bounded, low-risk Claude helper work, the owning core agent may put the
-helper into the least-interruptive permission mode available in the visible
-terminal after spawn, then verify the screen state with `hcom term`.
+Claude helpers default to:
+
+- visible terminal: `--terminal wezterm-tab`;
+- permission mode: auto mode, currently persisted in hcom config as
+  `--permission-mode auto`;
+- model tier: Haiku, currently persisted in hcom config as `--model haiku`.
+
+Use the explicit spawn shape in examples anyway. Explicit flags make helper
+notes and transcripts readable even if local hcom config changes later.
 
 Allowed cases:
 
@@ -101,6 +107,49 @@ format.
 Record the chosen permission mode, verification method, and stop condition in
 the helper note when the setting materially affects whether the helper can
 finish without waiting on the operator.
+
+### Claude Model Tier Rubric
+
+The default is Haiku because most helper work should be bounded, fast, and
+cheap. The default is not a hard cap.
+
+| Tier | Use when | Avoid when |
+|---|---|---|
+| Haiku | The helper is summarizing, checking explicit criteria, scanning named files, drafting a review packet, classifying records, or running a simple bounded inspection. | The task needs deep cross-file reasoning, ambiguous design judgment, or high-risk correctness. |
+| Sonnet | The helper must reason across several files, debug a non-obvious failure, review complex implementation behavior, compare competing designs, or produce a careful plan where missing a nuance would waste core-agent time. | The work is simple extraction, mechanical formatting, or a tiny checklist Haiku can handle. |
+| Opus | The helper request involves unusually hard architecture, subtle safety/security tradeoffs, high ambiguity, or a prior Sonnet/Haiku attempt produced inadequate reasoning with evidence. | The request is only "use the best model" without concrete difficulty or risk evidence. |
+
+Reviewers should approve higher tiers generously when the request explains the
+complexity and the expected bounded use. Resource management means matching
+model strength to the work, not always choosing the lowest or highest tier.
+
+### Requesting A Higher Claude Tier
+
+A Claude helper may use Sonnet or Opus only after a written escalation request
+is reviewed by a different core agent. Record the request in the helper note,
+task event, or hcom thread before spawning the higher-tier helper.
+
+Required request format:
+
+```text
+Issue: helper scope and why Haiku is likely insufficient.
+Options: Haiku default, Sonnet, Opus, or no helper.
+Recommendation: requested tier and bounded duration/scope.
+Needed: approval from a non-requesting core agent.
+```
+
+The reviewer decides the tier using the rubric above. They may approve the
+requested tier, choose a higher tier if the reasoning shows the work needs it,
+choose a lower tier if the work is clearly bounded enough, or reject helper use
+when the task should stay with a core agent or operator.
+
+The approved helper note must include:
+
+- requested model tier and approved model tier;
+- approving core agent;
+- reasoning summary;
+- scope and stop condition;
+- whether any lower-tier attempt was made or intentionally skipped.
 
 ## Helper Note
 

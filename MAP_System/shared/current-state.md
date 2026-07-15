@@ -10,7 +10,9 @@
 
 # Current State
 
-Last reviewed during TASK-143 after the TASK-140/TASK-141 process audits.
+Last reviewed during TASK-193 (first brain compaction, 2026-07-14). Compacted
+history for the TASK-147–192 era lives in
+`archive/compactions/compaction-2026-07-14-tasks-147-192.md`.
 
 ## Live Capabilities
 
@@ -75,72 +77,26 @@ Last reviewed during TASK-143 after the TASK-140/TASK-141 process audits.
 - Operator request intake recommendation helper lives in `scripts/intake_request.py`.
 - Canonical local repo status is recorded in `shared/canonical-repo.md`.
 - Approval calibration rules are recorded in `shared/approval-calibration.md`.
-- The Research System (DEC-015, TASK-103) defines the knowledge-acquisition
-  process: `RESEARCH_SYSTEM.md`, `research/README.md`,
-  `templates/research/` (brief, source map, source evaluation, claim
-  evidence matrix, assumption register, summary).
-- The Self-Repair System (DEC-016, TASK-105) formalizes repair severity,
-  records, health checks, and escalation: `SELF_REPAIR_SYSTEM.md`,
-  `repairs/README.md`, `templates/repairs/` (repair record, health check
-  report). Cross-linked to the Research System and Emergence.
-- The Context System (DEC-017, TASK-107) formalizes context packets,
-  required/forbidden context, staleness, token budgets, and the
-  local-summarizer role: `CONTEXT_SYSTEM.md`,
-  `templates/CONTEXT_PACKET_TEMPLATE.md`. Governs (does not replace)
-  `notes/context-routing-guide.md`. Cross-linked to Research, Self-Repair,
-  Memory, and Emergence.
-- The Decision/Authority System (DEC-018, TASK-108) applies HPOM tiers to
-  decision rights, human-approval requirements, and supersession:
-  `DECISION_AUTHORITY_SYSTEM.md`, `DECISION_CLASSES.md`. Cross-linked to
-  Self-Repair (STRUCTURAL repairs) and Research (unresolved
-  contradictions).
-- The Human Interface System (DEC-019, TASK-110) defines the operator
-  dashboard content contract: `HUMAN_INTERFACE_SYSTEM.md`. Specifies what
-  the existing CommandCenterUI prototype (`artifacts/command-center-ui/`)
-  should surface; does not require a rebuild. Cross-linked to
-  Decision/Authority, Self-Repair, Research, and Emergence.
-- The Risk System (DEC-020, TASK-111) defines risk classes, severity
-  (reusing Self-Repair's vocabulary), register format, owners, review
-  cadence, escalation, and acceptance: `RISK_SYSTEM.md`,
-  `templates/RISK_REGISTER_TEMPLATE.md`. Cross-linked to Self-Repair,
-  Decision/Authority, Human Interface, and Research.
-- The Security/Permissions System (DEC-021, TASK-112) defines the trust
-  boundary model, agent permission levels, and destructive-action policy:
-  `SECURITY_PERMISSIONS_SYSTEM.md`, `AGENT_PERMISSION_LEVELS.md`,
-  `DESTRUCTIVE_ACTION_POLICY.md`. Extends (does not replace) `AGENTS.md`'s
-  Security Second Pass rule. Cross-linked to Risk, Decision/Authority, and
-  Self-Repair.
-- The Change Control System (DEC-022, TASK-114) formalizes change
-  requests (the task file itself), release records
-  (`artifacts/releases/` checklist convention), rollback notes, changelog
-  policy, migration notes, version tags, and artifact retirement:
-  `CHANGE_CONTROL_SYSTEM.md`. Cross-linked to Self-Repair,
-  Decision/Authority, Risk, and Human Interface.
-- The Project Bootstrapping System (DEC-023, TASK-115) defines what a new
-  project must establish before its first task: `PROJECT_BOOTSTRAPPING_SYSTEM.md`,
-  `NEW_PROJECT_WIZARD.md`. Extends `notes/brain-organization-guide.md`.
-  Cross-linked to Research, Risk, and Decision/Authority.
-- The Archive/Retention System (DEC-024, TASK-117) defines archive
-  statuses, retention rules, and the archiving-vs-retirement distinction:
-  `ARCHIVE_RETENTION_SYSTEM.md`. Extends `notes/brain-compaction-guide.md`.
-  Cross-linked to Self-Repair, Change Control, and Context.
-- The Retrospective/Learning System (DEC-025, TASK-118) defines the
-  end-of-cycle retrospective loop: `RETROSPECTIVE_SYSTEM.md`,
-  `templates/RETROSPECTIVE_TEMPLATE.md`. Includes RETRO-0001, a worked
-  retrospective of the TASK-103-117 build sequence. Cross-linked to
-  Self-Repair, Emergence, the improvement backlog, and Change Control.
-  This completes the full `MAP_System/artifacts/reports/MAP-repo-systems-gap-review.md`
-  build sequence (all priority and secondary gaps now built).
-- Emergence capture is now mandatory per-project and mechanically
-  enforced (DEC-026, TASK-126): `PROJECT_BOOTSTRAPPING_SYSTEM.md` and
-  `NEW_PROJECT_WIZARD.md` require Emergence folders at bootstrap and
-  ongoing capture; `scripts/release_task.py`'s `REQUIRED_CHECKS` blocks
-  release without an "Emergence capture considered" checklist line.
-  Triggered by ProjectUpdater (TASK-123-125) shipping with zero Emergence
-  artifacts despite real insights surfacing.
-- Systems-use posture after TASK-140/TASK-143: MAP should not force every
-  documented system into every task. Emergence/Insights is actively used and
-  enforced; Research remains mostly unexercised and should be invoked when a
+- The eleven governance systems (DEC-015..026, TASK-103–126) are all built and
+  cross-linked; each system doc is its own canonical reference:
+
+| System | DEC | Doc |
+|---|---|---|
+| Research | DEC-015 | `RESEARCH_SYSTEM.md` + `templates/research/` |
+| Self-Repair | DEC-016 | `SELF_REPAIR_SYSTEM.md` + `repairs/` |
+| Context | DEC-017 | `CONTEXT_SYSTEM.md` |
+| Decision/Authority | DEC-018 | `DECISION_AUTHORITY_SYSTEM.md`, `DECISION_CLASSES.md` |
+| Human Interface | DEC-019 | `HUMAN_INTERFACE_SYSTEM.md` |
+| Risk | DEC-020 | `RISK_SYSTEM.md` |
+| Security/Permissions | DEC-021 | `SECURITY_PERMISSIONS_SYSTEM.md`, `AGENT_PERMISSION_LEVELS.md`, `DESTRUCTIVE_ACTION_POLICY.md` |
+| Change Control | DEC-022 | `CHANGE_CONTROL_SYSTEM.md` |
+| Project Bootstrapping | DEC-023 | `PROJECT_BOOTSTRAPPING_SYSTEM.md`, `NEW_PROJECT_WIZARD.md` |
+| Archive/Retention | DEC-024 | `ARCHIVE_RETENTION_SYSTEM.md` |
+| Retrospective | DEC-025 | `RETROSPECTIVE_SYSTEM.md` + `retros/` |
+| Emergence capture mandatory | DEC-026 | `emergence/README.md`; release gate enforces "Emergence capture considered" |
+
+- Systems-use posture (TASK-140/143): don't force every system into every
+  task. Emergence is actively used and enforced; Research is invoked when a
   task needs sourced, current, external, or disputed facts.
 
 ### HPOM Gates (all active as of 2026-06-29)
@@ -176,19 +132,12 @@ Last reviewed during TASK-143 after the TASK-140/TASK-141 process audits.
 
 ## Known Health Issues
 
-- All shared files are CURRENT (0 stale as of 2026-06-29).
+- All shared files are CURRENT (validate_shared_state 21/21 as of 2026-07-14).
 - Some historical artifacts still mention the old `langgraph/` directory. The live code path is `graph/`.
-- `aider_wrapper.py` has one open RECOMMENDED fix: remove `--no-auto-commits` from `FORBIDDEN_AIDER_FLAGS` (tracked as TASK-050).
-- `local_runner.py` has two OPTIONAL cosmetic items (tracked as TASK-051).
-- Repo reconciliation is COMPLETE (TASK-079, 2026-07-02), and the active
-  canonical repo is now `/home/home/Projects/MultiAgentProject` per DEC-014 /
-  `shared/canonical-repo.md`. The earlier Downloads-path rule from DEC-012 is
-  superseded.
-- `agents/status.json` was reconciled to hcom reality on 2026-07-02 (TASK-082);
-  identity-kind semantics are documented in `agents/README.md`.
-- `validate_events.py` still reports 33 legacy warnings in historical event
-  lines, but `events/warning_baseline.json` and `--fail-on-new` prevent new
-  warnings from hiding in that accepted baseline.
+- Canonical repo is `/home/home/Projects/MultiAgentProject` per DEC-014 /
+  `shared/canonical-repo.md` (supersedes DEC-012's Downloads path).
+- `validate_events.py` reports 33 accepted legacy warnings; `--fail-on-new`
+  with `events/warning_baseline.json` blocks new ones.
 - `agents/limit-watcher-state.json` carries 10 open incidents (8 gave-up) for
   registered-but-idle early-July sessions. TASK-176's prune only removes
   incidents for agents absent from `agents/status.json`, so these persist and

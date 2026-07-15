@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-189",
+  "title": "Outcome feedback: event type + validator blind-spot metric",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "SUBMITTED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Source-mining audit item #2 (Extension-Plan #2, spec artifacts/planning/map-outcome-feedback-spec.md, self-declared design-only): implement the outcome event type (outcome_pass/outcome_fail per released task) and the validator blind-spot metric in map_metrics.py per the existing spec. The spec is the design authority; deviations documented in the task report.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/events/README.md",
+    "MAP_System/scripts/map_metrics.py",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_events.py",
+    "MAP_System/tests/test_liveness_reaper.py",
+    "MAP_System/tests/test_outcome_feedback.py"
+  ],
+  "acceptance_criteria": [
+    "Outcome events are recordable per the spec and validate cleanly under validate_events --fail-on-new.",
+    "map_metrics.py reports a blind-spot rate (defects found post-release that gates missed) from outcome events.",
+    "Focused tests wired into run_tests.sh; suite stays green.",
+    "Spec deviations, if any, documented."
+  ]
+}
