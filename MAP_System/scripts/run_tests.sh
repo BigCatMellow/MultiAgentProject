@@ -28,8 +28,11 @@ py_compile_all() {
 run_check py_compile py_compile_all
 run_check validate_task_mirrors python3 MAP_System/scripts/validate_task_mirrors.py
 run_check validate_task_graph python3 MAP_System/scripts/validate_task_graph.py
+run_check validate_task_schema python3 MAP_System/scripts/validate_task_schema.py
+run_check validate_task_schema_test python3 MAP_System/tests/test_validate_task_schema.py
 run_check validate_canonical_repo_paths python3 MAP_System/scripts/validate_canonical_repo_paths.py
 run_check validate_research_artifacts python3 MAP_System/scripts/validate_research_artifacts.py
+run_check validate_decisions python3 MAP_System/scripts/validate_decisions.py
 run_check validate_repair_artifacts python3 MAP_System/scripts/validate_repair_artifacts.py
 run_check validate_context_packets python3 MAP_System/scripts/validate_context_packets.py
 run_check validate_risk_registers python3 MAP_System/scripts/validate_risk_registers.py
@@ -51,6 +54,7 @@ run_check map_emergence_stale_test python3 MAP_System/tests/test_map_emergence_s
 run_check validate_task_graph_shared_outputs_test python3 MAP_System/tests/test_validate_task_graph_shared_outputs.py
 run_check validate_task_mirrors_test python3 MAP_System/tests/test_validate_task_mirrors.py
 run_check validate_research_artifacts_test python3 MAP_System/tests/test_validate_research_artifacts.py
+run_check decision_conflicts_test python3 MAP_System/tests/test_decision_conflicts.py
 run_check validate_repair_artifacts_test python3 MAP_System/tests/test_validate_repair_artifacts.py
 run_check map_repair_test python3 MAP_System/tests/test_map_repair.py
 run_check validate_context_packets_test python3 MAP_System/tests/test_validate_context_packets.py

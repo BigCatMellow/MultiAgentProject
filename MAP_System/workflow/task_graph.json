@@ -4345,7 +4345,7 @@
       "title": "Decision-conflict detection pass for validate_decisions.py",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "IN_PROGRESS",
+      "status": "RELEASED",
       "dependencies": [],
       "owner": "codex-lab-nivo",
       "output_paths": [

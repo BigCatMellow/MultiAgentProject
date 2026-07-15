@@ -56,6 +56,7 @@
 | [IDEA-0014](ideas/IDEA-0014-after-gap-review-implementation-run-a-backed-up-full-folder-file.md) | MAP | After gap-review implementation, run a backed-up full folder/file-structure audit using MAP's own systems on itself. | PROMOTED_TO_TASK | codex-lab-dino | 2026-07-02 |
 | [IDEA-0015](ideas/IDEA-0015-add-an-export-import-json-button-to-projectupdater-to-mitigate-i.md) | ProjectUpdater | Add an Export/Import JSON button to ProjectUpdater to mitigate its accepted localStorage data-loss risk without adding a server ... | PROMOTED_TO_TASK | claude-lab-valo | 2026-07-03 |
 | [IDEA-0016](ideas/IDEA-0016-extend-the-task-191-redaction-guard-to-events-jsonl-appenders.md) | MAP | idea: Extend the TASK-191 redaction guard to events.jsonl appenders | CANDIDATE | claude-lab-zero | 2026-07-14 |
+| [IDEA-0017](ideas/IDEA-0017-atomic-review-claiming-add-claim-review-task-id-reviewer-to-db-c.md) | MAP | idea: Atomic review claiming: add claim_review(task_id, reviewer) to db/claims.py so review assignment is SQLite-arbitrated like task claiming — ... | CANDIDATE | claude-lab-mira | 2026-07-15 |
 
 ## Active Experiments
 

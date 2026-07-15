@@ -39,6 +39,36 @@ FIELD_PATTERNS = {
     "superseded_by": re.compile(r"^\*?\*?superseded.by\*?\*?\s*:\s*(.+)$", re.IGNORECASE | re.MULTILINE),
 }
 
+DEC_REF = re.compile(r"\bDEC-\d+\b", re.IGNORECASE)
+SUBJECT_STOPWORDS = {
+    "across",
+    "active",
+    "agent",
+    "agents",
+    "all",
+    "and",
+    "architecture",
+    "authority",
+    "class",
+    "code",
+    "control",
+    "current",
+    "decision",
+    "decisions",
+    "framework",
+    "layer",
+    "map",
+    "policy",
+    "project",
+    "projects",
+    "scope",
+    "system",
+    "task",
+    "tasks",
+    "the",
+    "use",
+}
+
 
 def extract_blocks(text: str) -> list[dict]:
     """Split decisions.md into per-DEC blocks and parse fields."""
@@ -77,6 +107,8 @@ def extract_blocks(text: str) -> list[dict]:
             if at_match:
                 fields["applies_to"] = at_match.group(1).strip()[:80]
 
+        fields["_raw"] = block_text
+
         blocks.append(fields)
     return blocks
 
@@ -93,6 +125,82 @@ def check_block(block: dict) -> list[str]:
         sup_ref = sup_by or re.search(r"(DEC-\d+)", block.get("status", ""), re.IGNORECASE)
         sup_ref = sup_ref.group(0) if hasattr(sup_ref, "group") else sup_ref or "(unspecified)"
         issues.append(f"SUPERSEDED: superseded_by={sup_ref}")
+    return issues
+
+
+def decision_refs(value: str | None) -> set[str]:
+    """Return normalized DEC-NNN references from a link-like field."""
+    if not value:
+        return set()
+    return {match.group(0).upper() for match in DEC_REF.finditer(value)}
+
+
+def supersedes_refs(block: dict) -> set[str]:
+    return decision_refs(block.get("supersedes"))
+
+
+def superseded_by_refs(block: dict) -> set[str]:
+    refs = decision_refs(block.get("superseded_by"))
+    status = block.get("status", "")
+    if re.search(r"\bsuperseded\s+by\b", status, re.IGNORECASE):
+        refs.update(decision_refs(status))
+    return refs
+
+
+def subject_terms(block: dict) -> set[str]:
+    """Extract conservative subject tokens from Applies-To for pair reporting."""
+    subject = block.get("applies_to", "")
+    tokens = re.findall(r"[a-z0-9]+", subject.lower())
+    return {token for token in tokens if len(token) >= 4 and token not in SUBJECT_STOPWORDS}
+
+
+def directly_superseded(block_a: dict, block_b: dict) -> bool:
+    a_id = block_a["id"].upper()
+    b_id = block_b["id"].upper()
+    return (
+        b_id in supersedes_refs(block_a)
+        or b_id in superseded_by_refs(block_a)
+        or a_id in supersedes_refs(block_b)
+        or a_id in superseded_by_refs(block_b)
+    )
+
+
+def check_decision_conflicts(blocks: list[dict]) -> list[str]:
+    """Report-only supersession and same-subject findings.
+
+    This deliberately returns NOTE-level strings; it must not affect the
+    validator's exit status until MAP has reviewed real-world noise.
+    """
+    issues: list[str] = []
+    by_id = {block["id"].upper(): block for block in blocks}
+
+    for block in blocks:
+        dec_id = block["id"].upper()
+        for target in sorted(supersedes_refs(block)):
+            target_block = by_id.get(target)
+            if target_block is None:
+                issues.append(f"SUPERSESSION_DANGLING: {dec_id} supersedes unknown {target}")
+            elif dec_id not in superseded_by_refs(target_block):
+                issues.append(f"SUPERSESSION_ONE_WAY: {dec_id} supersedes {target}, but {target} does not list superseded_by {dec_id}")
+        for target in sorted(superseded_by_refs(block)):
+            target_block = by_id.get(target)
+            if target_block is None:
+                issues.append(f"SUPERSESSION_DANGLING: {dec_id} superseded_by unknown {target}")
+            elif dec_id not in supersedes_refs(target_block):
+                issues.append(f"SUPERSESSION_ONE_WAY: {dec_id} superseded_by {target}, but {target} does not list supersedes {dec_id}")
+
+    for index, block_a in enumerate(blocks):
+        for block_b in blocks[index + 1:]:
+            if directly_superseded(block_a, block_b):
+                continue
+            shared = subject_terms(block_a) & subject_terms(block_b)
+            if len(shared) >= 2:
+                issues.append(
+                    "POSSIBLE_DECISION_CONFLICT: "
+                    f"{block_a['id']} and {block_b['id']} share subject terms "
+                    f"{', '.join(sorted(shared))} without supersession links"
+                )
+
     return issues
 
 
@@ -174,8 +282,15 @@ def main(argv: list[str] | None = None) -> int:
                 else:
                     print(f"  NOTE {label}: {issue}")
 
+    conflict_issues = check_decision_conflicts(blocks)
+    for issue in conflict_issues:
+        print(f"  NOTE decision-conflicts: {issue}")
+
     active = sum(1 for b in blocks if b.get("status", "").lower() not in ("superseded",))
-    print(f"\n{len(blocks)} decision(s) checked. {active} active. {failures} failure(s).")
+    print(
+        f"\n{len(blocks)} decision(s) checked. {active} active. "
+        f"{failures} failure(s). {len(conflict_issues)} report-only conflict note(s)."
+    )
 
     if args.emit_index:
         emit_index(blocks, DEFAULT_INDEX_OUT)
