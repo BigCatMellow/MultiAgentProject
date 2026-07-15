@@ -56,6 +56,57 @@ def test_one_nudge_per_window():
     assert nudges == [("codex", newer)]
 
 
+def test_failed_recorded_reset_retry_throttle():
+    past = (NOW - timedelta(minutes=5)).isoformat()
+    recent_failure = {
+        "nudged": {},
+        "failed_nudges": {
+            "codex": {
+                "resume_after": past,
+                "last_failed_at": (NOW - timedelta(minutes=2)).isoformat(),
+            }
+        },
+    }
+    nudges, _ = decide_nudges(status(codex=entry(resume_after=past)), recent_failure, NOW)
+    assert nudges == []
+
+    old_failure = {
+        "nudged": {},
+        "failed_nudges": {
+            "codex": {
+                "resume_after": past,
+                "last_failed_at": (NOW - timedelta(minutes=6)).isoformat(),
+            }
+        },
+    }
+    nudges, _ = decide_nudges(status(codex=entry(resume_after=past)), old_failure, NOW)
+    assert nudges == [("codex", past)]
+
+
+def test_live_due_recorded_reset_is_clearable():
+    from limit_watcher import clear_recorded_reset_status, live_due_recorded_resets
+
+    past = (NOW - timedelta(minutes=5)).isoformat()
+    st = status(
+        codex={
+            "status": "standby",
+            "reason": "out_of_tokens",
+            "resume_after": past,
+            "notes": "keep me | [command-center-token-refresh] reset note",
+        }
+    )
+    snapshot = {"codex": {"status": "listening", "status_age_seconds": 0, "process_bound": True}}
+
+    assert live_due_recorded_resets(st, {"nudged": {}}, snapshot, NOW) == [("codex", past)]
+    assert clear_recorded_reset_status(st, "codex") is True
+    assert st["agents"]["codex"] == {
+        "status": "available",
+        "reason": None,
+        "resume_after": None,
+        "notes": "keep me",
+    }
+
+
 def test_unparseable_reported_once():
     raw = "when operator restores token budget"
     st = status(antigravity=entry(resume_after=raw))
@@ -539,6 +590,35 @@ def test_send_nudge_active_session_fallback_failure_returns_false():
         lw.subprocess.run = real_run
 
     assert len(calls) == 3
+
+
+def test_send_nudge_resume_timeout_returns_false():
+    import subprocess
+    import limit_watcher as lw
+
+    class FakeResult:
+        def __init__(self, code=0, stdout="", stderr=""):
+            self.returncode = code
+            self.stdout = stdout
+            self.stderr = stderr
+
+    calls = []
+    real_run = lw.subprocess.run
+    try:
+        def fake_run(cmd, **kwargs):
+            calls.append(cmd)
+            if cmd[:2] == ["hcom", "r"]:
+                raise subprocess.TimeoutExpired(cmd, kwargs.get("timeout"))
+            return FakeResult(0)
+
+        lw.subprocess.run = fake_run
+        assert lw.send_nudge("claude-lab-mira") is False
+    finally:
+        lw.subprocess.run = real_run
+
+    assert len(calls) == 2
+    assert calls[1][:6] == ["hcom", "r", "claude-lab-mira", "--terminal", "wezterm-tab", "--go"]
+    assert "--headless" not in calls[1]
 
 
 def main():

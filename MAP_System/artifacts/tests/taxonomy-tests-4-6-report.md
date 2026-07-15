@@ -113,9 +113,11 @@ actual requirements.
   coexist (collision checked with claude-lab-zero over hcom, hcom #34517;
   run_tests.sh is a declared shared output path). Full-suite total at
   submission time is recorded below.
-- Full suite at submission: see release/approval record — one non-TASK-192
-  check from the parallel in-flight tasks was failing at first merged run;
-  all three TASK-192 checks pass in the merged suite.
+- Full suite at submission: `run_tests.sh` SUMMARY pass=61 fail=0 total=61.
+  An earlier merged run showed pass=60 fail=1 while TASK-189/190/191 were
+  still landing concurrently; that failure belonged to their in-flight work,
+  not TASK-192, and cleared once they finished — all three TASK-192 checks
+  passed in both runs.
 
 ## Missing-mechanism follow-up candidates (for the lead, not filed here)
 

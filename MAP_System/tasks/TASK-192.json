@@ -3,7 +3,7 @@
   "title": "Close taxonomy-audit regression tests #4-#6",
   "task_type": "implementation",
   "role": "implementer",
-  "status": "IN_PROGRESS",
+  "status": "RELEASED",
   "dependencies": [],
   "owner": "claude-lab-toku",
   "description": "Source-mining audit item #5 (origin map-failure-taxonomy-coverage.md #4/#5/#6): three focused test files \u2014 decomposer dependency-edge cases, context-summary drift detection negative paths, multi-project isolation \u2014 wired into run_tests.sh. Where a taxonomy hole has no detector, the test is written and skipped-with-reason naming the missing mechanism (honest tracked gap, not a fabricated pass). Packet: MAP_System/inbox/helpers/taxonomy-tests-packet.md. Starts after TASK-187 review + TASK-188 release.",

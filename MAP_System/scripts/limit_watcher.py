@@ -60,6 +60,7 @@ STALE_CLAIM_TASK_ID = "TASK-119"
 TERMINAL_SESSION_REASONS = {"session_superseded", "disposable_session_ended"}
 TERMINAL_TASK_ID = "TASK-186"  # terminal-session suppression events (IDEA-0009)
 ACTIVE_SESSION_RESUME_RE = re.compile(r"\bstill active\b", re.IGNORECASE)
+RECORDED_RESET_FAILURE_RETRY_SECONDS = 300
 
 NUDGE_PROMPT = (
     "Rise & Shine (RnS limit watcher, TASK-083): your session appears to have "
@@ -91,6 +92,7 @@ def decide_nudges(status_data, state, now):
     nudges = []
     unparseable = []
     nudged = state.get("nudged", {})
+    failed = state.get("failed_nudges", {})
     warned = state.get("warned_unparseable", {})
     for name, entry in sorted(status_data.get("agents", {}).items()):
         if entry.get("status") != "standby" or entry.get("reason") != "out_of_tokens":
@@ -103,8 +105,54 @@ def decide_nudges(status_data, state, now):
             continue
         if now < parsed or nudged.get(name) == raw:
             continue
+        failure = failed.get(name, {})
+        if failure.get("resume_after") == raw:
+            last_failed = parse_resume_after(failure.get("last_failed_at"))
+            if last_failed is not None and (
+                now - last_failed).total_seconds() < RECORDED_RESET_FAILURE_RETRY_SECONDS:
+                continue
         nudges.append((name, raw))
     return nudges, unparseable
+
+
+def clear_recorded_reset_status(status_data, agent):
+    """Clear a due out_of_tokens record after RnS confirms a live session."""
+    entry = status_data.get("agents", {}).get(agent)
+    if not isinstance(entry, dict):
+        return False
+    before = json.dumps(entry, sort_keys=True)
+    entry["status"] = "available"
+    entry["reason"] = None
+    entry["resume_after"] = None
+    notes = str(entry.get("notes") or "")
+    marker = "[command-center-token-refresh]"
+    if marker in notes:
+        parts = [part.strip() for part in notes.split(" | ") if marker not in part]
+        entry["notes"] = " | ".join(parts)
+    return json.dumps(entry, sort_keys=True) != before
+
+
+def write_status(status_data, dry_run=False):
+    if dry_run:
+        return
+    STATUS_FILE.write_text(json.dumps(status_data, indent=2, sort_keys=True) + "\n")
+
+
+def live_due_recorded_resets(status_data, state, snapshot, now):
+    """Agents whose recorded reset has passed and whose hcom session is live."""
+    if snapshot is None:
+        return []
+    due = []
+    for name, entry in sorted(status_data.get("agents", {}).items()):
+        if entry.get("status") != "standby" or entry.get("reason") != "out_of_tokens":
+            continue
+        raw = entry.get("resume_after")
+        parsed = parse_resume_after(raw)
+        if parsed is None or now < parsed:
+            continue
+        if classify_live(snapshot.get(name, {})):
+            due.append((name, raw))
+    return due
 
 
 def detect_silent_stops(prev_live, current_live, status_data, already_reported):
@@ -517,21 +565,43 @@ def send_nudge(agent, dry_run=False, kind="resume"):
                 "--", f"!NOTE RnS: {kind} nudge for {agent} (TASK-083)."]
     resume = ["hcom", "r", agent, "--terminal", "wezterm-tab", "--go",
               "--hcom-prompt", NUDGE_PROMPT]
-    active_fallback = ["hcom", "send", f"@{agent}", "--intent", "inform", "--name", SENDER,
-                       "--", (
-                           f"!NOTE RnS active-session fallback for {agent} (TASK-083): "
-                           "hcom r reported the session is still active. "
-                           f"{NUDGE_PROMPT}"
-                       )]
     if dry_run:
         print(f"[dry-run] would announce + run: {' '.join(resume)}")
         return True
-    subprocess.run(announce, capture_output=True, text=True, timeout=30)
-    result = subprocess.run(resume, capture_output=True, text=True, timeout=180)
+    try:
+        subprocess.run(announce, capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        print(f"warning: RnS announce failed for {agent}: {exc}", file=sys.stderr)
+    try:
+        result = subprocess.run(resume, capture_output=True, text=True, timeout=180)
+    except subprocess.TimeoutExpired as exc:
+        print(f"warning: RnS resume timed out for {agent}: {exc}", file=sys.stderr)
+        return False
+    except OSError as exc:
+        print(f"warning: RnS resume failed for {agent}: {exc}", file=sys.stderr)
+        return False
     if is_active_session_resume_failure(result):
-        fallback = subprocess.run(active_fallback, capture_output=True, text=True, timeout=30)
-        return fallback.returncode == 0
+        return send_active_session_nudge(agent, dry_run=dry_run, kind=kind)
     return result.returncode == 0
+
+
+def send_active_session_nudge(agent, dry_run=False, kind="resume"):
+    active_fallback = ["hcom", "send", f"@{agent}", "--intent", "inform", "--name", SENDER,
+                       "--", (
+                           f"!NOTE RnS active-session fallback for {agent} (TASK-083): "
+                           f"{kind} nudge for a live session. {NUDGE_PROMPT}"
+                       )]
+    if dry_run:
+        print(f"[dry-run] would active-session nudge {agent}: {kind}")
+        return True
+    try:
+        fallback = subprocess.run(
+            active_fallback, capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        print(f"warning: RnS active-session fallback failed for {agent}: {exc}",
+              file=sys.stderr)
+        return False
+    return fallback.returncode == 0
 
 
 def is_active_session_resume_failure(result):
@@ -564,12 +634,33 @@ def poll_once(dry_run=False):
         return
     state = load_state()
     state.setdefault("nudged", {})
+    state.setdefault("failed_nudges", {})
     state.setdefault("warned_unparseable", {})
     state.setdefault("incidents", {})
     state.setdefault("last_live", [])
     now = datetime.now().astimezone()
+    snapshot = hcom_snapshot()
 
     # v1: recorded-reset path
+    status_changed = False
+    for agent, raw in live_due_recorded_resets(status_data, state, snapshot, now):
+        ok = send_active_session_nudge(agent, dry_run=dry_run, kind="recorded-reset-live")
+        if ok:
+            status_changed = clear_recorded_reset_status(status_data, agent) or status_changed
+            state["nudged"][agent] = raw
+            state["failed_nudges"].pop(agent, None)
+        else:
+            state["failed_nudges"][agent] = {
+                "resume_after": raw,
+                "last_failed_at": now.isoformat(timespec="seconds"),
+            }
+        append_event("PROGRESS",
+            f"RnS: recorded resume window passed for {agent} (resume_after {raw}); "
+            f"hcom shows the session live, direct nudge {'sent and durable status cleared' if ok else 'FAILED'}.",
+            dry_run=dry_run)
+    if status_changed:
+        write_status(status_data, dry_run=dry_run)
+
     nudges, unparseable = decide_nudges(status_data, state, now)
     for agent, raw in unparseable:
         append_event("BLOCKED",
@@ -578,13 +669,19 @@ def poll_once(dry_run=False):
         state["warned_unparseable"][agent] = raw
     for agent, raw in nudges:
         ok = send_nudge(agent, dry_run=dry_run, kind="recorded-reset")
-        state["nudged"][agent] = raw
+        if ok:
+            state["nudged"][agent] = raw
+            state["failed_nudges"].pop(agent, None)
+        else:
+            state["failed_nudges"][agent] = {
+                "resume_after": raw,
+                "last_failed_at": now.isoformat(timespec="seconds"),
+            }
         append_event("PROGRESS",
             f"RnS: recorded resume window passed for {agent} (resume_after {raw}); "
             f"visible resume nudge {'sent' if ok else 'FAILED'}.", dry_run=dry_run)
 
     # v2: presumed-down incidents
-    snapshot = hcom_snapshot()
     if snapshot is not None:
         pruned = prune_absent_session_tracking(state, status_data, snapshot)
         if pruned["pruned_incidents"] or pruned["pruned_last_live"]:

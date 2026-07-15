@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-198",
+  "title": "Fix RnS failed-nudge consumption and live-state reconciliation",
+  "task_type": "BUG",
+  "role": "implementation",
+  "status": "RETIRED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "RnS marked recorded-reset nudges as consumed even when hcom resume failed, leaving agents stuck standby/out_of_tokens after the scheduled reset. It also did not reconcile durable status when hcom showed the agent was already live after the reset window. Do not consume failed nudges, retry with a bounded backoff, and clear out_of_tokens when a due recorded-reset agent is live.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/agents/status.json",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "Recorded-reset send failures are retried instead of stored as successful nudges",
+    "Due out_of_tokens records are cleared when hcom shows the agent is already live",
+    "The current 4:11 stuck Claude lab entries are reconciled back to available"
+  ]
+}

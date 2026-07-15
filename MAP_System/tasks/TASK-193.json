@@ -3,7 +3,7 @@
   "title": "First brain compaction: archive TASK-147-192 era narrative",
   "task_type": "maintenance",
   "role": "implementer",
-  "status": "IN_PROGRESS",
+  "status": "RELEASED",
   "dependencies": [],
   "owner": "claude-lab-mira",
   "description": "notes/brain-compaction-guide.md trigger is ~45 tasks overdue (no compaction has ever run; archive/compactions/ does not exist). Compact completed-work narrative from shared active memory into archive/compactions/compaction-2026-07-14-tasks-147-192.md per the guide and templates/compaction-summary.md: preserve decisions/risks/outcomes, remove stale progress narrative from current-state.md and improvement-backlog.md, keep raw history untouched in events/artifacts, backlink from active files. Follows the guide's safety rules: no raw-log deletion, no history rewriting, no closing unresolved questions without evidence.",

@@ -3,7 +3,7 @@
   "title": "Outcome feedback: event type + validator blind-spot metric",
   "task_type": "implementation",
   "role": "implementer",
-  "status": "SUBMITTED",
+  "status": "RELEASED",
   "dependencies": [],
   "owner": "codex-lab-nivo",
   "description": "Source-mining audit item #2 (Extension-Plan #2, spec artifacts/planning/map-outcome-feedback-spec.md, self-declared design-only): implement the outcome event type (outcome_pass/outcome_fail per released task) and the validator blind-spot metric in map_metrics.py per the existing spec. The spec is the design authority; deviations documented in the task report.",

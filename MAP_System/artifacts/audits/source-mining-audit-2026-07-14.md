@@ -55,7 +55,7 @@ Prior coverage: TASK-171 (`artifacts/audits/repo-reference-map-runtime-audit.md`
 | callimachus-main | Thread-to-commit linking (file-overlap + time-window, no LLM) | UNEXPLOITED | Session replay (TASK-173) joins events/tasks/traces but not git commits; trace_id tagging is manual | Optional enrichment of `session_replay.py` with commit linking (M, low priority) |
 | graphify-8 / graphifyy whl | **EXTRACTED vs INFERRED provenance tag on individual claims** | UNEXPLOITED | Survey: "a clean, adoptable idea for MAP's own emergence system... doesn't tag individual claims by provenance." Emergence templates (`templates/`, `map_emergence.py`) have no claim-level provenance field | Add optional `provenance: extracted|inferred` label to emergence record templates (S) |
 | claude-bedrock-main | Librarian blueprint (single write point, healthcheck, dedup/compress) | IMPLEMENTED (as precedent) | SUMMARY-0002 + survey; MAP librarian (TASK-174) took the wikilink/validation/backlink core; single-write-point equivalent is `map_emergence.py`/`map_repair.py` CLIs | — |
-| claude-code-memory-setup-main | Obsidian + Graphify combo setup | UNEXPLOITED (unreviewed) | Only repo/ item covered by **neither** prior audit (grep both audits: absent). It's a setup recipe for tools already evaluated separately; likely nil marginal value | 10-minute skim to confirm nil, then mark closed (S) |
+| claude-code-memory-setup-main | Obsidian + Graphify combo setup | CLOSED (skimmed, TASK-196, confirmed nil) | See "claude-code-memory-setup-main Skim (TASK-196)" section below | — |
 | headroom.js / react-headroom / svelte-headroom, Callimachus .deb, WenyuChiou .desktop | Name-collision UI libraries, binary packages, browser shortcut | CLOSED (noise) | TASK-171 Inventory Notes: unrelated to Headroom AI; packages retained as reference only | — |
 
 ## C. Gap review + command-center-later open items
@@ -79,3 +79,44 @@ Prior coverage: TASK-171 (`artifacts/audits/repo-reference-map-runtime-audit.md`
 5. **Close the three missing regression tests** (C: taxonomy audit #4-#6) — MAP's own audit named them highest-value; each is small and two of them (multi-project isolation, context drift) guard areas the Gap Register calls the weakest. (S)
 
 Operator-decision honorable mentions (not agent-startable): pick the first real workflow target (the oldest open strategic item in the corpus), and approve/decline the bounded Library pilot that the viability measurement itself recommends as the next step.
+
+## claude-code-memory-setup-main Skim (TASK-196)
+
+Closure of the one `repo/` item neither the TASK-171 runtime audit nor the
+zera knowledge-cluster survey covered. Files inspected: `README.md` (table
+of contents, Problem/Solution framing, savings tables, "Real Results" and
+"Architecture" sections), `README.pt-BR.md` (confirmed a translation, not
+independent content), `scripts/claude_to_obsidian.py` (chat-import →
+Obsidian-note pipeline: frontmatter, keyword-to-tag mapping, wikilink
+insertion), `scripts/sync_claude_obsidian.sh` (cron-driven wrapper calling
+`claude-extract` + the Python script).
+
+**Conclusion: nil marginal value for MAP, confirmed.** This is a setup guide
+and two glue scripts for wiring `claude-conversation-extractor` + Obsidian +
+Graphify + `/resume`/`/save` slash commands into a *single-operator, no-
+harness* Claude Code workflow — a personal second-brain recipe, not a
+library or pattern MAP doesn't already have a stronger version of:
+
+- The Obsidian-vault-as-memory pattern is the same one `claude-bedrock-main`
+  and `agentcairn-main` demonstrate more directly (TASK-171/SUMMARY-0002),
+  and MAP's own `librarian.py` (TASK-174/179) already implements the
+  wikilink/backlink mechanics natively against MAP's own Markdown, with no
+  external vault or Obsidian dependency.
+- The chat-import pipeline solves "insights lost in chat history" for a
+  single human using the Claude Code app directly; MAP's equivalent problem
+  (coordination history across many agents) is already covered more
+  precisely by `session_replay.py` (TASK-172/173), which indexes MAP's own
+  hcom/event/task sources rather than parsing chat exports.
+- Graphify is separately covered (and already evaluated) in the TASK-171
+  audit's Priority-adjacent notes and the zera survey's EXTRACTED/INFERRED
+  provenance-tag finding (source-mining audit section A); this repo adds no
+  new information about Graphify itself, only a personal setup wrapper
+  around it.
+- The 71.5x/499x token-savings claims are self-reported, single-project
+  benchmarks (React+Supabase, 126 files) with no methodology beyond a
+  results table — consistent with `MAP-Repo-Review-List.md`'s own warning
+  that "token-savings percentages... are self-reported" and not something to
+  import as evidence.
+
+No further action. This closes the last unaudited `repo/` download; the
+source-mining audit's coverage of `repo/` is now complete.

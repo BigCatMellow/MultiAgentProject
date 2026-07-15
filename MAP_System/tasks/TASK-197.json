@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-197",
+  "title": "Decision-conflict detection pass for validate_decisions.py",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "IN_PROGRESS",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "Source-mining audit section B (callimachus 'Review conflicts' precedent, UNEXPLOITED): extend validate_decisions.py (or sibling) with a supersession/contradiction pass over shared/decisions.md \u2014 flag decision pairs touching the same subject where neither supersedes the other, and decisions whose supersedes/superseded_by links are one-way or dangling. Report-only (no gate) for the first pass, matching validate_events.py's telemetry-first posture. Reference: repo/callimachus-main review-conflicts pass. Starts after TASK-189 release.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/tests/task197-decision-conflict-run.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_decisions.py",
+    "MAP_System/tests/test_decision_conflicts.py"
+  ],
+  "acceptance_criteria": [
+    "Detects one-way/dangling supersession links and same-subject decision pairs lacking supersession, on fixtures.",
+    "Report-only first pass; real decisions.md run included in submission with findings triaged (real conflicts get follow-ups, false positives documented).",
+    "Suite green with focused tests wired in."
+  ]
+}

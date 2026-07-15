@@ -4174,7 +4174,7 @@
       "title": "Outcome feedback: event type + validator blind-spot metric",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "SUBMITTED",
+      "status": "RELEASED",
       "dependencies": [],
       "owner": "codex-lab-nivo",
       "output_paths": [
@@ -4218,7 +4218,7 @@
       "title": "Redaction guard for capture pipelines",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "IN_PROGRESS",
+      "status": "RELEASED",
       "dependencies": [],
       "owner": "claude-lab-zero",
       "output_paths": [
@@ -4242,7 +4242,7 @@
       "title": "Close taxonomy-audit regression tests #4-#6",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "IN_PROGRESS",
+      "status": "RELEASED",
       "dependencies": [],
       "owner": "claude-lab-toku",
       "output_paths": [
@@ -4264,7 +4264,7 @@
       "title": "First brain compaction: archive TASK-147-192 era narrative",
       "task_type": "maintenance",
       "role": "implementer",
-      "status": "IN_PROGRESS",
+      "status": "RELEASED",
       "dependencies": [],
       "owner": "claude-lab-mira",
       "output_paths": [
@@ -4286,7 +4286,7 @@
       "title": "Claude helper model-tier defaults and escalation policy",
       "task_type": "implementation",
       "role": "implementer",
-      "status": "SUBMITTED",
+      "status": "APPROVED",
       "dependencies": [],
       "owner": "codex-lab-nivo",
       "output_paths": [
@@ -4299,6 +4299,84 @@
         "Higher Claude helper tiers require a written request with reasoning and review by another core agent before use.",
         "A tier capability rubric explains when Haiku is enough and when Sonnet or Opus is justified, including the principle that sound reasoning should be approved generously.",
         "The hcom Claude default args are updated to include auto permission mode and Haiku."
+      ]
+    },
+    {
+      "task_id": "TASK-195",
+      "title": "Harden RnS watcher against hung resumes",
+      "task_type": "BUG",
+      "role": "implementation",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "/home/home/Projects/CommandCenterUI/app/server.py",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "send_nudge returns false instead of raising when hcom r times out",
+        "poll_once records failed nudge events and the watcher process keeps running after a hung resume",
+        "Command center RnS health can distinguish stale/dead watcher pidfile from normal warning state"
+      ]
+    },
+    {
+      "task_id": "TASK-196",
+      "title": "Audit small closures: task-JSON schema check + memory-setup skim",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "RELEASED",
+      "dependencies": [],
+      "owner": "claude-lab-toku",
+      "output_paths": [
+        "MAP_System/artifacts/audits/source-mining-audit-2026-07-14.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_task_schema.py",
+        "MAP_System/tests/test_validate_task_schema.py"
+      ],
+      "acceptance_criteria": [
+        "Task-JSON structural validation (required keys, types, status vocabulary, output_paths/criteria list shapes) runs in the suite and fails on a malformed fixture.",
+        "Existing 190+ task files all pass the new check, or failures are triaged as real drift with repairs filed.",
+        "memory-setup skim conclusion appended to the audit artifact with evidence (file paths inspected)."
+      ]
+    },
+    {
+      "task_id": "TASK-197",
+      "title": "Decision-conflict detection pass for validate_decisions.py",
+      "task_type": "implementation",
+      "role": "implementer",
+      "status": "IN_PROGRESS",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/artifacts/tests/task197-decision-conflict-run.md",
+        "MAP_System/scripts/run_tests.sh",
+        "MAP_System/scripts/validate_decisions.py",
+        "MAP_System/tests/test_decision_conflicts.py"
+      ],
+      "acceptance_criteria": [
+        "Detects one-way/dangling supersession links and same-subject decision pairs lacking supersession, on fixtures.",
+        "Report-only first pass; real decisions.md run included in submission with findings triaged (real conflicts get follow-ups, false positives documented).",
+        "Suite green with focused tests wired in."
+      ]
+    },
+    {
+      "task_id": "TASK-198",
+      "title": "Fix RnS failed-nudge consumption and live-state reconciliation",
+      "task_type": "BUG",
+      "role": "implementation",
+      "status": "RETIRED",
+      "dependencies": [],
+      "owner": "codex-lab-nivo",
+      "output_paths": [
+        "MAP_System/agents/status.json",
+        "MAP_System/scripts/limit_watcher.py",
+        "MAP_System/tests/test_limit_watcher.py"
+      ],
+      "acceptance_criteria": [
+        "Recorded-reset send failures are retried instead of stored as successful nudges",
+        "Due out_of_tokens records are cleared when hcom shows the agent is already live",
+        "The current 4:11 stuck Claude lab entries are reconciled back to available"
       ]
     }
   ],

@@ -28,13 +28,13 @@
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": "[command-center-token-refresh] Claude provider limit; resets 11:10 PM; synced 2026-07-14T22:44:42Z"
+      "notes": ""
     },
     "claude-lab-toku": {
       "status": "available",
       "reason": null,
       "resume_after": null,
-      "notes": "[command-center-token-refresh] Claude provider limit; resets 11:10 PM; synced 2026-07-14T22:44:42Z"
+      "notes": ""
     },
     "claude-lab-valo": {
       "status": "available",
@@ -61,10 +61,10 @@
       "notes": "Live hcom session as of 2026-07-13 (MAP 6.13 review, TASK-148 migration planning)."
     },
     "claude-lab-zero": {
-      "status": "available",
-      "reason": null,
+      "status": "standby",
+      "reason": "awaiting_work",
       "resume_after": null,
-      "notes": "[command-center-token-refresh] Claude provider limit; resets 11:10 PM; synced 2026-07-14T22:44:42Z"
+      "notes": ""
     },
     "codex": {
       "status": "available",

@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-196",
+  "title": "Audit small closures: task-JSON schema check + memory-setup skim",
+  "task_type": "implementation",
+  "role": "implementer",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "claude-lab-toku",
+  "description": "Two S-sized closures from source-mining-audit-2026-07-14.md section C: (1) structural schema check for tasks/TASK-NNN.json (command-center-later item; promote_task.py validates 8 HPOM fields but nothing validates structure/types of task JSON) \u2014 append to validate_task_mirrors.py or standalone, agent's call, wired into run_tests.sh with focused tests; (2) 10-minute skim of repo/claude-code-memory-setup-main (the only repo/ item no prior audit covered) to confirm nil marginal value, recorded as a short section appended to the source-mining audit artifact so the coverage claim becomes complete.",
+  "input_paths": [],
+  "output_paths": [
+    "MAP_System/artifacts/audits/source-mining-audit-2026-07-14.md",
+    "MAP_System/scripts/run_tests.sh",
+    "MAP_System/scripts/validate_task_schema.py",
+    "MAP_System/tests/test_validate_task_schema.py"
+  ],
+  "acceptance_criteria": [
+    "Task-JSON structural validation (required keys, types, status vocabulary, output_paths/criteria list shapes) runs in the suite and fails on a malformed fixture.",
+    "Existing 190+ task files all pass the new check, or failures are triaged as real drift with repairs filed.",
+    "memory-setup skim conclusion appended to the audit artifact with evidence (file paths inspected)."
+  ]
+}

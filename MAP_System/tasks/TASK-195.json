@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-195",
+  "title": "Harden RnS watcher against hung resumes",
+  "task_type": "BUG",
+  "role": "implementation",
+  "status": "RELEASED",
+  "dependencies": [],
+  "owner": "codex-lab-nivo",
+  "description": "A hung hcom r subprocess can crash the persistent RnS limit watcher, leaving auto-resume inactive until manual restart. Catch resume timeouts/failures as failed nudges, continue polling, and make health expose dead or stale watcher pidfiles.",
+  "input_paths": [],
+  "output_paths": [
+    "/home/home/Projects/CommandCenterUI/app/server.py",
+    "MAP_System/scripts/limit_watcher.py",
+    "MAP_System/tests/test_limit_watcher.py"
+  ],
+  "acceptance_criteria": [
+    "send_nudge returns false instead of raising when hcom r times out",
+    "poll_once records failed nudge events and the watcher process keeps running after a hung resume",
+    "Command center RnS health can distinguish stale/dead watcher pidfile from normal warning state"
+  ]
+}

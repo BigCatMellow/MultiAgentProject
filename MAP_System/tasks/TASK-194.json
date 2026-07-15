@@ -3,7 +3,7 @@
   "title": "Claude helper model-tier defaults and escalation policy",
   "task_type": "implementation",
   "role": "implementer",
-  "status": "SUBMITTED",
+  "status": "APPROVED",
   "dependencies": [],
   "owner": "codex-lab-nivo",
   "description": "Implement the operator directive that Claude-created helper agents default to auto permission mode plus Haiku model tier, and require a written reviewed escalation request for higher Claude model tiers. Document a practical tier-capability rubric so reviewers choose the right model level generously when the reasoning is sound, without forcing low-tier or high-tier use by default.",

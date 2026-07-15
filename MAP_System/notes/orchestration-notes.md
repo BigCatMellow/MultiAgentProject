@@ -71,6 +71,23 @@ Promote recurring patterns into AGENTS.md or an insight record.
   full-loop live validation of the TASK-080/083/084 stack; also surfaced
   TASK-187 (active-session resume awareness) as a real gap.
 
+- fails: starting a review without claiming it in hcom first — TASK-196's
+  review got duplicated (mira mid-verification during a harness outage, zera
+  approved+released meanwhile after an operator 'continue' broadcast fanned
+  the request out). fix: reply "taking the TASK-NNN review" BEFORE verifying,
+  same announce-before-claim rule as task IDs. Duplicated verification is the
+  cheap failure mode; conflicting verdicts would be the expensive one.
+- fails: reading task-file mirrors for live claim state — mirrors export-lag;
+  claimed_by looked empty while SQLite held a valid claim, triggering an
+  unnecessary arbitration message. fix: for claim/lease questions, read
+  map.db (mode=ro) directly; mirrors are for content, not liveness. (SYN-0001
+  applied to my own read.)
+- works: suite-failure triage under concurrent agents — 3 transient fails
+  (a peer's mid-run non-canonical event append) resolved by re-running before
+  reacting; the second run was clean because the peer had already fixed their
+  event. Rule: on suite failures in a live multi-agent tree, re-run once and
+  diff the failure set before filing anything.
+
 ### Standing rules (operator-set)
 
 - rule: all spawned Claude helpers start in auto permission mode and Haiku

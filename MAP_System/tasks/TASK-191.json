@@ -3,7 +3,7 @@
   "title": "Redaction guard for capture pipelines",
   "task_type": "implementation",
   "role": "implementer",
-  "status": "IN_PROGRESS",
+  "status": "RELEASED",
   "dependencies": [],
   "owner": "claude-lab-zero",
   "description": "Source-mining audit item #4 (agentcairn pattern; security gap flagged by zera's survey, confirmed absent): shared redaction module (known credential formats + URL userinfo + tuned high-entropy fallback) wired warn-and-redact into map_emergence.py, map_repair.py, and local_runner.py write paths. Packet: MAP_System/inbox/helpers/redaction-guard-packet.md. Starts after TASK-190 release.",
