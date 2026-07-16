@@ -12,7 +12,13 @@ https://github.com/BigCatMellow/MultiAgentProject
 Then it runs the full repo installer:
 
 ```text
-MAP-System-Installer.run
+Source/MAP-System-Installer.run
+```
+
+Raw download URL:
+
+```text
+https://raw.githubusercontent.com/BigCatMellow/MultiAgentProject/main/Installer/install.sh
 ```
 
 ## Quick Start
@@ -47,4 +53,3 @@ MAP_REPO_DIR="$HOME/MAP/MultiAgentProject" ./install.sh
 
 Credentials still require user action: Codex, Claude, Gemini, and any model/API
 provider login cannot be safely automated.
-

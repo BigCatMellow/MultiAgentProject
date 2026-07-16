@@ -13,7 +13,7 @@ usage() {
 Usage: ./install.sh [options] [-- extra installer args]
 
 Bootstrap MAP on a fresh PC by cloning/updating the repository and running
-MAP-System-Installer.run.
+Source/MAP-System-Installer.run.
 
 Options:
   --dry-run       Show actions and pass --dry-run to the repo installer
@@ -77,7 +77,7 @@ clone_or_update_repo() {
 }
 
 run_repo_installer() {
-  installer="$REPO_DIR/MAP-System-Installer.run"
+  installer="$REPO_DIR/Source/MAP-System-Installer.run"
   if [ ! -x "$installer" ]; then
     log "Installer not found or not executable: $installer"
     return 1
@@ -122,4 +122,3 @@ log "MAP branch: $BRANCH"
 ensure_clone_prereqs
 clone_or_update_repo
 run_repo_installer "${extra_args[@]}"
-
