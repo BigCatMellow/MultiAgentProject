@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=AI Command Center
+Comment=Chat with and monitor the AI Command Center Lab
+Exec=command-center-ui
+Terminal=false
+Categories=Utility;

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Command Center — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./studio.css">
+</head>
+<body>
+
+<div class="cc-card">
+
+  <!-- titlebar -->
+  <div class="cc-titlebar">
+    <div class="cc-dots"><span></span><span></span><span></span></div>
+    <div class="cc-brand">AI Command Center</div>
+    <div class="cc-spacer"></div>
+    <div class="cc-path">~/Projects/MultiAgentProject</div>
+  </div>
+
+  <div class="cc-body">
+    <!-- ===================== LEFT RAIL ===================== -->
+    <div class="cc-rail">
+
+      <div class="cc-miniweb" id="miniweb">
+        <div class="cc-miniweb-label">LIVE · 1 IN FLIGHT</div>
+        <svg width="220" height="150" viewBox="0 0 220 150">
+          <line x1="110" y1="78" x2="110" y2="30" stroke="rgba(244,205,138,.6)" stroke-width="2.5"></line>
+          <line x1="110" y1="78" x2="182" y2="118" stroke="rgba(255,255,255,.12)" stroke-width="2"></line>
+          <line x1="110" y1="78" x2="42" y2="118" stroke="rgba(255,255,255,.1)" stroke-width="2"></line>
+          <line x1="110" y1="30" x2="182" y2="118" stroke="rgba(217,119,87,.3)" stroke-width="1.5" stroke-dasharray="4 5"></line>
+          <circle r="4.5" fill="#f4d58a" style="offset-path:path('M110,30 L110,78');animation:ccflow 2s linear infinite"></circle>
+          <g><circle cx="110" cy="78" r="17" fill="#e7f3ec" stroke="#4fa874" stroke-width="2.5"></circle><text x="110" y="84" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="15" fill="#3f8f63">⌂</text></g>
+          <g><circle cx="110" cy="30" r="15" fill="#ecedfb" stroke="#f4d58a" stroke-width="2.5"></circle><text x="110" y="35" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="13" fill="#5a5ec9">N</text><circle cx="123" cy="18" r="7" fill="#f0b429" stroke="#1d2420" stroke-width="2"></circle><text x="123" y="22" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="9" fill="#5a3d05">!</text></g>
+          <g><circle cx="182" cy="118" r="14" fill="#f8ece5" stroke="#d97757" stroke-width="2.5"></circle><text x="182" y="123" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="12" fill="#c06a48">M</text></g>
+          <g><circle cx="42" cy="118" r="12" fill="#f8efdd" stroke="#c9c2b4" stroke-width="2"></circle><text x="42" y="123" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="11" fill="#b5862f">◉</text></g>
+        </svg>
+        <div class="cc-miniweb-legend"><span style="color:#a59cc9">nora</span><span style="color:#d6a187">miro</span></div>
+      </div>
+
+      <div class="cc-rail-label">AGENTS</div>
+
+      <button class="cc-row" data-agent="all" id="row-all">
+        <div class="cc-avatar cc-avatar--all">◹</div>
+        <div class="cc-row-text"><b>All agents</b><small>Unified feed</small></div>
+      </button>
+      <div class="cc-rows">
+        <button class="cc-row" data-agent="nora" id="row-nora">
+          <div class="cc-avatar-wrap"><div class="cc-avatar cc-avatar--nora">N</div><span class="cc-dot cc-dot--nora cc-blink"></span></div>
+          <div class="cc-row-text"><b>nora</b><small>Implementer · Codex</small></div>
+          <em class="cc-badge">1</em>
+        </button>
+        <button class="cc-row" data-agent="miro" id="row-miro">
+          <div class="cc-avatar-wrap"><div class="cc-avatar cc-avatar--miro">M</div><span class="cc-dot cc-dot--miro cc-blink"></span></div>
+          <div class="cc-row-text"><b>miro</b><small>Reviewer · Claude</small></div>
+        </button>
+        <button class="cc-row" data-agent="monitor" id="row-monitor">
+          <div class="cc-avatar-wrap"><div class="cc-avatar cc-avatar--monitor">◉</div><span class="cc-dot cc-dot--monitor"></span></div>
+          <div class="cc-row-text"><b>monitor</b><small>Observer · idle</small></div>
+        </button>
+        <button class="cc-row" data-agent="command-center" id="row-command-center">
+          <div class="cc-avatar-wrap"><div class="cc-avatar cc-avatar--command">C</div><span class="cc-dot cc-dot--command"></span></div>
+          <div class="cc-row-text"><b>command‑center</b><small>You · orchestrator</small></div>
+        </button>
+      </div>
+
+      <div class="cc-rail-fill"></div>
+      <div class="cc-health">
+        <div class="cc-health-icon">✓</div>
+        <div><b>All systems green</b><span>13/13 tests · 0 conflicts</span></div>
+      </div>
+    </div>
+
+    <!-- ===================== MAIN FEED ===================== -->
+    <div class="cc-main">
+      <div class="cc-feed-head">
+        <div id="scope-title">Conversation</div>
+        <span class="cc-chip">summarized</span>
+        <div class="cc-spacer"></div>
+        <div class="cc-disc" id="toggle-all">⊞ Expand all work</div>
+      </div>
+
+      <div class="cc-scroll" id="feed">
+        <div class="cc-daydivider"><div class="cc-hr"></div><span>TODAY · JUN 30</span><div class="cc-hr"></div></div>
+
+        <!-- command-center task -->
+        <div class="cc-msg" data-agent="command-center">
+          <div class="cc-avatar cc-avatar--command" style="width:34px;height:34px;border-radius:10px;font-size:14px;flex:none">C</div>
+          <div class="cc-bubble-wrap" style="max-width:560px">
+            <div class="cc-meta"><b>You</b><time>21:50</time></div>
+            <div class="cc-bubble cc-bubble--command">Commit &amp; push the git baseline, then start on the launcher.</div>
+          </div>
+        </div>
+
+        <!-- nora verify -->
+        <div class="cc-msg cc-msg--right" data-agent="nora">
+          <div class="cc-avatar cc-avatar--nora" style="order:2;width:34px;height:34px;border-radius:10px;font-size:14px;flex:none">N</div>
+          <div class="cc-bubble-wrap cc-bubble-wrap--right">
+            <div class="cc-meta"><b>nora</b><span class="cc-role cc-role--codex">CODEX</span><span class="cc-status cc-status--done">✓ done</span><time>21:51</time></div>
+            <div class="cc-bubble">
+              Verified the backup is intact — <b>4.3&nbsp;GB</b>, all files present. Safe to start work.
+              <div class="cc-disc cc-worktoggle" data-target="verify">▸ Show work</div>
+              <div class="cc-raw" id="raw-verify">
+                <div class="cc-raw-comment"># read-only verification · auto-approved</div>
+                <div><span class="cc-raw-prompt">$</span> du -sh …/Onion-workbench-backup-2026-06-30</div>
+                <div class="cc-raw-out">4.3G   …/Onion-workbench-backup-2026-06-30</div>
+                <div style="margin-top:4px"><span class="cc-raw-prompt">$</span> find … -maxdepth 2 -type f | head -20</div>
+                <div class="cc-raw-out">…/pocket-os-all-needed-icons.txt</div>
+                <div class="cc-raw-out">…/source-edit/.gitmodules</div>
+                <div class="cc-raw-out">…/source-edit/.clang-format</div>
+                <div class="cc-raw-comment">… +17 more files</div>
+                <div class="cc-raw-ok">✓ auto-reviewer approved — low risk, read-only</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- monitor health -->
+        <div class="cc-msg cc-msg--right" data-agent="monitor">
+          <div class="cc-avatar cc-avatar--monitor" style="order:2;width:34px;height:34px;border-radius:10px;font-size:15px;flex:none">◉</div>
+          <div class="cc-bubble-wrap cc-bubble-wrap--right">
+            <div class="cc-meta"><b>monitor</b><span class="cc-status cc-status--informed">informed</span><time>21:48</time></div>
+            <div class="cc-bubble">
+              MAP health verified — <b>13/13 tests pass</b>, nothing stale, review queue clear.
+              <div class="cc-disc cc-worktoggle" data-target="health">▸ Show work</div>
+              <div class="cc-raw" id="raw-health">
+                <div><span class="cc-raw-prompt">✓</span> validate_task_graph … <span class="cc-raw-out">pass</span></div>
+                <div><span class="cc-raw-prompt">✓</span> shared_state/decisions.jsonl … <span class="cc-raw-out">pass</span></div>
+                <div><span class="cc-raw-prompt">✓</span> run_tests.sh … <span class="cc-raw-out">13/13</span></div>
+                <div class="cc-raw-comment" style="margin-top:4px">review queue 0 · conflicts 0 · stale files 0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- miro review -->
+        <div class="cc-msg cc-msg--right" data-agent="miro">
+          <div class="cc-avatar cc-avatar--miro" style="order:2;width:34px;height:34px;border-radius:10px;font-size:14px;flex:none">M</div>
+          <div class="cc-bubble-wrap cc-bubble-wrap--right">
+            <div class="cc-meta"><b>miro</b><span class="cc-role cc-role--claude">CLAUDE</span><span class="cc-status">review</span><time>21:56</time></div>
+            <div class="cc-bubble">
+              Reviewed the launcher — <b>4 Tier‑1 recommendations</b> ready. All are pure C changes in one file. Which tiers do you want?
+              <div class="cc-disc cc-worktoggle" data-target="review">▸ Show work</div>
+              <div class="cc-raw cc-raw--light" id="raw-review">
+                <div class="cc-tier-label cc-tier-label--1">TIER 1 — recommend now</div>
+                <div class="cc-tier-list">
+                  <div><span class="cc-tier-num">1</span>Filename cleaning — strip (USA), dates, [!]</div>
+                  <div><span class="cc-tier-num">2</span>Favorites ★ indicator in Library / Browse</div>
+                  <div><span class="cc-tier-num">3</span><span class="cc-mono">MAX_GAMES 1500 → 4096</span></div>
+                  <div><span class="cc-tier-num">4</span>Home menu reorder — Sleep to position 4</div>
+                </div>
+                <div class="cc-tier-label cc-tier-label--2">TIER 2 — optional</div>
+                <div class="cc-tier-list cc-tier-list--muted">
+                  <div><span class="cc-tier-num cc-tier-num--muted">5</span>Letter‑jump — SELECT + L1/R1</div>
+                  <div><span class="cc-tier-num cc-tier-num--muted">6</span>Game‑count badges on home items</div>
+                </div>
+                <div class="cc-raw-comment" style="margin-top:10px;color:#b3aca0">cooked 4m 6s · all Tier 1 = pure C in pocketOS.c</div>
+                <div class="cc-tier-actions">
+                  <span class="cc-btn cc-btn--primary">Approve Tier 1</span>
+                  <span class="cc-btn">Tier 1 + 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- nora implementing -->
+        <div class="cc-msg cc-msg--right" data-agent="nora">
+          <div class="cc-avatar cc-avatar--nora" style="order:2;width:34px;height:34px;border-radius:10px;font-size:14px;flex:none">N</div>
+          <div class="cc-bubble-wrap cc-bubble-wrap--right">
+            <div class="cc-meta"><b>nora</b><span class="cc-role cc-role--codex">CODEX</span><span class="cc-status cc-status--working"><span class="cc-dot-inline cc-blink"></span>working</span><time>now</time></div>
+            <div class="cc-bubble">
+              Implementing the Tier 1 launcher changes — currently editing the display‑name parser.
+              <div class="cc-progress"><span></span></div>
+              <div class="cc-impl-row">
+                <div class="cc-disc cc-worktoggle" data-target="impl">▸ Show work</div>
+                <span class="cc-watchlive">watch live ↗</span>
+              </div>
+              <div class="cc-raw" id="raw-impl">
+                <div class="cc-raw-comment"># searched 2 patterns · read 2 files</div>
+                <div><span class="cc-raw-prompt">›</span> opening pocketOS.c <span class="cc-raw-comment">(display-name parser)</span></div>
+                <div class="cc-diff-del">- title = raw_name;</div>
+                <div class="cc-diff-add">+ title = clean_display_name(raw_name);  <span class="cc-raw-comment">// TASK-051</span></div>
+                <div class="cc-raw-out" style="margin-top:3px">  strips "(USA)", dates, "[!]" …</div>
+                <div class="cc-raw-warn" style="margin-top:4px">▸ running run_tests.sh …</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- nora approval -->
+        <div class="cc-msg cc-msg--right" data-agent="nora">
+          <div class="cc-avatar cc-avatar--nora" style="order:2;width:34px;height:34px;border-radius:10px;font-size:14px;flex:none">N</div>
+          <div class="cc-bubble-wrap cc-bubble-wrap--right">
+            <div class="cc-meta"><b>nora</b><span class="cc-needsyou">⚑ needs you</span><time>now</time></div>
+            <div class="cc-bubble cc-bubble--attention">
+              <div class="cc-attention-title">Approve push to origin/main?</div>
+              <div class="cc-attention-body">Commit <span class="cc-mono cc-mono--amber">5098156</span> is ready, but the push was blocked by policy — it would export repo contents to an external GitHub remote.</div>
+              <div class="cc-attention-actions">
+                <span class="cc-btn cc-btn--primary">Approve push</span>
+                <span class="cc-btn cc-btn--outline">Inspect commit</span>
+                <span class="cc-btn cc-btn--ghost">Keep local only</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- composer -->
+      <div class="cc-composer-wrap">
+        <div class="cc-composer">
+          <span class="cc-composer-to">To</span>
+          <span class="cc-chip cc-chip--nora">nora</span>
+          <span class="cc-chip cc-chip--miro">miro</span>
+          <div class="cc-composer-input">Give a task or answer a question…</div>
+          <span class="cc-send" id="send-btn">↑</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="./studio.js"></script>
+</body>
+</html>

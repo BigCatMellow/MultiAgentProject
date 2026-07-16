@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ProjectUpdater
+Comment=Open the MAP ProjectUpdater app
+Exec=__LOCAL_BIN__/project-updater
+Terminal=false
+Categories=Development;
+

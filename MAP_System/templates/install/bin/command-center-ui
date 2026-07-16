@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+COMMAND_CENTER_UI_DIR="${COMMAND_CENTER_UI_DIR:-__COMMAND_CENTER_UI_DIR__}"
+export COMMAND_CENTER_UI_WORKSPACE="${COMMAND_CENTER_UI_WORKSPACE:-$PROJECT_DIR}"
+
+if [ ! -x "$COMMAND_CENTER_UI_DIR/run-command-center-app.sh" ]; then
+  printf 'CommandCenterUI launcher not found at %s\n' "$COMMAND_CENTER_UI_DIR/run-command-center-app.sh" >&2
+  printf 'Run ./MAP-System-Installer.run from the MAP repo to install it.\n' >&2
+  exit 1
+fi
+
+exec "$COMMAND_CENTER_UI_DIR/run-command-center-app.sh" "$@"
+

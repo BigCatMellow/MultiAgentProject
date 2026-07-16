@@ -1,0 +1,220 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+HCOM="${HCOM:-$(command -v hcom 2>/dev/null || printf '%s' '__LOCAL_BIN__/hcom')}"
+HCOM_NAME="${HCOM_NAME:-command-center}"
+DEFAULT_TERMINAL="${HCOM_TERMINAL:-wezterm-tab}"
+HELPER_DIR="$PROJECT_DIR/MAP_System/inbox/helpers"
+AGENT_STATUS="$PROJECT_DIR/MAP_System/agents/status.json"
+
+usage() {
+  cat <<'EOF'
+AI Command Center
+
+Core:
+  ai help                         Show this command list
+  ai start                        Open the MAP lab workspace
+  ai status                       Show hcom agent status
+  ai inbox [N]                    Show recent hcom events
+  ai screens                      Dump visible agent terminal buffers
+  ai screen <agent>               Dump one agent terminal buffer
+  ai approve <agent> [text]       Inject text, or Enter when text is omitted
+  ai route                        Run the MAP graph router
+  ai tasks                        Show current MAP tasks
+  ai local-health                 Check local helper prerequisites
+
+Messaging:
+  ai tell "message"               Send to active Codex and Claude lab groups
+  ai codex "message"              Send to Codex lab agents
+  ai claude "message"             Send to Claude lab agents
+
+Helpers:
+  ai helper list
+  ai helper start codex <slug> "scope"
+  ai helper start claude <slug> "scope"
+  ai helper send <slug> "message"
+  ai helper note <slug> "note"
+EOF
+}
+
+need_hcom() {
+  if [ ! -x "$HCOM" ] && ! command -v hcom >/dev/null 2>&1; then
+    printf 'hcom is not installed or not on PATH. Install/configure hcom, then retry.\n' >&2
+    exit 127
+  fi
+}
+
+hcom_cmd() {
+  need_hcom
+  "$HCOM" "$@" --name "$HCOM_NAME"
+}
+
+send_msg() {
+  targets="$1"
+  shift
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing message.\n' >&2
+    exit 2
+  fi
+  need_hcom
+  # shellcheck disable=SC2086
+  exec "$HCOM" send $targets --intent inform --name "$HCOM_NAME" -- "$*"
+}
+
+helper_tag() {
+  case "$1" in
+    helper-*) printf '%s\n' "$1" ;;
+    *) printf 'helper-%s\n' "$1" ;;
+  esac
+}
+
+helper_note_path() {
+  tag="$(helper_tag "$1")"
+  printf '%s/%s.md\n' "$HELPER_DIR" "$tag"
+}
+
+helper_list() {
+  mkdir -p "$HELPER_DIR"
+  printf 'Helper notes:\n'
+  find "$HELPER_DIR" -maxdepth 1 -type f -name 'helper-*.md' -printf '  %f\n' 2>/dev/null | sort
+  printf '\nHcom agents:\n'
+  hcom_cmd list
+}
+
+helper_note() {
+  slug="$1"
+  shift
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing helper note.\n' >&2
+    exit 2
+  fi
+  mkdir -p "$HELPER_DIR"
+  note_path="$(helper_note_path "$slug")"
+  {
+    printf '\n## %s\n\n' "$(date -Iseconds)"
+    printf '%s\n' "$*"
+  } >> "$note_path"
+  printf 'Updated %s\n' "$note_path"
+}
+
+helper_start() {
+  provider="$1"
+  slug="$2"
+  shift 2
+  if [ "$#" -eq 0 ]; then
+    printf 'Missing helper scope.\n' >&2
+    exit 2
+  fi
+  case "$provider" in
+    codex|claude) ;;
+    *) printf 'Unsupported helper provider: %s\n' "$provider" >&2; exit 2 ;;
+  esac
+  tag="$(helper_tag "$slug")"
+  mkdir -p "$HELPER_DIR"
+  note_path="$(helper_note_path "$tag")"
+  {
+    printf '# %s\n\n' "$tag"
+    printf '- started_at: %s\n' "$(date -Iseconds)"
+    printf '- provider: %s\n' "$provider"
+    printf '- scope: %s\n' "$*"
+  } >> "$note_path"
+  need_hcom
+  exec "$HCOM" "$provider" --tag "$tag" --terminal "$DEFAULT_TERMINAL" --dir "$PROJECT_DIR" --hcom-prompt "$*"
+}
+
+helper_send() {
+  slug="$1"
+  shift
+  tag="$(helper_tag "$slug")"
+  send_msg "@$tag" "$@"
+}
+
+local_health() {
+  printf 'MAP repo: %s\n' "$PROJECT_DIR"
+  for cmd in git python3 hcom wezterm codex claude gemini ollama; do
+    if command -v "$cmd" >/dev/null 2>&1; then
+      printf 'ok      %s: %s\n' "$cmd" "$(command -v "$cmd")"
+    else
+      printf 'manual  %s: not found\n' "$cmd"
+    fi
+  done
+  if [ -x "$PROJECT_DIR/MAP_System/.venv/bin/python" ]; then
+    printf 'ok      MAP venv: %s\n' "$PROJECT_DIR/MAP_System/.venv"
+  else
+    printf 'manual  MAP venv: run ./install-map-system.sh --yes\n'
+  fi
+}
+
+cmd="${1:-help}"
+case "$cmd" in
+  help|-h|--help)
+    usage
+    ;;
+  start)
+    exec ai-command-center-lab
+    ;;
+  status)
+    hcom_cmd list -v
+    ;;
+  inbox)
+    count="${2:-25}"
+    hcom_cmd events --last "$count"
+    ;;
+  screens)
+    for agent in $(hcom_cmd list --names 2>/dev/null); do
+      printf '\n===== %s =====\n' "$agent"
+      hcom_cmd term "$agent" || true
+    done
+    ;;
+  screen)
+    [ "$#" -ge 2 ] || { printf 'Usage: ai screen <agent>\n' >&2; exit 2; }
+    hcom_cmd term "$2"
+    ;;
+  approve)
+    [ "$#" -ge 2 ] || { printf 'Usage: ai approve <agent> [text]\n' >&2; exit 2; }
+    agent="$2"
+    shift 2
+    if [ "$#" -eq 0 ]; then
+      hcom_cmd term inject "$agent" --enter
+    else
+      hcom_cmd term inject "$agent" "$*" --enter
+    fi
+    ;;
+  route|langgraph)
+    exec "$PROJECT_DIR/MAP_System/.venv/bin/python" "$PROJECT_DIR/MAP_System/graph/runner.py"
+    ;;
+  tasks)
+    exec "$PROJECT_DIR/MAP_System/.venv/bin/python" "$PROJECT_DIR/MAP_System/scripts/map_task.py" list
+    ;;
+  local-health)
+    local_health
+    ;;
+  tell)
+    shift
+    send_msg "@codex-lab- @claude-lab-" "$@"
+    ;;
+  codex)
+    shift
+    send_msg "@codex-lab-" "$@"
+    ;;
+  claude)
+    shift
+    send_msg "@claude-lab-" "$@"
+    ;;
+  helper)
+    sub="${2:-}"
+    case "$sub" in
+      list) helper_list ;;
+      start) [ "$#" -ge 5 ] || { usage >&2; exit 2; }; shift 2; helper_start "$@" ;;
+      send) [ "$#" -ge 4 ] || { usage >&2; exit 2; }; shift 2; helper_send "$@" ;;
+      note) [ "$#" -ge 4 ] || { usage >&2; exit 2; }; shift 2; helper_note "$@" ;;
+      *) usage >&2; exit 2 ;;
+    esac
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac
+

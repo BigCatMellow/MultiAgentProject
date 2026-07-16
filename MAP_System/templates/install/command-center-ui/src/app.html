@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Command Center App</title>
+  <link rel="stylesheet" href="./studio.css">
+  <link rel="stylesheet" href="./app-live.css">
+</head>
+<body>
+  <div class="cc-card">
+    <div class="cc-titlebar">
+      <div class="cc-dots"><span></span><span></span><span></span></div>
+      <div class="cc-brand">AI Command Center</div>
+      <div class="cc-spacer"></div>
+      <div class="cc-path" id="workspace-path">loading workspace...</div>
+    </div>
+
+    <div class="app-body">
+      <aside class="app-rail">
+        <div class="app-label">LIVE APP</div>
+        <div class="app-status" id="server-status">Connecting...</div>
+        <div class="app-kpis">
+          <div><b id="task-total">-</b><span>tasks</span></div>
+          <div><b id="task-active">-</b><span>active</span></div>
+          <div><b id="event-count">-</b><span>events</span></div>
+        </div>
+        <div class="app-label">HCOM</div>
+        <pre class="app-hcom" id="hcom-list">loading...</pre>
+      </aside>
+
+      <main class="app-main">
+        <header class="app-head">
+          <div>
+            <h1>Studio Command Center</h1>
+            <p>Live MAP state with guarded hcom send.</p>
+          </div>
+          <button id="refresh-btn" class="cc-btn cc-btn--outline">Refresh</button>
+        </header>
+
+        <section class="app-grid">
+          <section class="app-panel">
+            <div class="app-label">RECENT EVENTS</div>
+            <div id="events-list" class="app-list"></div>
+          </section>
+          <section class="app-panel">
+            <div class="app-label">ACTIVE TASKS</div>
+            <div id="tasks-list" class="app-list"></div>
+          </section>
+        </section>
+
+        <section class="app-panel send-panel">
+          <div class="app-label">SEND HCOM MESSAGE</div>
+          <div class="identity-help" id="identity-help">
+            Loading hcom sender mode...
+          </div>
+          <form id="send-form" class="send-form">
+            <label>Recipients <input id="recipients" value="bigboss" aria-label="Recipients"></label>
+            <label>Intent
+              <select id="intent" aria-label="Intent">
+                <option value="inform">inform</option>
+                <option value="request">request</option>
+                <option value="ack">ack</option>
+              </select>
+            </label>
+            <label class="body-field">Message <textarea id="message" rows="3" aria-label="Message"></textarea></label>
+            <button class="cc-btn cc-btn--primary" id="send-button" type="submit">Send</button>
+          </form>
+          <pre id="send-result" class="send-result"></pre>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="./app-live.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+exec "$PROJECT_DIR/MAP_System/.venv/bin/python" "$PROJECT_DIR/MAP_System/graph/runner.py" "$@"
+

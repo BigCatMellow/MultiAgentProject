@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AI Command Center Lab
+Comment=Open the MAP multi-agent lab workspace
+Exec=__LOCAL_BIN__/ai-command-center-lab
+Terminal=false
+Categories=Development;
+

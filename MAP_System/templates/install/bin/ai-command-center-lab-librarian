@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+HCOM="${HCOM:-$(command -v hcom 2>/dev/null || printf '%s' '__LOCAL_BIN__/hcom')}"
+cd "$PROJECT_DIR"
+
+PROMPT='You are the MAP helper librarian. Read AGENTS.md, MAP_System/AGENTS.md, docs/agent-quickstart.md, and docs/project-map.md. Validate durable MAP files, backlinks, task records, and release/review artifacts. Write concise findings to MAP_System/inbox/helpers/helper-librarian.md and send one hcom inform message to @codex-lab- and @claude-lab- with status. Do not make destructive changes. Use --intent request only for blockers or operator decisions.'
+
+exec "$HCOM" codex --tag helper-librarian --run-here --dir "$PROJECT_DIR" --hcom-prompt "$PROMPT"
+

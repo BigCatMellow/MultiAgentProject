@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+cd "$PROJECT_DIR"
+
+cat <<EOF
+MAP Command Center Shell
+
+Repo: $PROJECT_DIR
+
+Useful commands:
+  ai status
+  ai inbox
+  ai tell "message"
+  ai route
+  MAP_System/scripts/map-git status
+EOF
+
+exec "${SHELL:-/bin/sh}"
+

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Agent Tabs
+Comment=Open MAP agent tabs
+Exec=__LOCAL_BIN__/agent-tabs
+Terminal=false
+Categories=Development;
+

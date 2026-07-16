@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AI Command Center
+Comment=Open the graphical MAP CommandCenterUI
+Exec=__LOCAL_BIN__/command-center-ui
+Terminal=false
+Categories=Development;
+

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+
+if [ "$#" -eq 0 ]; then
+  exec "$DIR/install-map-system.sh" --yes
+fi
+
+exec "$DIR/install-map-system.sh" "$@"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AI Command Center Monitor
+Comment=Open the MAP monitor tab
+Exec=__LOCAL_BIN__/ai-command-center-monitor
+Terminal=true
+Categories=Development;
+

@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+export PROJECT_DIR
+CONFIG="${WEZTERM_CONFIG_FILE:-__HOME__/.config/wezterm/ai-command-center-lab.lua}"
+WEZTERM="${WEZTERM:-$(command -v wezterm 2>/dev/null || printf '%s' '__LOCAL_BIN__/wezterm')}"
+
+cd "$PROJECT_DIR"
+if [ -x "$PROJECT_DIR/MAP_System/scripts/start-limit-watcher.sh" ]; then
+  "$PROJECT_DIR/MAP_System/scripts/start-limit-watcher.sh" 60 || true
+fi
+
+if [ ! -x "$WEZTERM" ] && ! command -v wezterm >/dev/null 2>&1; then
+  printf 'WezTerm is not installed or not on PATH. Install WezTerm, then retry.\n' >&2
+  exit 127
+fi
+
+exec "$WEZTERM" --config-file "$CONFIG" start --always-new-process --workspace ai-command-center-lab --cwd "$PROJECT_DIR"
+

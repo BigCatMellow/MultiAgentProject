@@ -1,0 +1,73 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+HCOM="${HCOM:-$(command -v hcom 2>/dev/null || printf '%s' '__LOCAL_BIN__/hcom')}"
+HCOM_NAME="${HCOM_NAME:-command-center-monitor}"
+EVENT_LOG="$PROJECT_DIR/MAP_System/events/events.jsonl"
+AGENT_STATUS="$PROJECT_DIR/MAP_System/agents/status.json"
+MODE="${1:-attention}"
+
+print_hcom() {
+  if [ -x "$HCOM" ] || command -v hcom >/dev/null 2>&1; then
+    "$HCOM" events --last 12 --name "$HCOM_NAME" 2>/dev/null || true
+  else
+    printf 'hcom not found\n'
+  fi
+}
+
+print_map_events() {
+  if [ -f "$EVENT_LOG" ]; then
+    tail -n 10 "$EVENT_LOG"
+  else
+    printf 'No MAP event log at %s\n' "$EVENT_LOG"
+  fi
+}
+
+print_agent_status() {
+  if [ -f "$AGENT_STATUS" ]; then
+    python3 -m json.tool "$AGENT_STATUS" 2>/dev/null || cat "$AGENT_STATUS"
+  else
+    printf 'No agent status at %s\n' "$AGENT_STATUS"
+  fi
+}
+
+render_once() {
+  clear 2>/dev/null || true
+  printf 'AI Command Center Monitor\n'
+  printf 'Repo: %s\n' "$PROJECT_DIR"
+  printf 'Mode: %s\n\n' "$MODE"
+
+  case "$MODE" in
+    attention)
+      printf 'Recent hcom events:\n'
+      print_hcom
+      printf '\nAgent status:\n'
+      print_agent_status
+      ;;
+    feed)
+      printf 'Recent hcom events:\n'
+      print_hcom
+      printf '\nRecent MAP events:\n'
+      print_map_events
+      ;;
+    summary)
+      printf 'Agent status:\n'
+      print_agent_status
+      printf '\nRecent MAP events:\n'
+      print_map_events
+      ;;
+    *)
+      printf 'Unknown monitor mode: %s\n' "$MODE" >&2
+      exit 2
+      ;;
+  esac
+
+  printf '\nRefreshes every 5 seconds. Ctrl-C exits.\n'
+}
+
+while :; do
+  render_once
+  sleep 5
+done
+

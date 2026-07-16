@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+PROJECT_DIR="${PROJECT_DIR:-__PROJECT_DIR__}"
+APP="$PROJECT_DIR/Projects/ProjectUpdater/app/index.html"
+
+if [ ! -f "$APP" ]; then
+  printf 'ProjectUpdater app not found at %s\n' "$APP" >&2
+  exit 1
+fi
+
+if command -v xdg-open >/dev/null 2>&1; then
+  exec xdg-open "$APP"
+fi
+
+python3 - "$APP" <<'PY'
+import pathlib
+import sys
+import webbrowser
+
+webbrowser.open(pathlib.Path(sys.argv[1]).resolve().as_uri())
+PY
+

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Command Center</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell" aria-label="AI Command Center">
+    <header class="titlebar">
+      <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="brand">AI Command Center</div>
+      <div class="project-pill"><span></span>MultiAgentProject</div>
+      <div class="title-spacer"></div>
+      <div class="path">~/Projects/MultiAgentProject</div>
+    </header>
+
+    <section class="workspace">
+      <aside class="sidebar" aria-label="Agents">
+        <section class="mini-map" aria-label="Live agent map">
+          <div class="mini-label">LIVE · 1 IN FLIGHT</div>
+          <svg viewBox="0 0 240 150" role="img" aria-label="Command center agent activity map">
+            <line x1="120" y1="35" x2="58" y2="112"></line>
+            <line x1="120" y1="35" x2="184" y2="112"></line>
+            <line x1="58" y1="112" x2="184" y2="112"></line>
+            <circle class="node command" cx="120" cy="35" r="18"></circle>
+            <circle class="node codex" cx="58" cy="112" r="18"></circle>
+            <circle class="node claude" cx="184" cy="112" r="18"></circle>
+            <circle class="pulse" r="5">
+              <animateMotion dur="2.8s" repeatCount="indefinite" path="M120,35 L58,112 L184,112"></animateMotion>
+            </circle>
+          </svg>
+          <div class="mini-legend"><span>maki</span><span>taro</span></div>
+        </section>
+
+        <div class="rail-label">AGENTS</div>
+        <nav class="agent-list" aria-label="Agent filter">
+          <button class="agent-row active" data-agent="all">
+            <span class="avatar all">◹</span>
+            <span><b>All agents</b><small>Unified feed</small></span>
+          </button>
+          <button class="agent-row" data-agent="codex">
+            <span class="avatar codex">M</span>
+            <span><b>codex-lab-maki</b><small>Implementer · active</small></span>
+            <em>1</em>
+          </button>
+          <button class="agent-row" data-agent="claude">
+            <span class="avatar claude">T</span>
+            <span><b>claude-lab-taro</b><small>Reviewer · standby</small></span>
+          </button>
+          <button class="agent-row" data-agent="monitor">
+            <span class="avatar monitor">◉</span>
+            <span><b>Monitor</b><small>Attention-only</small></span>
+          </button>
+          <button class="agent-row" data-agent="command">
+            <span class="avatar command">C</span>
+            <span><b>command-center</b><small>Operator</small></span>
+          </button>
+        </nav>
+
+        <section class="health">
+          <div class="health-icon">✓</div>
+          <div><b>MAP active</b><span>TASK-055 · claimed</span></div>
+        </section>
+      </aside>
+
+      <section class="feed-pane" aria-label="Conversation feed">
+        <header class="feed-head">
+          <div>
+            <h1 id="scope-title">Conversation</h1>
+            <span class="state-chip">Studio</span>
+          </div>
+          <button class="ghost" id="toggle-work">⊞ Expand work</button>
+        </header>
+
+        <div class="feed" id="feed">
+          <article class="message command" data-agent="command">
+            <div class="avatar command">C</div>
+            <div class="bubble">
+              <div class="meta"><b>command-center</b><span>request</span><time>22:44</time></div>
+              <p>NEW PROJECT: build the AI Command Center UI from the existing prototype materials.</p>
+            </div>
+          </article>
+
+          <article class="message codex" data-agent="codex">
+            <div class="avatar codex">M</div>
+            <div class="bubble">
+              <div class="meta"><b>codex-lab-maki</b><span>ack</span><time>22:44</time></div>
+              <p>Inspecting the Studio, Constellation, and Mission Control mockups. Creating MAP task ownership before implementation.</p>
+              <button class="work-toggle" data-target="work-intake">▸ Show work</button>
+              <pre class="work" id="work-intake">read: Command Center.dc.html
+read: Command Center - Studio.dc.html
+read: support.js
+task: TASK-055 claimed by codex-lab-maki</pre>
+            </div>
+          </article>
+
+          <article class="message claude" data-agent="claude">
+            <div class="avatar claude">T</div>
+            <div class="bubble">
+              <div class="meta"><b>claude-lab-taro</b><span>review path</span><time>22:47</time></div>
+              <p>Standing by as reviewer. Request review before the UI task is marked done or shipped.</p>
+            </div>
+          </article>
+
+          <article class="message monitor" data-agent="monitor">
+            <div class="avatar monitor">◉</div>
+            <div class="bubble">
+              <div class="meta"><b>Monitor</b><span>status</span><time>22:48</time></div>
+              <p>Ownership visible: codex implements, Claude reviews, operator decisions use request intent only.</p>
+              <button class="work-toggle" data-target="work-map">▸ Show work</button>
+              <pre class="work" id="work-map">events.jsonl: progress recorded
+tasks/TASK-055.json: IN_PROGRESS
+workflow/task_graph.json: synced</pre>
+            </div>
+          </article>
+
+          <article class="message codex attention" data-agent="codex">
+            <div class="avatar codex">M</div>
+            <div class="bubble approval-card">
+              <div class="meta"><b>codex-lab-maki</b><span>needs review later</span><time>now</time></div>
+              <h2>Review gate: TASK-055</h2>
+              <p>The implementation will pause for Claude review before completion. External prototype writes require explicit approval if needed.</p>
+              <div class="actions">
+                <button class="primary" data-action="approve">Request review</button>
+                <button data-action="inspect">Inspect task</button>
+                <button data-action="hold">Hold</button>
+              </div>
+              <div class="action-result" id="action-result" aria-live="polite"></div>
+            </div>
+          </article>
+        </div>
+
+        <form class="composer" id="composer">
+          <span>To</span>
+          <button type="button" class="recipient codex">maki</button>
+          <button type="button" class="recipient claude">taro</button>
+          <input id="composer-input" aria-label="Message" placeholder="Give a task or answer a question">
+          <button class="send" aria-label="Send message">↑</button>
+        </form>
+      </section>
+
+      <aside class="inspector" aria-label="Task inspector">
+        <section class="task-card">
+          <div class="card-label">CURRENT TASK</div>
+          <h2>TASK-055</h2>
+          <p>Build Command Center UI from prototype</p>
+          <div class="progress"><span></span></div>
+          <small>35% · static Studio build</small>
+        </section>
+
+        <section class="queue">
+          <div class="card-label">NEEDS ATTENTION</div>
+          <div class="attention-item">
+            <b>Claude review</b>
+            <span>Required before done</span>
+          </div>
+          <div class="attention-item quiet">
+            <b>External write scope</b>
+            <span>Approval if target prototype is edited</span>
+          </div>
+        </section>
+
+        <section class="reference">
+          <div class="card-label">SOURCE TABS</div>
+          <img src="./assets/pasted-1782846261949-0.png" alt="Control Lab terminal reference">
+          <img src="./assets/pasted-1782846275994-0.png" alt="Codex Lab terminal reference">
+          <img src="./assets/pasted-1782846286125-0.png" alt="Claude Lab terminal reference">
+        </section>
+      </aside>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
